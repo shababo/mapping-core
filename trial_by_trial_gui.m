@@ -22,7 +22,7 @@ function varargout = trial_by_trial_gui(varargin)
 
 % Edit the above text to modify the response to help trial_by_trial_gui
 
-% Last Modified by GUIDE v2.5 18-Apr-2015 22:18:23
+% Last Modified by GUIDE v2.5 10-Oct-2015 09:20:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -96,7 +96,7 @@ draw_plot(handles)
 
 % --- Executes on button press in forward.
 function forward_Callback(hObject, eventdata, handles)
-% hObject    handle to forward (see GCBO)
+% hObject    handle to forward (see GCBO)Select Address
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -112,22 +112,37 @@ draw_plot(handles)
 
 function draw_plot(handles)
 
+current_xlim = get(handles.data_axes,'xlim');
+current_ylim = get(handles.data_axes,'ylim');
+
 trace_ind = str2num(get(handles.trial_number,'String'));
 
 start_ind = 1; %2450
 trace_len = length(handles.data.sweeps{trace_ind}(:,1));
 
+gain_mult = 1;
+
 axes(handles.data_axes)
-plot((0:trace_len-1)/20000,handles.data.sweeps{trace_ind}(:,1),'b');
+plot((0:trace_len-1)/20000,handles.data.sweeps{trace_ind}(:,1)*gain_mult,'b');
 hold on;
-plot((0:trace_len-1)/20000,handles.data.sweeps{trace_ind}(:,2)/10,'r');%/10 - 80,'r');
+plot((0:trace_len-1)/20000,handles.data.sweeps{trace_ind}(:,2)/10*gain_mult,'r');
 % hold on;
 % scatter(handles.data.time(find(handles.data.spikes(trace_ind,:))),100*ones(1,sum(handles.data.spikes(trace_ind,:))),20*ones(1,sum(handles.data.spikes(trace_ind,:))),'filled');
 % hold on;
 % scatter(handles.data.time(find(handles.data.stims(trace_ind,:))),120*ones(1,sum(handles.data.stims(trace_ind,:))),20*ones(1,sum(handles.data.stims(trace_ind,:))),'filled');
 hold off;
-axis tight
-% ylim([-150 0])
+if ~get(handles.hold_axes,'Value')
+    axis tight
+else
+    set(handles.data_axes,'xlim',current_xlim)
+    set(handles.data_axes,'ylim',current_ylim)
+end
+% if trace_ind ~= 1
+    title(['Experiment Time: ' num2str(handles.data.trialtime(trace_ind)) ' sec, ' num2str(diff(handles.data.trialtime(max(trace_ind-1,1):trace_ind))) 'sec since prev trial'])
+% else
+%     title(['Experiment Time: ' num2str(handles.data.trialtime(trace_ind)) ' sec'])
+% end
+% ylim([-700 200])
 
 
 function trial_number_Callback(hObject, eventdata, handles)
@@ -159,4 +174,18 @@ function trial_number_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in hold_axes.
+function hold_axes_Callback(hObject, eventdata, handles)
+% hObject    handle to hold_axes (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of hold_axes
+
+if ~get(hObject,'Value')
+    axes(handles.data_axes)
+    axis tight
 end
