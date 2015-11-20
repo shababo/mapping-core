@@ -24,28 +24,25 @@ for i = 1:length(dirinfo)
     end
 end
 
-assignin('base','traces',traces)
+if plot
 
-traces_out = zeros(num_traces,size(traces{1},2));
-colors = zeros(num_traces,3);
-first = 1;
-last = 0;
-count = 1;
-for i = 1:length(traces)
-    if ~isempty(traces{i})
-        last = last + size(traces{i},1);
-        traces_out(first:last,:) = traces{i};
-        colors(first:last,:) = repmat([0 0 mod(count,2)],last-first+1,1);
-        first = first + size(traces{i},1);
-        count = count + 1;
+    traces_plot = zeros(num_traces,size(traces{1},2));
+    colors = zeros(num_traces,3);
+    first = 1;
+    last = 0;
+    count = 1;
+    for i = 1:length(traces)
+        if ~isempty(traces{i})
+            last = last + size(traces{i},1);
+            traces_plot(first:last,:) = traces{i};
+            colors(first:last,:) = repmat([0 0 mod(count,2)],last-first+1,1);
+            first = first + size(traces{i},1);
+            count = count + 1;
+        end
     end
-end
 
-traces = traces_out;
-
-if plot && ~isempty(traces)
     figure
-    plot_trace_stack(traces,100,colors,'-');
+    plot_trace_stack(traces_plot,100,colors,'-');
 end
 
     
