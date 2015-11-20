@@ -138,8 +138,10 @@ else
     set(handles.data_axes,'ylim',current_ylim)
 end
 % if trace_ind ~= 1
+if isfield(handles.data,'trialtime')
     title(['Experiment Time: ' num2str(handles.data.trialtime(trace_ind)) ' sec, ' num2str(diff(handles.data.trialtime(max(trace_ind-1,1):trace_ind))) 'sec since prev trial'])
-% else
+end
+    % else
 %     title(['Experiment Time: ' num2str(handles.data.trialtime(trace_ind)) ' sec'])
 % end
 % ylim([-700 200])
