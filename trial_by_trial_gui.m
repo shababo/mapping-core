@@ -122,10 +122,30 @@ trace_len = length(handles.data.sweeps{trace_ind}(:,1));
 
 gain_mult = 1;
 
-axes(handles.data_axes)
-plot((0:trace_len-1)/20000,handles.data.sweeps{trace_ind}(:,1)*gain_mult,'b');
-hold on;
-plot((0:trace_len-1)/20000,handles.data.sweeps{trace_ind}(:,2)/10*gain_mult,'r');
+% axes(handles.data_axes)
+% plot((0:trace_len-1)/20000,handles.data.sweeps{trace_ind}(:,1)*gain_mult,'b');
+% hold on;
+% plot((0:trace_len-1)/20000,handles.data.sweeps{trace_ind}(:,2)*gain_mult,'r');
+
+
+timebase = (0:trace_len-1)/20000;
+if isfield(handles.data,'trial_metadata')
+    
+    if strcmp(handles.data.trial_metadata(trace_ind).stim_type,'LED')
+        stim_sweep = handles.data.sweeps{trace_ind}(:,3);
+    elseif strcmp(handles.data.trial_metadata(trace_ind).stim_type,'2P')
+        stim_sweep = handles.data.sweeps{trace_ind}(:,4);
+        if isfield(handles.data.trial_metadata,'lut_used') && handles.data.trial_metadata(trace_ind).lut_used
+            stim_sweep = stim_sweep/max(stim_sweep)*handles.data.trial_metadata(trace_ind).pulseamp;
+        end
+    end
+else
+    
+    stim_sweep = handles.data.sweeps{trace_ind}(:,2)*gain_mult;
+    
+end
+handles.data_axes = plotyy(handles.data_axes(1),timebase,stim_sweep,timebase,handles.data.sweeps{trace_ind}(:,1)*gain_mult);
+
 % hold on;
 % scatter(handles.data.time(find(handles.data.spikes(trace_ind,:))),100*ones(1,sum(handles.data.spikes(trace_ind,:))),20*ones(1,sum(handles.data.spikes(trace_ind,:))),'filled');
 % hold on;
@@ -141,7 +161,9 @@ end
 if isfield(handles.data,'trialtime')
     title(['Experiment Time: ' num2str(handles.data.trialtime(trace_ind)) ' sec, ' num2str(diff(handles.data.trialtime(max(trace_ind-1,1):trace_ind))) 'sec since prev trial'])
 end
+
     % else
+
 %     title(['Experiment Time: ' num2str(handles.data.trialtime(trace_ind)) ' sec'])
 % end
 % ylim([-700 200])
