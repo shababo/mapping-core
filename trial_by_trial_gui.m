@@ -135,7 +135,7 @@ if isfield(handles.data,'trial_metadata')
         stim_sweep = handles.data.sweeps{trace_ind}(:,3);
     elseif strcmp(handles.data.trial_metadata(trace_ind).stim_type,'2P')
         stim_sweep = handles.data.sweeps{trace_ind}(:,4);
-        if handles.data.trial_metadata(trace_ind).lut_used
+        if isfield(handles.data.trial_metadata,'lut_used') && handles.data.trial_metadata(trace_ind).lut_used
             stim_sweep = stim_sweep/max(stim_sweep)*handles.data.trial_metadata(trace_ind).pulseamp;
         end
     end
@@ -161,7 +161,9 @@ end
 if isfield(handles.data,'trialtime')
     title(['Experiment Time: ' num2str(handles.data.trialtime(trace_ind)) ' sec, ' num2str(diff(handles.data.trialtime(max(trace_ind-1,1):trace_ind))) 'sec since prev trial'])
 end
-% else
+
+    % else
+
 %     title(['Experiment Time: ' num2str(handles.data.trialtime(trace_ind)) ' sec'])
 % end
 % ylim([-700 200])

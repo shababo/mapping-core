@@ -1,10 +1,10 @@
-function plot_trace_stack_grid(traces_array,in_max_traces,downsample_rate)
+function plot_trace_stack_grid(traces_array,in_max_traces,downsample_rate,plot_avg)
 
 figure
 [num_rows, num_cols] = size(traces_array);
 
 count = 1;
-grid_offset_y_spacer = 200;
+grid_offset_y_spacer = 25;
 grid_offset_y = -grid_offset_y_spacer;
 grid_offset_x = .05;
 
@@ -36,7 +36,11 @@ for i = 1:num_cols
             these_traces = these_traces(1:max_traces,:);    
         end
         these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,60,downsample_rate);
+        if plot_avg
+            these_traces_offset = mean(these_traces_offset);
+        end
         time = (1:size(these_traces_offset,2))/20000*downsample_rate + (i-1)*(size(these_traces_offset,2)/20000*downsample_rate + grid_offset_x);
+        
         plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'k')
         hold on;
         if i == 1
