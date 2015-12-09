@@ -4,9 +4,9 @@ figure
 [num_rows, num_cols] = size(traces_array);
 
 count = 1;
-grid_offset_y_spacer = 25;
+grid_offset_y_spacer = 150;
 grid_offset_y = -grid_offset_y_spacer;
-grid_offset_x = .05;
+grid_offset_x = .1;
 
 if isinf(in_max_traces)
     max_traces = 0;
@@ -35,7 +35,7 @@ for i = 1:num_cols
         elseif size(these_traces,1) > max_traces
             these_traces = these_traces(1:max_traces,:);    
         end
-        these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,60,downsample_rate);
+        these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,100,downsample_rate);
         if plot_avg
             these_traces_offset = mean(these_traces_offset);
         end

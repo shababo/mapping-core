@@ -159,7 +159,8 @@ else
 end
 % if trace_ind ~= 1
 if isfield(handles.data,'trialtime')
-    title(['Experiment Time: ' num2str(handles.data.trialtime(trace_ind)) ' sec, ' num2str(diff(handles.data.trialtime(max(trace_ind-1,1):trace_ind))) 'sec since prev trial'])
+%     title(['Experiment Time: ' num2str(handles.data.trialtime(trace_ind)) ' sec, ' num2str(diff(handles.data.trialtime(max(trace_ind-1,1):trace_ind))) 'sec since prev trial'])
+title(mat2str(handles.data.trial_metadata(trace_ind).relative_position))
 end
 
     % else

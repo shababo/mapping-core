@@ -15,7 +15,7 @@ function match = match_trial(params,trial_metadata)
 
         if ischar(these_params) && ~strcmp(these_params,'ignore')
             match = match && match_str(these_params,trial_metadata,param_names{i});
-        elseif ~ischar(these_params) && isvector(these_params) && ~isnan(these_params)
+        elseif ~ischar(these_params) && isvector(these_params)
             match = match && match_vec(these_params,trial_metadata,param_names{i});
         end
 
@@ -43,8 +43,8 @@ function match = match_vec(param_set,trial_metadata,param_name)
     match = 0;
 
     if isfield(trial_metadata,param_name)
-
-        match = param_set == trial_metadata.(param_name);
+        
+        match = isequal(param_set,trial_metadata.(param_name));
 
     end
     
