@@ -6,7 +6,7 @@ figure
 count = 1;
 grid_offset_y_spacer = 150;
 grid_offset_y = -grid_offset_y_spacer;
-grid_offset_x = .1;
+grid_offset_x = .01;
 
 if isinf(in_max_traces)
     max_traces = 0;
