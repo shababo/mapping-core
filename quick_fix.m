@@ -10,11 +10,12 @@ if isempty(trials)
     
 end
     
+cell_position = data.trial_metadata(1).obj_position + [3 0 0];
+
 for j = 1:length(trials)
     
     ind = trials(j);
-    temp = data.trial_metadata(ind).relative_position;
-    data.trial_metadata(ind).relative_position = [temp(1:2) 0];
+    data.trial_metadata(ind).cell_position = cell_position;
         
 
 end
