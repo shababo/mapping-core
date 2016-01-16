@@ -29,7 +29,7 @@ for i = 1:num_cols
   
     for j = 1:num_rows
         
-        these_traces = traces_array{j,i}';
+        these_traces = traces_array{j,i}(:,5000:7500);
         if size(these_traces,1) < max_traces
             these_traces = [these_traces; zeros(max_traces - size(these_traces,1),size(these_traces,2))];
         elseif size(these_traces,1) > max_traces
