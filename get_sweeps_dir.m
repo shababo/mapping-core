@@ -1,5 +1,7 @@
 function [traces, traces_metadata] = get_sweeps_dir(dirname,match_string,recursive,ch_ind,plot,max_sweep,varargin)
 
+varargin{:}
+
 if iscellstr(match_string)
     match_string = cellstr2regexp(match_string);
 end

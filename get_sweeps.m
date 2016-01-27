@@ -22,7 +22,8 @@ addParameter(p,'lut_used',NaN,@isnumeric);
 addParameter(p,'run_count',NaN,@isnumeric);
 addParameter(p,'clamp_type','ignore',@(x) ischar(x) || cellstr(x));
 
-
+% varargin{:}
+p.parse(varargin{2:end})
 
 assignin('base','p',p)
 

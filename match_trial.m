@@ -34,6 +34,11 @@ end
 function match = match_str(param_set,trial_metadata,param_name)
 
     match = 0;
+    
+    if strcmp(param_set,'ignore')
+        match = 1;
+        return
+    end
 
     if isfield(trial_metadata,param_name)
 
@@ -49,6 +54,11 @@ end
 function match = match_vec(param_set,trial_metadata,param_name)
 
     match = 0;
+    
+    if isnan(param_set)
+        match = 1;
+        return
+    end
 
     if isfield(trial_metadata,param_name)
         
