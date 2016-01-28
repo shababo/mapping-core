@@ -58,7 +58,7 @@ else
 end
 
 start_ind = 1;
-end_ind = length(trace_array{1});
+end_ind = 10000;
 
 traces = zeros(length(trace_array),length(trace_array{1}(start_ind:end_ind,ch_ind)'));
 
