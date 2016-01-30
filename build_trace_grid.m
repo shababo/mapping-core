@@ -1,45 +1,51 @@
-function trace_array = build_trace_grid(traces, metadata)
+function traces_by_location = build_trace_grid(filename, runs, step_size, trace_limits, plot_grid)
 
-[traces, traces_metadata] = get_sweeps_dir('data','12_3_slice6_cell2',0,1,0,Inf,'run_count',8);
-get_sweeps_dir(dirname,match_string,recursive,ch_ind,plot,max_sweep,varargin)
-[traces, traces_metadata] = get_sweeps_dir('data','12_3_slice6_cell2',0,1,0,Inf,'run_count',8);
-p.Results
-[traces, traces_metadata] = get_sweeps_dir('data','12_3_slice6_cell2',0,1,0,Inf,'run_count',8);
-traces = traces{1};
-traces_metadata = traces_metadata{1};
+
+[traces, traces_metadata] =  get_sweeps(filename,1,[],0,Inf,'run_count',runs);
+% get_sweeps_dir(directory,file_string,0,1,0,Inf,'run_count',runs);
+
+size(traces)
+
+% traces = traces{1};
+% traces_metadata = traces_metadata{1};
+
 traces_by_location = cell(11,11);
-start_ind = 20000*.280; end_ind = 20000*.400;
-for i = 1:size(traces,1)
-ind1 = traces_metadata(i).relative_position(1)/10 + 6;
-ind2 = traces_metadata(i).relative_position(2)/10 + 6;
-traces_by_location{ind1,ind2} = [traces_by_location{ind1,ind2} traces(i,start_ind:end_ind)'];
+if ~isempty(trace_limits)
+    start_ind = trace_limits(1); end_ind = trace_limits(2);
+else
+    start_ind = 1; end_ind = size(traces,2);
 end
-figure; plot_trace_stack_grid(traces_by_location,5,10,0)
-for i = 1:size(traces,1)
-ind1 = traces_metadata(i).relative_position(1)/10 + 6;
-ind2 = traces_metadata(i).relative_position(2)/10 + 6;
-traces_by_location{ind1,ind2} = [traces_by_location{ind1,ind2} traces(i,start_ind:end_ind)'];
+
+% find limits of grid
+x_min = Inf; x_max = -Inf; y_min = Inf; y_max = -Inf;
+
+for i = 1:length(traces_metadata)
+    this_location = traces_metadata(i).relative_position;
+    if x_min > this_location(1)
+        x_min = this_location(1);
+    end
+    if x_max < this_location(1)
+        x_max = this_location(1);
+    end
+    if y_min > this_location(2)
+        y_min = this_location(2);
+    end
+    if y_max < this_location(2)
+        y_max = this_location(2);
+    end
 end
+
+num_x_positions = (x_max - x_min)/step_size + 1
+num_y_positions = (y_max - y_min)/step_size + 1
+
+
+traces_by_location = cell(num_x_positions,num_y_positions);
 for i = 1:size(traces,1)
-ind1 = traces_metadata(i).relative_position(1)/10 + 6;
-ind2 = traces_metadata(i).relative_position(2)/10 + 6;
-traces_by_location{ind1,ind2} = [traces_by_location{ind1,ind2}; traces(i,start_ind:end_ind)];
+    ind1 = traces_metadata(i).relative_position(1)/step_size + ceil(num_x_positions/2)
+    ind2 = traces_metadata(i).relative_position(2)/step_size + ceil(num_y_positions/2)
+    traces_by_location{ind1,ind2} = [traces_by_location{ind1,ind2}; traces(i,start_ind:end_ind)];
 end
-clear traces_by_location
-for i = 1:size(traces,1)
-ind1 = traces_metadata(i).relative_position(1)/10 + 6;
-ind2 = traces_metadata(i).relative_position(2)/10 + 6;
-traces_by_location{ind1,ind2} = [traces_by_location{ind1,ind2}; traces(i,start_ind:end_ind)];
+
+if plot_grid
+    figure; plot_trace_stack_grid(traces_by_location,5,10,0)
 end
-traces_by_location = cell(11,11);
-for i = 1:size(traces,1)
-ind1 = traces_metadata(i).relative_position(1)/10 + 6;
-ind2 = traces_metadata(i).relative_position(2)/10 + 6;
-traces_by_location{ind1,ind2} = [traces_by_location{ind1,ind2}; traces(i,start_ind:end_ind)];
-end
-figure; plot_trace_stack_grid(traces_by_location,5,10,0)
-evoked_traces = traces_by_location{9,4};
-figure; plot(mean(evoked_traces))
-evoked_traces(end+1,:) = mean(evoked_traces);
-figure; plot_trace_stack(evoked_traces,25,zeros(size(evoked_traces,1),3),'-')
-figure; plot_trace_stack(evoked_traces,75,zeros(size(evoked_traces,1),3),'-')

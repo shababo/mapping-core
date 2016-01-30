@@ -57,29 +57,40 @@ else
     end
 end
 
-start_ind = 1;
-end_ind = length(trace_array{1});
+% start_ind = 1;
+% end_ind = Inf;
 
-traces = zeros(length(trace_array),length(trace_array{1}(start_ind:end_ind,ch_ind)'));
+% traces = zeros(length(trace_array),1);
 
 
 if ~exist('sweeps','var') && isfield(data,'trial_metadata')
     match = zeros(length(trace_array),1);
 end
 
+count = 1;
 for i = 1:length(trace_array)
     
     if ~exist('sweeps','var')  && isfield(data,'trial_metadata')
         match(i) = match_trial(p.Results, data.trial_metadata(i));
+        if match(i)
+            traces(count,:) = trace_array{i}(:,ch_ind)';
+            count = count + 1;
+        
+        end
+    
+    else
+        traces(i,:) = trace_array{i}(:,ch_ind)';
     end
-    traces(i,:) = trace_array{i}(start_ind:end_ind,ch_ind)'; 
+
+     
     
 end
 
 
+
 if ~exist('sweeps','var')  && isfield(data,'trial_metadata')
     match = logical(match);
-    traces = traces(match,:);
+%     traces = traces(match,:);
     if isfield(data,'trial_metadata')
         traces_metadata = traces_metadata(match);
     end
