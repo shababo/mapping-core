@@ -18,8 +18,9 @@ count = 1;
 for i = 1:length(dirinfo)
     
     if ~dirinfo(i).isdir && ~isempty(regexpi(dirinfo(i).name,match_string))
+        [dirname '\' dirinfo(i).name]
         [traces{count}, traces_metadata{count}] = ...
-            get_sweeps([dirname '/' dirinfo(i).name],ch_ind,[],0,max_sweep,varargin{:});
+            get_sweeps([dirname '\' dirinfo(i).name],ch_ind,[],0,max_sweep,varargin{:});
         
         num_traces = num_traces + size(traces{count},1);
         count = count + 1;
