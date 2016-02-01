@@ -35,7 +35,7 @@ for i = 1:num_cols
         elseif size(these_traces,1) > max_traces
             these_traces = these_traces(1:max_traces,:);    
         end
-        these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,100,downsample_rate);
+        these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,25,downsample_rate);
         if plot_avg
             these_traces_offset = mean(these_traces_offset);
         end
