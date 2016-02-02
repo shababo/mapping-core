@@ -29,22 +29,24 @@ for i = 1:num_cols
   
     for j = 1:num_rows
         
-        these_traces = traces_array{j,i};
-        if size(these_traces,1) < max_traces
-            these_traces = [these_traces; zeros(max_traces - size(these_traces,1),size(these_traces,2))];
-        elseif size(these_traces,1) > max_traces
-            these_traces = these_traces(1:max_traces,:);    
-        end
-        these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,25,downsample_rate);
-        if plot_avg
-            these_traces_offset = mean(these_traces_offset);
-        end
-        time = (1:size(these_traces_offset,2))/20000*downsample_rate + (i-1)*(size(these_traces_offset,2)/20000*downsample_rate + grid_offset_x);
-        
-        plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'k')
-        hold on;
-        if i == 1
-            grid_offset_y(j+1) = grid_offset_y(j) - (max(max(these_traces_offset)) - min(min(these_traces_offset))) - grid_offset_y_spacer;
+        if ~isempty(traces_array{j,i})
+            these_traces = traces_array{j,i};
+            if size(these_traces,1) < max_traces
+                these_traces = [these_traces; zeros(max_traces - size(these_traces,1),size(these_traces,2))];
+            elseif size(these_traces,1) > max_traces
+                these_traces = these_traces(1:max_traces,:);    
+            end
+            these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,25,downsample_rate);
+            if plot_avg
+                these_traces_offset = mean(these_traces_offset);
+            end
+            time = (1:size(these_traces_offset,2))/20000*downsample_rate + (i-1)*(size(these_traces_offset,2)/20000*downsample_rate + grid_offset_x);
+
+            plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'k')
+            hold on;
+            if i == 1
+                grid_offset_y(j+1) = grid_offset_y(j) - (max(max(these_traces_offset)) - min(min(these_traces_offset))) - grid_offset_y_spacer;
+            end
         end
     end
     

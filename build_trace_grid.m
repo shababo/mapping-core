@@ -41,11 +41,11 @@ num_y_positions = (y_max - y_min)/step_size + 1
 
 traces_by_location = cell(num_x_positions,num_y_positions);
 for i = 1:size(traces,1)
-    ind1 = traces_metadata(i).relative_position(1)/step_size + ceil(num_x_positions/2)
-    ind2 = traces_metadata(i).relative_position(2)/step_size + ceil(num_y_positions/2)
+    ind1 = traces_metadata(i).relative_to_start_position(1)/step_size + ceil(num_x_positions/2)
+    ind2 = traces_metadata(i).relative_to_start_position(2)/step_size + ceil(num_y_positions/2)
     traces_by_location{ind1,ind2} = [traces_by_location{ind1,ind2}; traces(i,start_ind:end_ind)];
 end
 
 if plot_grid
-    figure; plot_trace_stack_grid(traces_by_location,3,3,0)
+    figure; plot_trace_stack_grid(traces_by_location,5,3,0)
 end
