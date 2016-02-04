@@ -1,4 +1,4 @@
-function current_image = get_current_image(trace_array,do_plot)
+function current_image = get_current_image(trace_array,min_or_max,do_plot)
 
 current_image = zeros(size(trace_array));
 
@@ -7,7 +7,12 @@ for i = 1:size(trace_array,1)
         
         if ~isempty(trace_array{i,j})
             mean_trace = mean(trace_array{i,j});
-            current_image(i,j) = mean_trace(.005*20000) - min(mean_trace);
+            switch min_or_max
+                case 'min'
+                    current_image(i,j) = mean_trace(.005*20000) - min(mean_trace);
+                case 'max'
+                    current_image(i,j) =  max(mean_trace) - mean_trace(.005*20000);
+            end
         else
             current_image(i,j) = NaN;
         end
