@@ -9,7 +9,7 @@ size(traces)
 % traces = traces{1};
 % traces_metadata = traces_metadata{1};
 
-traces_by_location = cell(11,11);
+% traces_by_location = cell(11,11);
 if ~isempty(trace_limits)
     start_ind = trace_limits(1); end_ind = trace_limits(2);
 else
@@ -35,14 +35,14 @@ for i = 1:length(traces_metadata)
     end
 end
 
-num_x_positions = (x_max - x_min)/step_size + 1
-num_y_positions = (y_max - y_min)/step_size + 1
+num_x_positions = (x_max - x_min)/step_size + 1;
+num_y_positions = (y_max - y_min)/step_size + 1;
 
 
 traces_by_location = cell(num_x_positions,num_y_positions);
 for i = 1:size(traces,1)
-    ind1 = traces_metadata(i).relative_to_start_position(1)/step_size + ceil(num_x_positions/2)
-    ind2 = traces_metadata(i).relative_to_start_position(2)/step_size + ceil(num_y_positions/2)
+    ind1 = traces_metadata(i).relative_to_start_position(1)/step_size + ceil(num_x_positions/2);
+    ind2 = traces_metadata(i).relative_to_start_position(2)/step_size + ceil(num_y_positions/2);
     traces_by_location{ind1,ind2} = [traces_by_location{ind1,ind2}; traces(i,start_ind:end_ind)];
 end
 
