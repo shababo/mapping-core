@@ -1,4 +1,4 @@
-function traces_by_location = build_trace_grid(filename, runs, step_size, trace_limits, plot_grid)
+function traces_by_location = build_trace_grid(filename, runs, step_size, max_traces, trace_limits, plot_grid)
 
 
 [traces, traces_metadata] =  get_sweeps(filename,1,[],0,Inf,'run_count',runs);
@@ -43,9 +43,9 @@ traces_by_location = cell(num_x_positions,num_y_positions);
 for i = 1:size(traces,1)
     ind1 = traces_metadata(i).relative_to_start_position(1)/step_size + ceil(num_x_positions/2);
     ind2 = traces_metadata(i).relative_to_start_position(2)/step_size + ceil(num_y_positions/2);
-    traces_by_location{ind1,ind2} = [traces_by_location{ind1,ind2}; traces(i,start_ind:end_ind)];
+    traces_by_location{end-ind1+1,ind2} = [traces_by_location{end-ind1+1,ind2}; traces(i,start_ind:end_ind)];
 end
 
 if plot_grid
-    figure; plot_trace_stack_grid(traces_by_location,5,3,0)
+    figure; plot_trace_stack_grid(traces_by_location,max_traces,3,0)
 end
