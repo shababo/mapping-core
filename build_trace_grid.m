@@ -9,6 +9,7 @@ size(traces)
 % traces = traces{1};
 % traces_metadata = traces_metadata{1};
 
+
 if ~isempty(trace_limits)
     start_ind = trace_limits(1); end_ind = trace_limits(2);
 else
@@ -40,11 +41,11 @@ num_y_positions = (y_max - y_min)/step_size + 1;
 
 traces_by_location = cell(num_x_positions,num_y_positions);
 for i = 1:size(traces,1)
-    if ~isfield(traces_metadata,'is_test_trial')
-        ind1 = traces_metadata(i).relative_to_start_position(1)/step_size + ceil(num_x_positions/2);
-        ind2 = traces_metadata(i).relative_to_start_position(2)/step_size + ceil(num_y_positions/2);
-        traces_by_location{ind1,ind2} = [traces_by_location{ind1,ind2}; traces(i,start_ind:end_ind)];
-    end
+
+    ind1 = traces_metadata(i).relative_to_start_position(1)/step_size + ceil(num_x_positions/2);
+    ind2 = traces_metadata(i).relative_to_start_position(2)/step_size + ceil(num_y_positions/2);
+    traces_by_location{end-ind1+1,ind2} = [traces_by_location{end-ind1+1,ind2}; traces(i,start_ind:end_ind)];
+    
 end
 
 if plot_grid
