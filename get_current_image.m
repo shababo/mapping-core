@@ -6,7 +6,7 @@ for i = 1:size(trace_array,1)
     for j = 1:size(trace_array,2)
         
         if ~isempty(trace_array{i,j})
-            mean_trace = mean(trace_array{i,j});
+            mean_trace = mean(trace_array{i,j},1);
             switch min_or_max
                 case 'min'
                     current_image(i,j) = mean_trace(.005*20000) - min(mean_trace);
