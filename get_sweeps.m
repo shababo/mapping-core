@@ -74,7 +74,8 @@ count = 1;
 for i = 1:length(trace_array)
     
     if ~exist('sweeps','var')  && isfield(data,'trial_metadata')
-        match(i) = match_trial(p.Results, data.trial_metadata(i))&& ~data.trial_metadata(i).test_trial;
+        match(i) = match_trial(p.Results, data.trial_metadata(i)) && ...
+            (~isfield(data.trial_metadata,'test_trial') || ~data.trial_metadata(i).test_trial);
         if match(i) 
             traces(count,:) = trace_array{i}(:,ch_ind)';
             count = count + 1;

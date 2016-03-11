@@ -7,9 +7,13 @@ for i = 1:size(trace_array,1)
         
         if ~isempty(trace_array{i,j})
             mean_trace = mean(trace_array{i,j},1);
+%             if min(mean_trace) < -1000
+%                 mean_trace = mean(trace_array{i,j}([1 2],:),1);
+%             end
             switch min_or_max
                 case 'min'
                     current_image(i,j) = mean_trace(.005*20000) - min(mean_trace);
+                        
                 case 'max'
                     current_image(i,j) =  max(mean_trace) - mean_trace(.005*20000);
             end
