@@ -7,7 +7,7 @@ function traces_by_location = build_trace_grid(filename, runs, step_size, max_tr
 size(traces)
 
 % traces = traces{1};
-% traces_metadata = traces_metadata{1};
+% traces_metadata = traces_metadata{1};600
 
 % traces_by_location = cell(11,11);
 if ~isempty(trace_limits)
@@ -47,5 +47,5 @@ for i = 1:size(traces,1)
 end
 
 if plot_grid
-    figure; plot_trace_stack_grid(traces_by_location,max_traces,3,0)
+    figure; plot_trace_stack_grid(traces_by_location,max_traces,1,0)
 end
