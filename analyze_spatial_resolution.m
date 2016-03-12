@@ -1,18 +1,18 @@
-function results = analyze_spatial_resolution_spiking(filenames,run_counts,trial_ids)
+function results = analyze_spatial_resolution(filenames,run_count_id,trial_ids)
 
-peak_currents_cells_by_trial = cell(length(filenames),size(trial_ids1,1));
-peak_currents_cells_by_trial_mean = zeros(length(filenames),size(trial_ids1,1));
-peak_currents_cells_by_trial_std = zeros(length(filenames),size(trial_ids1,1));
-peak_currents_trial_mean = zeros(size(trial_ids1,1),1);
-peak_currents_trial_std = zeros(size(trial_ids1,1),1);
+peak_currents_cells_by_trial = cell(length(filenames),size(trial_ids,1));
+peak_currents_cells_by_trial_mean = zeros(length(filenames),size(trial_ids,1));
+peak_currents_cells_by_trial_std = zeros(length(filenames),size(trial_ids,1));
+peak_currents_trial_mean = zeros(size(trial_ids,1),1);
+peak_currents_trial_std = zeros(size(trial_ids,1),1);
 
 baseline_window = 20000*[.299 .300]; measure_window = 20000*[.301 .330];
 
 for i = 1:length(filenames)
     
-    load(['data/' filenames{i}])
+    load([filenames{i}])
     
-    [traces, traces_metadata] = get_sweeps_dir('data',filenames{i},0,1,0,Inf,'run_count',run_count_id{i});
+    [traces, traces_metadata] = get_sweeps_dir('',filenames{i},0,1,0,Inf,'run_count',run_count_id{i});
     traces = traces{1};
     
     params1.run_count = run_count_id{i};
@@ -24,9 +24,9 @@ for i = 1:length(filenames)
     trial_types = zeros(size(traces,1),1);
     
 
-    for j = 1:size(trial_ids1,1)
+    for j = 1:size(trial_ids,1)
         
-        params2.relative_position = trial_ids1(j,:);
+        params2.relative_position = trial_ids(j,:);
 %         params3.relative_position = trial_ids2(j,:);
 %         match_inds = unique([match_trials(params2, traces_metadata) match_trials(params3, traces_metadata)]);
         match_inds = unique([match_trials(params2, traces_metadata)]);
@@ -50,7 +50,7 @@ for i = 1:length(filenames)
 end
 
 
-for j = 1:length(trial_ids1)
+for j = 1:length(trial_ids)
     
     peak_currents_trial_mean(j) = mean(peak_currents_cells_by_trial_mean(:,j));
     peak_currents_trial_std(j) = mean(peak_currents_cells_by_trial_std(:,j));

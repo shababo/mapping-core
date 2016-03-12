@@ -1,6 +1,6 @@
 function plot_trace_stack_grid(traces_array,in_max_traces,downsample_rate,plot_avg)
 
-figure
+
 [num_rows, num_cols] = size(traces_array);
 
 count = 1;
@@ -47,6 +47,10 @@ for i = 1:num_cols
             if i == 1
                 grid_offset_y(j+1) = grid_offset_y(j) - (max(max(these_traces_offset)) - min(min(these_traces_offset))) - grid_offset_y_spacer;
             end
+%         elseif j ~= 1 && i == 1
+%             grid_offset_y(j+1) = grid_offset_y(j) + (grid_offset_y(j) - grid_offset_y(j-1)) + grid_offset_y_spacer;
+%         elseif i == 1
+%             grid_offset_y(j+1) = grid_offset_y(j) + (max_traces + 1)*grid_offset_y_spacer;
         end
     end
     

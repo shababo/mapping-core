@@ -22,6 +22,7 @@ addParameter(p,'lut_used',NaN,@isnumeric);
 addParameter(p,'run_count',NaN,@isnumeric);
 addParameter(p,'clamp_type','ignore',@(x) ischar(x) || cellstr(x));
 
+
 % varargin{:}
 p.parse(varargin{2:end})
 
@@ -69,11 +70,13 @@ if ~exist('sweeps','var') && isfield(data,'trial_metadata')
 end
 
 count = 1;
+
 for i = 1:length(trace_array)
     
     if ~exist('sweeps','var')  && isfield(data,'trial_metadata')
-        match(i) = match_trial(p.Results, data.trial_metadata(i));
-        if match(i)
+        match(i) = match_trial(p.Results, data.trial_metadata(i)) && ...
+            (~isfield(data.trial_metadata,'test_trial') || ~data.trial_metadata(i).test_trial);
+        if match(i) 
             traces(count,:) = trace_array{i}(:,ch_ind)';
             count = count + 1;
         
