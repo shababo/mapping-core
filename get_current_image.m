@@ -29,5 +29,6 @@ end
 if do_plot
     figure
     imagesc(current_image)
+    colormap hot
     colorbar
 end

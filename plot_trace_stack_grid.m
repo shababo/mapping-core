@@ -26,9 +26,10 @@ end
 for i = 1:num_cols
     
     
-  
+    
     for j = 1:num_rows
         
+        length(grid_offset_y)
         if ~isempty(traces_array{j,i})
             these_traces = traces_array{j,i};
             if size(these_traces,1) < max_traces
@@ -51,6 +52,8 @@ for i = 1:num_cols
 %             grid_offset_y(j+1) = grid_offset_y(j) + (grid_offset_y(j) - grid_offset_y(j-1)) + grid_offset_y_spacer;
 %         elseif i == 1
 %             grid_offset_y(j+1) = grid_offset_y(j) + (max_traces + 1)*grid_offset_y_spacer;
+        elseif i == 1
+             grid_offset_y(j+1) = grid_offset_y(j) - 600 - grid_offset_y_spacer;
         end
     end
     

@@ -24,7 +24,7 @@ y_locations = [];
 
 for i = 1:length(traces_metadata)
       
-    this_location = traces_metadata(i).relative_position;
+    this_location = traces_metadata(i).relative_to_start_position;
     
     x_locations = [x_locations this_location(1)];
     y_locations = [y_locations this_location(2)];
@@ -42,8 +42,8 @@ for i = 1:length(traces_metadata)
 %     end
 end
 
-x_locations = sort(unique(x_locations));
-y_locations = sort(unique(y_locations));
+x_locations = sort(unique(x_locations))
+y_locations = sort(unique(y_locations))
 
 
 num_x_positions = length(x_locations);%(x_max - x_min)/step_size + 1;
