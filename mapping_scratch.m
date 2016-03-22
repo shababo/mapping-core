@@ -77,47 +77,61 @@ title('Average Normalized ChrimsonR Current Map (N = 6)')
 
 %%
 
-soma_maps = zeros(6,21,21);
-soma_maps(1,:,:) = current_image_3_4_s1c2_r7;
-soma_maps(2,:,:) = current_image_3_4_s2c3_r3;
-soma_maps(3,:,:) = current_image_3_4_s3c1_r3;
-soma_maps(4,:,:) = current_image_3_5_s3c1_r3;
-soma_maps(5,:,:) = current_image_3_7_s2c2_r3;
-soma_maps(6,:,:) = current_image_3_7_s4c3_r3;
+soma_maps = zeros(21,21,6);
+soma_maps(:,:,1) = current_image_3_4_s1c2_r7;
+soma_maps(:,:,2) = current_image_3_4_s2c3_r3;
+soma_maps(:,:,3) = current_image_3_4_s3c1_r3;
+soma_maps(:,:,4) = current_image_3_5_s3c1_r3;
+soma_maps(:,:,5) = current_image_3_7_s2c2_r3;
+soma_maps(:,:,6) = current_image_3_7_s4c3_r3;
 
-chrimson_maps = zeros(6,21,21);
-chrimson_maps(1,:,:) = current_image_3_8_s3c2_r3;
-chrimson_maps(2,:,:) = current_image_3_8_s4c1_r4;
-chrimson_maps(3,:,:) = current_image_3_8_s4c2_r4;
-chrimson_maps(4,:,:) = current_image_3_8_s5c1_r3;
-chrimson_maps(5,:,:) = current_image_3_3_s4c1_r3;
-chrimson_maps(6,:,:) = current_image_3_8_s5c2_r1;
+chrimson_maps = zeros(21,21,6);
+chrimson_maps(:,:,1) = current_image_3_8_s3c2_r3;
+chrimson_maps(:,:,2) = current_image_3_8_s4c1_r4;
+chrimson_maps(:,:,3) = current_image_3_8_s4c2_r4;
+chrimson_maps(:,:,4) = current_image_3_8_s5c1_r3;
+chrimson_maps(:,:,5) = current_image_3_3_s4c1_r3;
+chrimson_maps(:,:,6) = current_image_3_8_s5c2_r1;
 
 figure
-for i = 1:size(soma_maps,1)
+for i = 1:size(soma_maps,3)
     subplot(2,3,i)
-    imagesc(squeeze(soma_maps(i,:,:)))
+    imagesc(soma_maps(:,:,i))
     colormap hot
     colorbar
     axis off
 end
 
 figure
-for i = 1:size(chrimson_maps,1)
+for i = 1:size(chrimson_maps,3)
     subplot(2,3,i)
-    imagesc(squeeze(chrimson_maps(i,:,:)))
+    imagesc(chrimson_maps(:,:,i))
     colormap hot
     colorbar
     axis off
 end
                 
+
+%%
+
+mean_soma = mean(soma_maps,3);
+mean_chrimson = mean(chrimson_maps,3);
+std_soma = std(soma_maps,[],3);
+std_chrimson = std(chrimson_maps,[],3);
+
+figure;          
+subplot(2,2,1)
+imagesc(mean_soma)
+subplot(2,2,2)
+imagesc(std_soma)
+subplot(2,2,3)
+imagesc(mean_chrimson)
+subplot(2,2,4)
+imagesc(std_chrimson)
             
-            
-            
-            
-            
-            
-            
+%%
+
+
             
             
             
