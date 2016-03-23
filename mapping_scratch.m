@@ -86,7 +86,7 @@ soma_maps(5,:,:) = current_image_3_7_s2c2_r3;
 soma_maps(6,:,:) = current_image_3_7_s4c3_r3;
 
 chrimson_maps = zeros(6,21,21);
-chrimson_maps(1,:,:) = current_image_3_8_s3c2_r3;
+chrimson_maps(1,:,:) = current_imgiage_3_8_s3c2_r3;
 chrimson_maps(2,:,:) = current_image_3_8_s4c1_r4;
 chrimson_maps(3,:,:) = current_image_3_8_s4c2_r4;
 chrimson_maps(4,:,:) = current_image_3_8_s5c1_r3;
@@ -112,8 +112,10 @@ for i = 1:size(chrimson_maps,1)
 end
                 
             
-            
-            
+%%    
+  
+figure; 
+errorbar(peak_currents_cells_by_trial_mean_norm(:,1:switch_ind)',peak_currents_cells_by_trial_std_norm(:,1:switch_ind)');
             
             
             
