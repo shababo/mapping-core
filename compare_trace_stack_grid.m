@@ -1,4 +1,8 @@
-function compare_trace_stack_grid(traces_arrays,in_max_traces,downsample_rate,plot_avg)
+function compare_trace_stack_grid(traces_arrays,in_max_traces,downsample_rate,plot_avg, varargin)
+
+if ~isempty(varargin)
+    plot_names = varargin{1};
+end
 
 num_arrays = length(traces_arrays);
 all_axes = [];
@@ -73,6 +77,10 @@ for array_i = 1:num_arrays
     hold off
     axis tight
     axis off
+    
+    if exist('plot_names','var')
+        title(plot_names{array_i})
+    end
     
 end
 

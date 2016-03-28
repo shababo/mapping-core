@@ -62,5 +62,5 @@ for i = 1:size(traces,1)
 end
 
 if plot_grid
-    figure; plot_trace_stack_grid(traces_by_location,max_traces,1,0)
+    figure; plot_trace_stack_grid(traces_by_location,max_traces,5,0)
 end
