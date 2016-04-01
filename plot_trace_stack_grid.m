@@ -29,7 +29,6 @@ for i = 1:num_cols
     
     for j = 1:num_rows
         
-        length(grid_offset_y)
         if ~isempty(traces_array{j,i})
             these_traces = traces_array{j,i};
             if size(these_traces,1) < max_traces

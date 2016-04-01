@@ -1,7 +1,7 @@
-function traces_by_location = build_trace_grid(filename, runs, step_size, max_traces, trace_limits, plot_grid)
+function traces_by_location = build_trace_grid(filename, runs, max_traces, trace_limits, plot_grid,varargin)
 
 
-[traces, traces_metadata] =  get_sweeps(filename,1,[],0,Inf,'run_count',runs);
+[traces, traces_metadata] =  get_sweeps(filename,1,[],0,Inf,'run_count',runs,varargin{:});
 % get_sweeps_dir(directory,file_string,0,1,0,Inf,'run_count',runs);
 
 size(traces)

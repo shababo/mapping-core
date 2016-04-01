@@ -9,7 +9,7 @@ all_axes = [];
 
 for array_i = 1:num_arrays
     
-    ax = subplot(1,num_arrays,array_i);
+    ax = subplot(2,ceil(num_arrays/2),array_i);
     all_axes = [all_axes ax];
     
     this_array = traces_arrays{array_i};
@@ -44,7 +44,6 @@ for array_i = 1:num_arrays
 
         for j = 1:num_rows
 
-            length(grid_offset_y)
             if ~isempty(this_array{j,i})
                 these_traces = this_array{j,i};
                 if size(these_traces,1) < max_traces
@@ -52,7 +51,7 @@ for array_i = 1:num_arrays
                 elseif size(these_traces,1) > max_traces
                     these_traces = these_traces(1:max_traces,:);    
                 end
-                these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,25,downsample_rate);
+                these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,100,downsample_rate);
                 if plot_avg
                     these_traces_offset = mean(these_traces_offset);
                 end
