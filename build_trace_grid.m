@@ -1,7 +1,18 @@
 function traces_by_location = build_trace_grid(filename, runs, max_traces, trace_limits, plot_grid,varargin)
 
+if ~isempty(varargin)
+    grid_colors = varargin{1};
+end
 
-[traces, traces_metadata] =  get_sweeps(filename,1,[],0,Inf,'run_count',runs,varargin{:});
+num_vargins = 1;
+
+if length(varargin) > num_vargins
+    sweep_options = varargin(num_vargins+1:end);
+else
+    sweep_options = cell(0);
+end
+    
+[traces, traces_metadata] =  get_sweeps(filename,1,[],0,Inf,'run_count',runs,sweep_options{:});
 % get_sweeps_dir(directory,file_string,0,1,0,Inf,'run_count',runs);
 
 size(traces)
@@ -62,5 +73,5 @@ for i = 1:size(traces,1)
 end
 
 if plot_grid
-    plot_trace_stack_grid(traces_by_location,max_traces,5,0)
+    plot_trace_stack_grid(traces_by_location,max_traces,5,0,grid_colors)
 end
