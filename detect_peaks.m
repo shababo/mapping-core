@@ -8,7 +8,7 @@ end
 
 for i = 1:size(traces,1)
     
-    [~, event_times] = findpeaks(traces(i,:),'MinPeakHeight',max(threshold_min,threshold*std(traces(i,start_ind:end))),'MinPeakDistance',min_window,'MinPeakProminence',30);
+    [~, event_times] = findpeaks(traces(i,:),'MinPeakHeight',max(threshold_min,threshold*std(traces(i,start_ind:end))),'MinPeakDistance',min_window); %,'MinPeakProminence',30
     event_times(event_times < start_ind) = [];
     
     if return_bit_vec

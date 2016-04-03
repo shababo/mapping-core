@@ -77,6 +77,7 @@ for i = 1:length(trace_array)
         match(i) = match_trial(p.Results, data.trial_metadata(i)) && ...
             (~isfield(data.trial_metadata,'test_trial') || ~data.trial_metadata(i).test_trial);
         if match(i) 
+
             traces(count,:) = trace_array{i}(:,ch_ind)';
             count = count + 1;
         

@@ -1,6 +1,6 @@
-function current_image = get_current_image(trace_array,min_or_max,do_plot)
+function variance_image = get_corr_image(trace_array,min_or_max,do_plot)
 
-current_image = zeros(size(trace_array));
+variance_image = zeros(size(trace_array));
 
 for i = 1:size(trace_array,1)
     for j = 1:size(trace_array,2)
@@ -13,16 +13,16 @@ for i = 1:size(trace_array,1)
             end
             switch min_or_max
                 case 'min'
-                    current_image(i,j) = mean_trace(.005*20000) - min(mean_trace);
+                    variance_image(i,j) = mean_trace(.005*20000) - min(mean_trace);
                         
                 case 'max'
                     maxes = max(trace_array{i,j},[],2);
                     starts = trace_array{i,j}(:,.005*20000);
-%                     current_image(i,j) = mean(max(traces));
-                    current_image(i,j) =  mean(maxes - starts);
+%                     variance_image(i,j) = mean(max(traces));
+                    variance_image(i,j) =  mean(maxes - starts);
             end
         else
-            current_image(i,j) = NaN;
+            variance_image(i,j) = NaN;
         end
         
     end
@@ -30,7 +30,7 @@ end
 
 if do_plot
    
-    imagesc(current_image)
+    imagesc(variance_image)
     colormap hot
     colorbar
 end

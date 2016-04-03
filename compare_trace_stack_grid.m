@@ -4,12 +4,18 @@ if ~isempty(varargin)
     plot_names = varargin{1};
 end
 
+if ~isempty(varargin) && length(varargin) > 1
+    num_plot_rows = varargin{2};
+else
+    num_plot_rows = 1;
+end
+
 num_arrays = length(traces_arrays);
 all_axes = [];
 
 for array_i = 1:num_arrays
     
-    ax = subplot(2,ceil(num_arrays/2),array_i);
+    ax = subplot(num_plot_rows,ceil(num_arrays/num_plot_rows),array_i);
     all_axes = [all_axes ax];
     
     this_array = traces_arrays{array_i};
