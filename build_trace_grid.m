@@ -2,6 +2,8 @@ function traces_by_location = build_trace_grid(filename, runs, max_traces, trace
 
 if ~isempty(varargin)
     grid_colors = varargin{1};
+else
+    grid_colors = [];
 end
 
 num_vargins = 1;
@@ -73,5 +75,10 @@ for i = 1:size(traces,1)
 end
 
 if plot_grid
-    plot_trace_stack_grid(traces_by_location,max_traces,5,0,grid_colors)
+    if isempty(grid_colors)
+        plot_trace_stack_grid(traces_by_location,max_traces,5,0)
+    else
+        plot_trace_stack_grid(traces_by_location,max_traces,5,0,grid_colors)
+
+    end
 end
