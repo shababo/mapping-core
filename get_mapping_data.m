@@ -11,10 +11,12 @@ title('data')
 subplot(132)
 current_image = get_current_image(trace_grid,min_or_max,1);
 title('amplitude')
+axis off
 surf1 = gca;
 subplot(133)
 corr_image = get_corr_image(trace_grid,plot_image);
 title('local correlations')
+axis off
 % caxis([0 1])
 surf2 = gca;
 % subplot(224)
