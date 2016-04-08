@@ -1,16 +1,20 @@
-function [trace_grid, current_image] = get_mapping_data(filename,run,min_or_max,plot_grid,plot_image)%,max_traces,trace_limits, plot_grid,min_or_max,plot_image)
+function [trace_grid, current_image] = get_mapping_data(filename,run,min_or_max,plot_grid,plot_image,varargin)%,max_traces,trace_limits, plot_grid,min_or_max,plot_image)
 
 % trace_grid = build_trace_grid(filename, run, 10, max_traces, trace_limits, plot_grid);
 % 
 % current_image = get_current_image(trace_grid,min_or_max,plot_image);
 figure
-subplot(211)
-trace_grid = build_trace_grid(filename, run, 5, [], 1);
-% subplot(222)
-current_image = get_current_image(trace_grid,min_or_max,0);
+subplot(131)
+ varargin{:}
+trace_grid = build_trace_grid(filename, run, 5, [], 1,[],varargin{:});
+title('data')
+subplot(132)
+current_image = get_current_image(trace_grid,min_or_max,1);
+title('amplitude')
 surf1 = gca;
-subplot(212)
+subplot(133)
 corr_image = get_corr_image(trace_grid,plot_image);
+title('local correlations')
 % caxis([0 1])
 surf2 = gca;
 % subplot(224)
