@@ -78,6 +78,8 @@ for i = 1:size(traces,1)
     
 end
 
+
+
 if plot_grid
     if isempty(grid_colors)
         plot_trace_stack_grid(traces_by_location,max_traces,5,0)
