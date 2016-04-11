@@ -1,22 +1,26 @@
 function current_image = get_current_image(trace_array,min_or_max,do_plot)
 
-current_image = zeros(size(trace_array));
+current_image = zeros(size(trace_array,1),size(trace_array,2));
+start_ind = .015*20000;
+end_ind = .025*20000;
 
 for i = 1:size(trace_array,1)
     for j = 1:size(trace_array,2)
         
-        if ~isempty(trace_array{i,j})
+        if ~isempty(trace_array{i,j,1})
 
-            mean_trace = mean(trace_array{i,j},1);
+
+            mean_trace = mean(trace_array{i,j,1},1);
             if min(mean_trace) < -1000
-                mean_trace = mean(trace_array{i,j}([1 2],:),1);
+                mean_trace = mean(trace_array{i,j,1}([1 2],:),1);
             end
+
             these_traces = [];
             neighborhood_size = 1;
             for ii = -neighborhood_size:neighborhood_size
                 for jj = -neighborhood_size:neighborhood_size
                      if ~(i+ii < 1 || i+ii > size(trace_array,1) || j+jj < 1 || j+jj > size(trace_array,2))
-                         these_traces = [these_traces; trace_array{i+ii,j+jj}];
+                         these_traces = [these_traces; trace_array{i+ii,j+jj,1}];
                      end
                 end
             end

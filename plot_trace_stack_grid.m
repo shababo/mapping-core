@@ -71,7 +71,8 @@ for i = 1:num_cols
     end
     
 end
-
 hold off
 axis tight
 axis off
+
+
