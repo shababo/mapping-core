@@ -18,4 +18,4 @@ for i = 1:size(traces,1)
     else
         detection_results{i} = event_times;
     end
-end
+end 
