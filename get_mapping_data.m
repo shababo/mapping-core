@@ -3,17 +3,17 @@ function [trace_grid, current_image, corr_image] = get_mapping_data(filename,run
 % trace_grid = build_trace_grid(filename, run, 10, max_traces, trace_limits, plot_grid);
 % 
 % current_image = get_current_image(trace_grid,min_or_max,plot_image);
-figure
-subplot(121)
+figure(1)
+ax25 = subplot(231)
  varargin{:}
-trace_grid = build_trace_grid(filename, run, 5, [], 1,[],varargin{:});
-title('data')
+trace_grid = build_trace_grid(filename, run, 3, [], 1,[],varargin{:});
+title('25 mW')
 % subplot(132)
 % current_image = get_current_image(trace_grid,min_or_max,1);
 % title('amplitude')
 % axis off
 % surf1 = gca;
-subplot(122)
+subplot(234)
 corr_image = get_corr_image(trace_grid,plot_image);
 current_image = corr_image;
 title('local correlations')

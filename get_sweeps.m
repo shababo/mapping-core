@@ -3,7 +3,7 @@ function [traces, traces_metadata] = get_sweeps(filename,ch_ind,trace_inds,plot_
 load(filename,'sweeps','data')
 
 
-if ~isempty(varargin) > 0
+if ~isempty(varargin)
     max_sweep = varargin{1};
 else
     max_sweep = Inf;
@@ -75,7 +75,10 @@ for i = 1:length(trace_array)
     
     if ~exist('sweeps','var')  && isfield(data,'trial_metadata')
         match(i) = match_trial(p.Results, data.trial_metadata(i)) && ...
-            (~isfield(data.trial_metadata,'test_trial') || ~data.trial_metadata(i).test_trial);
+            ((~isfield(data.trial_metadata,'test_trial') || ~data.trial_metadata(i).test_trial) && (~isfield(data.trial_metadata,'is_good_trial') || data.trial_metadata(i).is_good_trial));
+%         if ~data.trial_metadata(i).is_good_trial
+%             disp(match(i))
+%         end
         if match(i) 
             
             if (exist('traces','var') && length(trace_array{i}(:,ch_ind)) == size(traces,2)) || ~exist('traces','var')
