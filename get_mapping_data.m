@@ -6,7 +6,7 @@ function [trace_grid, current_image] = get_mapping_data(filename,run,min_or_max,
 figure
 subplot(131)
  varargin{:}
-trace_grid = build_trace_grid(filename, run, 3, [], 1,[],varargin{:});
+trace_grid = build_trace_grid(filename, run, 5, [], 1,[],varargin{:});
 title('data')
 subplot(132)
 current_image = get_current_image(trace_grid,min_or_max,1);

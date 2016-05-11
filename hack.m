@@ -7,10 +7,10 @@ end
 mapping_eval = [''...
 '[traces'...
 ', current_image'...
-'] = get_mapping_data(''data/' date '_slice' slice_num '_cell' num2str(cell_num) '' tag '.mat'',' num2str(run_num) ',''' min_or_max ''',1,1'];
+'] = get_mapping_data(''' date '_slice' slice_num '_cell' num2str(cell_num) '' tag '.mat'',' num2str(run_num) ',''' min_or_max ''',1,1'];
 
 for i = 1:2:length(varargin)
-    mapping_eval = [mapping_eval ',''' varargin{i} ''',' varargin{i+1}];
+    mapping_eval = [mapping_eval ',''' varargin{i} ''',' num2str(varargin{i+1})];
 end
 mapping_eval = [mapping_eval ');']
 
