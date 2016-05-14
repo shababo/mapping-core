@@ -1,4 +1,4 @@
-function traces_by_location = build_trace_grid(filename, runs, max_traces, trace_limits, plot_grid,varargin)
+function traces_by_location = build_trace_grid(filename, runs, ch_num, max_traces, trace_limits, plot_grid,varargin)
 
 if ~isempty(varargin)
     grid_colors = varargin{1};
@@ -14,7 +14,7 @@ else
     sweep_options = cell(0);
 end
     
-[traces, traces_metadata] =  get_sweeps(filename,1,[],0,Inf,'run_count',runs,sweep_options{:});
+[traces, traces_metadata] =  get_sweeps(filename,ch_num,[],0,Inf,'run_count',runs,sweep_options{:});
 % get_sweeps_dir(directory,file_string,0,1,0,Inf,'run_count',runs);
 
 size(traces)

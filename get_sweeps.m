@@ -3,24 +3,24 @@ function [traces, traces_metadata] = get_sweeps(filename,ch_ind,trace_inds,plot_
 load(filename,'sweeps','data')
 
 
-if ~isempty(varargin) > 0
+if ~isempty(varargin)
     max_sweep = varargin{1};
 else
     max_sweep = Inf;
 end
 
 p = inputParser;
-addParameter(p,'amp_units','ignore',@(x) ischar(x) || cellstr(x));
+addParameter(p,'amp_units','ignore',@(x) ischar(x) || iscellstr(x));
 addParameter(p,'pulseamp',NaN,@isvector);
 addParameter(p,'pulseduration',NaN,@isvector);
 addParameter(p,'pulsefrequency',NaN,@isvector);
 addParameter(p,'pulse_starttime',NaN,@isvector);
-addParameter(p,'stim_type','ignore',@(x) ischar(x) || cellstr(x));
-addParameter(p,'hologram_id','ignore',@(x) ischar(x) || cellstr(x));
-addParameter(p,'note','ignore',@(x) ischar(x) || cellstr(x));
+addParameter(p,'stim_type','ignore',@(x) ischar(x) || iscellstr(x));
+addParameter(p,'hologram_id','ignore',@(x) ischar(x) || iscellstr(x));
+addParameter(p,'note','ignore',@(x) ischar(x) || iscellstr(x));
 addParameter(p,'lut_used',NaN,@isnumeric);
-addParameter(p,'run_count',NaN,@isnumeric);
-addParameter(p,'clamp_type','ignore',@(x) ischar(x) || cellstr(x));
+addParameter(p,'run_count',NaN,@(x) isnumeric(x) || iscell(x));
+addParameter(p,'clamp_type','ignore',@(x) ischar(x) || iscellstr(x));
 
 
 % varargin{:}
@@ -75,12 +75,16 @@ for i = 1:length(trace_array)
     
     if ~exist('sweeps','var')  && isfield(data,'trial_metadata')
         match(i) = match_trial(p.Results, data.trial_metadata(i)) && ...
-            (~isfield(data.trial_metadata,'test_trial') || ~data.trial_metadata(i).test_trial);
+            ((~isfield(data.trial_metadata,'test_trial') || ~data.trial_metadata(i).test_trial) && (~isfield(data.trial_metadata,'is_good_trial') || data.trial_metadata(i).is_good_trial));
+%         if ~data.trial_metadata(i).is_good_trial
+%             disp(match(i))
+%         end
         if match(i) 
-
-            traces(count,:) = trace_array{i}(:,ch_ind)';
-            count = count + 1;
-        
+            
+            if (exist('traces','var') && length(trace_array{i}(:,ch_ind)) == size(traces,2)) || ~exist('traces','var')
+                traces(count,:) = trace_array{i}(:,ch_ind)';
+                count = count + 1;
+            end
         end
     
     else

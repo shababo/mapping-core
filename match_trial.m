@@ -7,12 +7,11 @@ function match = match_trial(params,trial_metadata)
     match = 1;
 
     for i = 1:length(param_names)
-
         these_params = params.(param_names{i});
+
         if iscellstr(these_params)
             these_params = cellstr2regexp(these_params);
         elseif iscell(these_params)
-            disp('in')
             match_tmp = 0;
             for j = 1:length(these_params)
                 match_tmp = match_tmp || match_vec(these_params{j},trial_metadata,param_names{i});

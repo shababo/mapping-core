@@ -83,7 +83,7 @@ for array_i = 1:num_arrays
     axis tight
     axis off
     
-    if exist('plot_names','var')
+    if exist('plot_names','var') && i <= length(plot_names)
         title(plot_names{array_i})
     end
     

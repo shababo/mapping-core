@@ -1,21 +1,21 @@
-function quick_fix(filename,trials)
+function quick_fix(filename,bad_trials)
 
 load(filename)
 bu_filename = [filename(1:end-4) '-bu.mat'];
 save(bu_filename,'data','defaults')
 
-if isempty(trials)
+% if isempty(trials)
     
     trials = 1:length(data.trial_metadata);
     
-end
+% end
     
-cell_position = data.trial_metadata(1).obj_position + [3 0 0];
 
 for j = 1:length(trials)
     
-    ind = trials(j);
-    data.trial_metadata(ind).cell_position = cell_position;
+    
+    is_good_trial = ~any(bad_trials == j);
+    data.trial_metadata(j).is_good_trial = is_good_trial;
         
 
 end

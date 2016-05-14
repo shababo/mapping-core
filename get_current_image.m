@@ -16,7 +16,7 @@ for i = 1:size(trace_array,1)
             end
 
             these_traces = [];
-            neighborhood_size = 1;
+            neighborhood_size = 0;
             for ii = -neighborhood_size:neighborhood_size
                 for jj = -neighborhood_size:neighborhood_size
                      if ~(i+ii < 1 || i+ii > size(trace_array,1) || j+jj < 1 || j+jj > size(trace_array,2))
