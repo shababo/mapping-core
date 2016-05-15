@@ -25,7 +25,7 @@ axis off
 subplot(223)
  varargin{:}
 
-trace_grid_ch2 = build_trace_grid(filename, run, 2, 5, [], 1,[],varargin{:});
+trace_grid_ch2 = build_trace_grid(filename, run, 2, 3, [], 1,[],varargin{:});
 title('Cell 2')
 % subplot(132)
 % current_image = get_current_image(trace_grid,min_or_max,1);
@@ -39,6 +39,8 @@ current_image = corr_image_ch2;
 title('local correlations')
 axis off
 
+disp('corr of images: ')
+corr([corr_image_ch1(:) corr_image_ch2(:)])
 
 % caxis([0 1])
 surf2 = gca;
