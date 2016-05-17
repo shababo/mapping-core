@@ -6,7 +6,13 @@ else
     grid_colors = [];
 end
 
-num_vargins = 1;
+if length(varargin) > 1
+    plot_z = varargin{2};
+else
+    plot_z = 0;
+end
+
+num_vargins = 2;
 
 if length(varargin) > num_vargins
     sweep_options = varargin(num_vargins+1:end);
@@ -59,12 +65,12 @@ end
 
 x_locations = sort(unique(x_locations));
 y_locations = sort(unique(y_locations));
-z_locations = sort(unique(z_locations));
+z_locations = sort(unique(z_locations))
 
 
 num_x_positions = length(x_locations);%(x_max - x_min)/step_size + 1;
 num_y_positions = length(y_locations);%(y_max - y_min)/step_size + 1;
-num_z_positions = length(z_locations);
+num_z_positions = length(z_locations)
 
 traces_by_location = cell(num_x_positions,num_y_positions,num_z_positions);
 for i = 1:size(traces,1)
@@ -81,10 +87,20 @@ end
 
 
 if plot_grid
-    if isempty(grid_colors)
-        plot_trace_stack_grid(traces_by_location,max_traces,5,0)
+    if plot_z
+        for i = 1:size(traces_by_location,3)
+            subplot(1,size(traces_by_location,3),i)
+            if isempty(grid_colors)
+                plot_trace_stack_grid(traces_by_location(:,:,i),max_traces,5,0)
+            else
+                plot_trace_stack_grid(traces_by_location(:,:,i),max_traces,5,0,grid_colors)
+            end
+        end
     else
-        plot_trace_stack_grid(traces_by_location,max_traces,5,0,grid_colors)
-
+        if isempty(grid_colors)
+            plot_trace_stack_grid(traces_by_location(:,:,ceil(size(traces_by_location,3)/2)),max_traces,5,0)
+        else
+            plot_trace_stack_grid(traces_by_location(:,:,ceil(size(traces_by_location,3)/2)),max_traces,5,0,grid_colors)
+        end
     end
 end
