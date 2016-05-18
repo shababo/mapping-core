@@ -21,6 +21,7 @@ addParameter(p,'note','ignore',@(x) ischar(x) || iscellstr(x));
 addParameter(p,'lut_used',NaN,@isnumeric);
 addParameter(p,'run_count',NaN,@(x) isnumeric(x) || iscell(x));
 addParameter(p,'clamp_type','ignore',@(x) ischar(x) || iscellstr(x));
+addParameter(p,'relative_to_start_position',[NaN NaN NaN],@isnumeric);
 
 
 % varargin{:}

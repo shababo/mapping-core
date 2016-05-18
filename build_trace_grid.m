@@ -72,6 +72,8 @@ num_x_positions = length(x_locations);%(x_max - x_min)/step_size + 1;
 num_y_positions = length(y_locations);%(y_max - y_min)/step_size + 1;
 num_z_positions = length(z_locations)
 
+num_trials_by_location = zeros(num_x_positions,num_y_positions,num_z_positions);
+
 traces_by_location = cell(num_x_positions,num_y_positions,num_z_positions);
 for i = 1:size(traces,1)
 
@@ -81,10 +83,14 @@ for i = 1:size(traces,1)
     ind2 = find(y_locations == traces_metadata(i).relative_to_start_position(2));
     ind3 = find(z_locations == traces_metadata(i).relative_to_start_position(3));
     traces_by_location{end-ind1+1,ind2,ind3} = [traces_by_location{end-ind1+1,ind2,ind3}; traces(i,start_ind:end_ind)];
+    num_trials_by_location(end-ind1+1,ind2,ind3) = num_trials_by_location(end-ind1+1,ind2,ind3) + 1;
     
 end
 
 
+if max_traces > max(max(max(num_trials_by_location)))
+    max_traces = max(max(max(num_trials_by_location)));
+end
 
 if plot_grid
     if plot_z

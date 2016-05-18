@@ -1,4 +1,4 @@
-function [trace_grid] = get_mapping_data(filename,run,min_or_max,plot_grid,plot_image,varargin)%,max_traces,trace_limits, plot_grid,min_or_max,plot_image)
+function [trace_grids] = get_mapping_data(filename,run,min_or_max,plot_grid,plot_image,varargin)%,max_traces,trace_limits, plot_grid,min_or_max,plot_image)
 
 %% corr images - 2 cells
 % 
@@ -11,8 +11,7 @@ figure
 subplot(221)
 varargin{:}
 
-trace_grid_ch1 = build_trace_grid(filename, run, 1, 3, [], 1,[],0,varargin{:});
-trace_grid = trace_grid_ch1;
+trace_grid_ch1 = build_trace_grid(filename, run, 1, 20, [], 0,[],0,varargin{:});
 title('Cell 1')
 % subplot(132)
 % current_image = get_current_image(trace_grid,min_or_max,1);
@@ -29,7 +28,7 @@ axis off
 subplot(223)
  varargin{:}
 
-trace_grid_ch2 = build_trace_grid(filename, run, 2, 3, [], 1,[],0,varargin{:});
+trace_grid_ch2 = build_trace_grid(filename, run, 2, 20, [], 0,[],0,varargin{:});
 title('Cell 2')
 % subplot(132)
 % current_image = get_current_image(trace_grid,min_or_max,1);
@@ -46,7 +45,8 @@ axis off
 disp('corr of images: ')
 corr([corr_image_ch1(:) corr_image_ch2(:)])
 
-
+trace_grids = {trace_grid_ch1, trace_grid_ch2};
+compare_trace_stack_grid(trace_grids,3,1,[subplot(221) subplot(223)],0,{'cell1','cell2'},1)
 %% 1 cell multi z spiking
 % figure
 % varargin{:}

@@ -1,4 +1,4 @@
-function compare_trace_stack_grid(traces_arrays,in_max_traces,downsample_rate,plot_avg, varargin)
+function compare_trace_stack_grid(traces_arrays,in_max_traces,downsample_rate,in_axes,plot_avg, varargin)
 
 if ~isempty(varargin)
     plot_names = varargin{1};
@@ -15,8 +15,15 @@ all_axes = [];
 
 for array_i = 1:num_arrays
     
-    ax = subplot(num_plot_rows,ceil(num_arrays/num_plot_rows),array_i);
+    if isempty(in_axes)
+        ax = subplot(num_plot_rows,ceil(num_arrays/num_plot_rows),array_i);
+        
+    else
+        ax = in_axes(array_i);
+        
+    end
     all_axes = [all_axes ax];
+    axes(ax)
     
     this_array = traces_arrays{array_i};
     
