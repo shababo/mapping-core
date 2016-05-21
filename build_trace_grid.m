@@ -63,14 +63,14 @@ for i = 1:length(traces_metadata)
 %     end
 end
 
-x_locations = sort(unique(x_locations));
-y_locations = sort(unique(y_locations));
+x_locations = sort(unique(x_locations))
+y_locations = sort(unique(y_locations))
 z_locations = sort(unique(z_locations))
 
 
 num_x_positions = length(x_locations);%(x_max - x_min)/step_size + 1;
 num_y_positions = length(y_locations);%(y_max - y_min)/step_size + 1;
-num_z_positions = length(z_locations)
+num_z_positions = length(z_locations);
 
 num_trials_by_location = zeros(num_x_positions,num_y_positions,num_z_positions);
 

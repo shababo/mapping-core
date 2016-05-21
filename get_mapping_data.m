@@ -42,6 +42,21 @@ corr([corr_image_ch1(:) corr_image_ch2(:)])
 
 trace_grids = {trace_grid_ch1, trace_grid_ch2};
 % compare_trace_stack_grid(trace_grids,3,1,[subplot(221) subplot(223)],0,{'cell1','cell2'},1)
+
+set(gcf,'units','inches')
+set(gcf,'Position',[3.0521   -0.0521   14.6979   11.4062])
+
+set(gcf,'PaperSize',[15 12])
+set(gcf,'PaperPosition',[.2   .2   14.6979   11.4062])
+
+% saveas(gcf,['quickfigs/' filename(1:end-4) '_' num2str(run) '.pdf'])
+
+fig_save_str = ['quickfigs/' filename(1:end-4) '_' num2str(run) '.pdf'];
+export_fig(fig_save_str,'-opengl')
+
+% saveas(gcf,['quickfigs/' filename(1:end-4) '_' num2str(run) '.jpg'])
+
+        
 %% 1 cell multi z spiking
 % figure
 % varargin{:}
