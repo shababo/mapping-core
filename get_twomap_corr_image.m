@@ -14,16 +14,16 @@ for i = 1:size(trace_array1,1)
         
             traces1 = trace_array1{i,j};
             traces2 = trace_array2{i,j};
-%             num_traces = size(traces1,1);
-%             
-%             for k = 1:num_traces
-%               
-%                corr_image(i,j) = corr(traces1(k,:)',traces2(k,:)')/num_traces;
-%                                
-%             end
-
-            tmp = cov(mean(traces1)',mean(traces2)');
-            corr_image(i,j) = tmp(1,2);
+            num_traces = size(traces1,1);
+            
+            for k = 1:num_traces
+              
+               corr_image(i,j) = corr(traces1(k,:)',traces2(k,:)')/num_traces;
+                               
+            end
+% 
+%             tmp = cov(mean(traces1)',mean(traces2)');
+%             corr_image(i,j) = tmp(1,2);
             
 
         else
