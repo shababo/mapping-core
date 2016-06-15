@@ -23,7 +23,7 @@ end
 
 axes(ax)
 
-colors = [0 .5 .5; 0 0 1];
+colors = [1 0 0; 0 0 1];
 
 for array_i = 1:num_arrays
     
