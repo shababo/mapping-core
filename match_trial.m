@@ -1,6 +1,6 @@
 function match = match_trial(params,trial_metadata)
 
-    assignin('base','params',params)
+%     assignin('base','params',params)
 
     param_names = fieldnames(params);
 
@@ -68,7 +68,7 @@ function match = match_vec(param_set,trial_metadata,param_name)
 
             else
 
-                match = match || isequal(param_set,trial_metadata.(param_name));
+                match = match || isequal(param_set(i),trial_metadata.(param_name));
 
             end
         end

@@ -52,7 +52,7 @@ set(gcf,'PaperPosition',[.2   .2   14.6979   11.4062])
 % saveas(gcf,['quickfigs/' filename(1:end-4) '_' num2str(run) '.pdf'])
 
 fig_save_str = ['quickfigs/' filename(1:end-4) '_' num2str(run) '.pdf'];
-export_fig(fig_save_str,'-opengl')
+% export_fig(fig_save_str,'-opengl')
 
 % saveas(gcf,['quickfigs/' filename(1:end-4) '_' num2str(run) '.jpg'])
 
