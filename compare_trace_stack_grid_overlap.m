@@ -1,4 +1,4 @@
-function compare_trace_stack_grid(traces_arrays,in_max_traces,downsample_rate,in_axes,plot_avg, varargin)
+function compare_trace_stack_grid_overlap(traces_arrays,in_max_traces,downsample_rate,in_axes,plot_avg, varargin)
 
 if ~isempty(varargin)
     plot_names = varargin{1};
@@ -38,7 +38,7 @@ for array_i = 1:num_arrays
     if array_i == 1
         grid_offset_y = -grid_offset_y_spacer;
     end
-    grid_offset_x = .01;
+    grid_offset_x = .01*20000;
 
     if isinf(in_max_traces)
         max_traces = 0;
@@ -72,12 +72,13 @@ for array_i = 1:num_arrays
                 if plot_avg
                     these_traces_offset = mean(these_traces_offset);
                 end
-                time = (1:size(these_traces_offset,2))/20000*downsample_rate + (i-1)*(size(these_traces_offset,2)/20000*downsample_rate + grid_offset_x);
+                time = (1:size(these_traces_offset,2))*downsample_rate + (i-1)*(size(these_traces_offset,2)*downsample_rate + grid_offset_x);
 
                 plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'color',colors(array_i,:))
                 hold on;
                 if i == 1 && array_i == 1;
-                    grid_offset_y(j+1) = grid_offset_y(j) - (max(max(these_traces_offset)) - min(min(these_traces_offset))) - grid_offset_y_spacer;
+                    grid_offset_y(j+1) = grid_offset_y(j) - 600 - grid_offset_y_spacer;
+%                     grid_offset_y(j+1) = grid_offset_y(j) - (max(max(these_traces_offset)) - min(min(these_traces_offset))) - grid_offset_y_spacer;
                 end
     %         elseif j ~= 1 && i == 1
     %             grid_offset_y(j+1) = grid_offset_y(j) + (grid_offset_y(j) - grid_offset_y(j-1)) + grid_offset_y_spacer;

@@ -26,7 +26,8 @@ for i = 1:size(trace_array,1)
             end
             switch min_or_max
                 case 'min'
-                    mins = min(these_traces,[],2);
+                    starts = median(these_traces(:,.004*20000:.005*20000));
+                    mins = min(these_traces(:,.005*20000:.025*20000),[],2);
                     current_image(i,j) = mean(median(these_traces,2) - mins);
                         
                 case 'max'

@@ -27,10 +27,10 @@ for array_i = 1:num_arrays
     
     this_array = traces_arrays{array_i};
     
-    [num_rows, num_cols] = size(this_array);
+    [num_rows, num_cols] = size(this_array)
 
     count = 1;
-    grid_offset_y_spacer = 150;
+    grid_offset_y_spacer = 750;
     if array_i == 1
         grid_offset_y = -grid_offset_y_spacer;
     end
@@ -73,14 +73,14 @@ for array_i = 1:num_arrays
                 plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'k')
                 hold on;
                 if i == 1 && array_i == 1;
-                    grid_offset_y(j+1) = grid_offset_y(j) - grid_offset_y_spacer - 200; %- (max(max(these_traces_offset)) - min(min(these_traces_offset))) 
+                    grid_offset_y(j+1) = grid_offset_y(j) - grid_offset_y_spacer - 1; %- (max(max(these_traces_offset)) - min(min(these_traces_offset))) 
                 end
     %         elseif j ~= 1 && i == 1
     %             grid_offset_y(j+1) = grid_offset_y(j) + (grid_offset_y(j) - grid_offset_y(j-1)) + grid_offset_y_spacer;
     %         elseif i == 1
     %             grid_offset_y(j+1) = grid_offset_y(j) + (max_traces + 1)*grid_offset_y_spacer;
             elseif i == 1 && array_i == 1;
-                 grid_offset_y(j+1) = grid_offset_y(j) - 600 - grid_offset_y_spacer;
+                 grid_offset_y(j+1) = grid_offset_y(j) - 1 - grid_offset_y_spacer;
             end
         end
 
