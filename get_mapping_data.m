@@ -16,10 +16,10 @@ colorbar
 % surf1 = gca;
 % subplot(222)
 % % % 
-% % % corr_image_ch1 = get_corr_image(trace_grid_ch1,plot_image);
-% % % current_image = corr_image_ch1;
-% % % title('local correlations')
-% % % axis off
+corr_image_ch1 = get_corr_image(trace_grid_ch1,plot_image);
+current_image = corr_image_ch1;
+title('local correlations')
+axis off
 % % % 
 % % % subplot(223)
 % % %  varargin{:}

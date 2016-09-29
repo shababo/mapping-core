@@ -8,7 +8,10 @@ end
 
 for i = 1:size(traces,1)
     
-    [~, event_times, w, p] = findpeaks(traces(i,:),'MinPeakHeight',max(threshold_min,threshold*std(traces(i,start_ind:end))),'MinPeakDistance',min_window,'MinPeakProminence',25,'MaxPeakWidth',10);
+    [~, event_times, w, p] = findpeaks(traces(i,:),...
+        'MinPeakHeight', max(threshold_min,threshold*std(traces(i,start_ind:end))),...
+        'MinPeakDistance', min_window,'MinPeakProminence',40,'MaxPeakWidth',200,...
+        'MinPeakWidth',1,'WidthReference','halfheight');
     if ~isempty(w)
         event_times
         w
