@@ -1,7 +1,6 @@
-function [traces, rebuild_map] = stack_traces(traces)
+function [traces, rebuild_map] = stack_traces(trace_grid)
 
 
-trace_grid = traces;
 rebuild_map = [];
 traces = [];
 for i = 1:size(trace_grid,1)
