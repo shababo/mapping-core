@@ -30,11 +30,11 @@ for array_i = 1:num_arrays
     [num_rows, num_cols] = size(this_array);
 
     count = 1;
-    grid_offset_y_spacer = 1500;
+    grid_offset_y_spacer = 200;
     if array_i == 1
         grid_offset_y = -grid_offset_y_spacer;
     end
-    grid_offset_x = .01*20000;
+    grid_offset_x = .1*20000;
 
     if isinf(in_max_traces)
         max_traces = 0;
@@ -47,7 +47,7 @@ for array_i = 1:num_arrays
             end
         end
     else
-        max_traces = 10;
+        max_traces = in_max_traces;
     end
 
 
@@ -64,7 +64,7 @@ for array_i = 1:num_arrays
                 elseif size(these_traces,1) > max_traces
                     these_traces = these_traces(1:max_traces,:);    
                 end
-                these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,100,downsample_rate);
+                these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,30,downsample_rate);
                 if plot_avg
                     these_traces_offset = mean(these_traces_offset);
                 end
