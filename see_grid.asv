@@ -1,0 +1,38 @@
+function [map_ch1,map_ch2,corr_ch1,corr_ch2] = see_grid(data,trials,map_index)
+
+traces_ch1 = cell(1,length(trials));
+traces_ch2 = cell(1,length(trials));
+for i = 1:length(trials)
+    
+    trial_ind = i; 
+    traces{i} = [data.sweeps{trial_ind}(:,1)'; data.sweeps{trial_ind}(:,2)'];
+    stim = data.sweeps{trial_ind}(:,4)' > .35; sum(diff(stim) == 1)
+    if sum(diff(stim) == 1) ~= 1323
+        figure; plot(stim)
+        return
+    end
+    
+    maps = build_slm_maps(traces,stim,map_index,.1*20000);
+    traces_ch1{i} = maps{1};
+    traces_ch2{i} = maps{2};
+end
+map_ch1 = stack_grids(traces_ch1);
+map_ch2 = stack_grids(traces_ch2);
+
+figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,1,[],0,{'raw','detected events'})
+corr_image_l5_x = get_corr_image(map_l5_s5c1_trials78,0);
+corr_image_l4_x = get_corr_image(map_l4_s5c1_trials78,0);
+figure; corr_image_l5_x = get_corr_image(map_l5_s5c1_trials12,1);
+figure; corr_image_l5_x = get_corr_image(map_l4_s5c1_trials12,1);
+trial_ind = 4; traces = [data.sweeps{trial_ind}(:,1)'; data.sweeps{trial_ind}(:,2)'];
+stim = data.sweeps{trial_ind}(:,4)' > .35; sum(diff(stim) == 1)
+figure; plot(stim)
+stim(1:233600) = 0;
+maps_1007_s5c1_trial4 = build_slm_maps(traces,stim,map_index,.1*20000);
+trial_ind = 5; traces = [data.sweeps{trial_ind}(:,1)'; data.sweeps{trial_ind}(:,2)'];
+stim = data.sweeps{trial_ind}(:,4)' > .35; sum(diff(stim) == 1)
+maps_1007_s5c1_trial5 = build_slm_maps(traces,stim,map_index,.1*20000);
+map_l4_s5c1_trials45 = stack_grids({maps_1007_s5c1_trial4{2},maps_1007_s5c1_trial5{2}});
+map_l5_s5c1_trials45 = stack_grids({maps_1007_s5c1_trial4{1},maps_1007_s5c1_trial5{1}});
+figure; corr_image_l4_x = get_corr_image(map_l4_s5c1_trials45,1);
+figure; corr_image_l4_x = get_corr_image(map_l5_s5c1_trials45,1);
