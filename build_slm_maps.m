@@ -1,8 +1,9 @@
-function maps = build_slm_maps(traces,stim,map_index,trial_length)
+function maps = build_slm_maps(traces,stim_starts,map_index,trial_length)
 
 num_traces = size(traces,1);
-num_stims = sum(diff(stim) == 1);
-stim_starts = find(diff(stim) == 1);
+% num_stims = sum(diff(stim) == 1);
+% stim_starts = find(diff(stim) == 1);
+num_stims = length(stim_starts);
 
 maps = cell(num_traces,1);
 

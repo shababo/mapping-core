@@ -28,14 +28,6 @@ for array_i = 1:num_arrays
     this_array = traces_arrays{array_i};
     
     [num_rows, num_cols] = size(this_array);
-
-    count = 1;
-    grid_offset_y_spacer = 200;
-    if array_i == 1
-        grid_offset_y = -grid_offset_y_spacer;
-    end
-    grid_offset_x = .1*20000;
-
     if isinf(in_max_traces)
         max_traces = 0;
         for i = 1:num_cols
@@ -49,6 +41,15 @@ for array_i = 1:num_arrays
     else
         max_traces = in_max_traces;
     end
+    
+    count = 1;
+    grid_offset_y_spacer = 50*max_traces;
+    if array_i == 1
+        grid_offset_y = -grid_offset_y_spacer;
+    end
+    grid_offset_x = .1*20000;
+
+    
 
 
     for i = 1:num_cols
