@@ -74,8 +74,8 @@ for array_i = 1:num_arrays
 
                 plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'k')
                 hold on;
-                line(repmat(time([100 1100 2100]),2,1),repmat([min(min(these_traces_offset' + grid_offset_y(j))) max(max(these_traces_offset' + grid_offset_y(j)))]',1,3))
-                hold on;
+%                 line(repmat(time([100 1100 2100]),2,1),repmat([min(min(these_traces_offset' + grid_offset_y(j))) max(max(these_traces_offset' + grid_offset_y(j)))]',1,3))
+%                 hold on;
                 if i == 1 && array_i == 1;
                     grid_offset_y(j+1) = grid_offset_y(j) - grid_offset_y_spacer - 1; %- (max(max(these_traces_offset)) - min(min(these_traces_offset))) 
                 end
