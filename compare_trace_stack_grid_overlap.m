@@ -32,12 +32,11 @@ for array_i = 1:num_arrays
     this_array = traces_arrays{array_i};
     
     [num_rows, num_cols] = size(this_array);
-
     if isinf(in_max_traces)
         max_traces = 0;
         for i = 1:num_cols
             for j = 1:num_rows
-                num_traces = size(this_array{j,i},2);
+                num_traces = size(this_array{j,i},1);
                 if num_traces > max_traces
                     max_traces = num_traces;
                 end
@@ -46,6 +45,7 @@ for array_i = 1:num_arrays
     else
         max_traces = in_max_traces;
     end
+    max_traces
     
     count = 1;
     grid_offset_y_spacer = 50*max_traces;

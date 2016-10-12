@@ -34,13 +34,14 @@ for array_i = 1:num_arrays
             for j = 1:num_rows
                 num_traces = size(this_array{j,i},1);
                 if num_traces > max_traces
-                    max_traces = num_traces
+                    max_traces = num_traces;
                 end
             end
         end
     else
         max_traces = in_max_traces;
     end
+    max_traces
     
     count = 1;
     grid_offset_y_spacer = 50*max_traces;
@@ -72,6 +73,8 @@ for array_i = 1:num_arrays
                 time = (1:size(these_traces_offset,2))*downsample_rate + (i-1)*(size(these_traces_offset,2)*downsample_rate + grid_offset_x);
 
                 plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'k')
+                hold on;
+                line(repmat(time([100 1100 2100]),2,1),repmat([min(min(these_traces_offset' + grid_offset_y(j))) max(max(these_traces_offset' + grid_offset_y(j)))]',1,3))
                 hold on;
                 if i == 1 && array_i == 1;
                     grid_offset_y(j+1) = grid_offset_y(j) - grid_offset_y_spacer - 1; %- (max(max(these_traces_offset)) - min(min(these_traces_offset))) 
