@@ -22,10 +22,22 @@ map_ch2 = stack_grids(traces_ch2);
 
 figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,1,[],0,{'raw','detected events'})
 figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,1,[],1,{'raw','detected events'})
+figure;compare_trace_stack_grid_overlap({map_ch1,map_ch2},Inf,1,[],0,{'L4','L5'},1)
 
-corr_ch1 = get_corr_image(map_ch1,0);
-corr_ch2 = get_corr_image(map_ch2,0);
+corr_ch1 = get_corr_image(map_ch1,0,1);
+corr_ch2 = get_corr_image(map_ch2,0,1);
 
 figure; 
 subplot(121); imagesc(corr_ch1); %caxis([0 1])
 subplot(122); imagesc(corr_ch2); %caxis([0 1])
+
+colormap hot
+
+charge_map_ch1 = get_charge_map(map_ch1);
+charge_map_ch2 = get_charge_map(map_ch2);
+
+figure; 
+subplot(121); imagesc(charge_map_ch1); %caxis([0 1])
+subplot(122); imagesc(charge_map_ch2); %caxis([0 1])
+
+colormap hot

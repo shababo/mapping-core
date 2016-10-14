@@ -1,4 +1,4 @@
-function corr_image = get_corr_image(trace_array,do_plot)
+function corr_image = get_corr_image(trace_array,do_plot,neighborhood_size)
 
 corr_image = zeros(size(trace_array));
 
@@ -12,7 +12,7 @@ for i = 1:size(trace_array,1)
 %                 mean_trace = mean(trace_array{i,j}([1 2],:),1);
 %             end
         traces = [];
-        neighborhood_size = 0;
+%         neighborhood_size = 0;
         for ii = -neighborhood_size:neighborhood_size
             for jj = -neighborhood_size:neighborhood_size
                 if ~(i+ii < 1 || i+ii > size(trace_array,1) || j+jj < 1 || j+jj > size(trace_array,2))
