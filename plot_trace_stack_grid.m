@@ -1,7 +1,12 @@
 function plot_trace_stack_grid(traces_array,in_max_traces,downsample_rate,plot_avg,varargin)
 
-if ~isempty(varargin)
+if ~isempty(varargin) && ~isempty(varargin{1})
     grid_colors = varargin{1};
+end
+
+if length(varargin) > 1 && ~isempty(varargin{2})
+    in_axes = varargin{2};
+    axes(in_axes);
 end
 
 
@@ -16,7 +21,7 @@ if isinf(in_max_traces)
     max_traces = 0;
     for i = 1:num_cols
         for j = 1:num_rows
-            num_traces = size(traces_array{j,i},2);
+            num_traces = size(traces_array{j,i},1);
             if num_traces > max_traces
                 max_traces = num_traces;
             end

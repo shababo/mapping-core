@@ -24,8 +24,8 @@ figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,1,[],0,{'raw','detected ev
 figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,1,[],1,{'raw','detected events'})
 figure;compare_trace_stack_grid_overlap({map_ch1,map_ch2},Inf,1,[],0,{'L4','L5'},1)
 
-corr_ch1 = get_corr_image(map_ch1,0,1);
-corr_ch2 = get_corr_image(map_ch2,0,1);
+corr_ch1 = get_corr_image(map_ch1,0,0);
+corr_ch2 = get_corr_image(map_ch2,0,0);
 
 figure; 
 subplot(121); imagesc(corr_ch1); %caxis([0 1])
