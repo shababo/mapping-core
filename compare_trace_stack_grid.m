@@ -1,17 +1,23 @@
 function compare_trace_stack_grid(traces_arrays,in_max_traces,downsample_rate,in_axes,plot_avg, varargin)
 
-if ~isempty(varargin)
+if ~isempty(varargin) && ~isempty(varargin{1})
     plot_names = varargin{1};
 end
 
-if ~isempty(varargin) && length(varargin) > 1
+if length(varargin) > 1 && ~isempty(varargin{2})
     num_plot_rows = varargin{2};
 else
     num_plot_rows = 1;
 end
 
+if length(varargin) > 2 && ~isempty(varargin{3})
+    alphas = varargin{3};
+end
+
 num_arrays = length(traces_arrays);
 all_axes = [];
+
+colors = [0 0 0; 0 0 1];
 
 for array_i = 1:num_arrays
     
@@ -71,8 +77,13 @@ for array_i = 1:num_arrays
                     these_traces_offset = mean(these_traces_offset);
                 end
                 time = (1:size(these_traces_offset,2))*downsample_rate + (i-1)*(size(these_traces_offset,2)*downsample_rate + grid_offset_x);
-
-                plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'k')
+                
+                if exist('alphas','var')
+                    this_color = [colors(array_i,:) alphas{array_i}(j,i)];
+                else
+                    this_color = colors(array_i,:);
+                end
+                plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
                 hold on;
 %                 line(repmat(time([100 1100 2100]),2,1),repmat([min(min(these_traces_offset' + grid_offset_y(j))) max(max(these_traces_offset' + grid_offset_y(j)))]',1,3))
 %                 hold on;

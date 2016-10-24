@@ -9,6 +9,10 @@ if length(varargin) > 1 && ~isempty(varargin{2})
     axes(in_axes);
 end
 
+if length(varargin) > 2 && ~isempty(varargin{3})
+    alphas = varargin{3};
+end
+
 
 [num_rows, num_cols] = size(traces_array);
 
@@ -58,10 +62,13 @@ for i = 1:num_cols
                     this_color_i = fix((grid_colors.color_i(j,i)-grid_colors.clims(1))/(grid_colors.clims(2)-grid_colors.clims(1))*size(grid_colors.colormap,1))+1;
                     this_color = grid_colors.colormap(min(this_color_i,size(grid_colors.colormap,1)),:);
                 end
+            elseif exist('alphas','var')
+                this_color = [0 0 0 alphas(j,i)];
             else
                 this_color = [0 0 0];
             end
             plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
+%             alpha(this_plot,alphas(i,j))
             hold on;
             if i == 1
                 grid_offset_y(j+1) = grid_offset_y(j) - (max(max(these_traces_offset)) - min(min(these_traces_offset))) - grid_offset_y_spacer;
