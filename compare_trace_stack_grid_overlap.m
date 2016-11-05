@@ -27,7 +27,7 @@ end
 
 axes(ax)
 
-colors = [0 0 1; 0 0 0];
+colors = [0 0 0; 0 0 1];
 
 for array_i = 1:num_arrays
     
@@ -79,7 +79,7 @@ for array_i = 1:num_arrays
 %                 these_traces = these_traces(:);
 %                 these_traces = zscore(these_traces);
 %                 these_traces = reshape(these_traces,size_tmp(1),size_tmp(2));
-%                 these_traces = zscore(these_traces,0,2);
+                these_traces = zscore(these_traces,0,2);
                 these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,10,downsample_rate);
                 if plot_avg
                     these_traces_offset = mean(these_traces_offset);
