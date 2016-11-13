@@ -8,9 +8,9 @@ for i = 1:length(trials)
     traces = [data.sweeps{trial_ind}(:,1)'; data.sweeps{trial_ind}(:,2)'];
     stim = data.sweeps{trial_ind}(:,4)' > .05; sum(diff(stim) == 1)
     stim_starts = find(diff(stim) == 1);
-    if length(stim_starts) ~= 363 %1323
+    if length(stim_starts) ~= 1323 %1323
 %         figure; plot(stim)
-        stim_starts(1:length(stim_starts)-363) = [];
+        stim_starts(1:length(stim_starts)-1323) = [];
     end
 %     
     maps = build_slm_maps(traces,stim_starts,map_index,.1*20000);
