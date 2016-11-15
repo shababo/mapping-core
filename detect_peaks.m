@@ -15,7 +15,9 @@ for i = 1:size(traces,1)
 %         'MinPeakWidth',1,'WidthReference','halfheight');
 
 
-    [~, event_times, w, p] = findpeaks(traces(i,:),'MinPeakHeight',max(threshold_min,threshold*std(traces(i,start_ind:end))),'MinPeakDistance',min_window,'MinPeakProminence',25,'MaxPeakWidth',10);
+    [~, event_times, w, p] = findpeaks(traces(i,:),...
+        'MinPeakHeight',max(threshold_min,threshold),...
+        'MinPeakDistance',min_window);%,'MinPeakProminence',25,'MaxPeakWidth',10);
     if ~isempty(w)
         event_times
         w
@@ -26,9 +28,9 @@ for i = 1:size(traces,1)
     event_times(event_times < start_ind) = [];
     
     if return_bit_vec
-        for j = 1:length(event_times)
-            detection_results(i,event_times(j)) = 1;
-        end
+%         for j = 1:length(event_times)
+            detection_results(i,event_times) = 1;
+%         end
     else
         detection_results{i} = event_times;
     end
