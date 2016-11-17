@@ -1,4 +1,4 @@
-function detection_results = detect_peaks(traces,threshold,min_window,return_bit_vec,start_ind,threshold_min)
+function detection_results = detect_peaks(traces,threshold,min_window,return_bit_vec,start_ind,threshold_min,do_z,do_hp)
 
 if return_bit_vec
     detection_results = zeros(size(traces));
@@ -13,11 +13,19 @@ for i = 1:size(traces,1)
 %         'MinPeakHeight', max(threshold_min,threshold*std(traces(i,start_ind:end))),...
 %         'MinPeakDistance', min_window,'MinPeakProminence',40,'MaxPeakWidth',200,...
 %         'MinPeakWidth',1,'WidthReference','halfheight');
-
-
-    [~, event_times, w, p] = findpeaks(traces(i,:),...
-        'MinPeakHeight',max(threshold_min,threshold),...
-        'MinPeakDistance',min_window);%,'MinPeakProminence',25,'MaxPeakWidth',10);
+    if do_hp
+        filtered_trace = highpass_filter(traces(i,:),20000);
+    else
+        filtered_trace = traces(i,:);
+    end
+    if do_z
+        scale = std(filtered_trace(1:100));
+    else
+        scale = 1;
+    end
+    [~, event_times, w, p] = findpeaks(filtered_trace,...
+        'MinPeakHeight',max(threshold_min,threshold*scale),...
+        'MinPeakDistance',min_window);%,'MinPeakProminence',5);%,'MaxPeakWidth',10);
     if ~isempty(w)
         event_times
         w
