@@ -23,7 +23,7 @@ map_ch2 = stack_grids(traces_ch2);
 if do_plot
     figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,1,[],0,{'raw','detected events'})
     % figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,1,[],1,{'raw','detected events'})
-    figure;compare_trace_stack_grid_overlap({map_ch1,map_ch2},Inf,1,[],0,{'L4','L5'},1)
+%     figure;compare_trace_stack_grid_overlap({map_ch1,map_ch2},Inf,1,[],0,{'L4','L5'},1)
 %     plot_trace_stack_grid(map_ch1,Inf,1,0);
 end
 % corr_ch1 = get_corr_image(map_ch1,0,0);
