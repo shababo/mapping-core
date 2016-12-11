@@ -9,14 +9,14 @@ varargin{:}
 trace_grid_ch1 = build_trace_grid(filename, run, 1, 20, [], 1,[],0,varargin{:});
 title('Cell 1')
 subplot(122)
-current_image = get_current_image(trace_grid_ch1,min_or_max,1);
+current_image = get_current_image(squeeze(trace_grid_ch1),min_or_max,1);
 title('amplitude')
 axis off
 colorbar
 % surf1 = gca;
 % subplot(222)
 % % % 
-corr_image_ch1 = get_corr_image(trace_grid_ch1,plot_image);
+corr_image_ch1 = get_corr_image(squeeze(trace_grid_ch1),plot_image,0);
 current_image = corr_image_ch1;
 title('local correlations')
 axis off

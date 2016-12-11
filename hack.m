@@ -15,6 +15,10 @@ mapping_eval = [mapping_eval ');']
 
 eval(mapping_eval);
 
+if isempty(varargin)
+    varargin{1} = '';
+end
+
 assignin('base',...
     ['traces_by_location_' date '_s' slice_num 'c' num2str(cell_num) '_r3_' varargin{end} 'mw'],...
     trace_grids);

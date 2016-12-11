@@ -104,7 +104,8 @@ if plot_grid
         end
     else
         if isempty(grid_colors)
-            plot_trace_stack_grid(traces_by_location(:,:,ceil(size(traces_by_location,3)/2)),max_traces,5,0)
+%             plot_trace_stack_grid(traces_by_location(:,:,ceil(size(traces_by_location,3)/2)),max_traces,5,0)
+            plot_trace_stack_grid(squeeze(traces_by_location),max_traces,5,0)
         else
             plot_trace_stack_grid(traces_by_location(:,:,ceil(size(traces_by_location,3)/2)),max_traces,5,0,grid_colors)
         end

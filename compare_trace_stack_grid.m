@@ -17,7 +17,7 @@ end
 num_arrays = length(traces_arrays);
 all_axes = [];
 
-colors = [0 0 0; 0 0 1];
+colors = [39 168 224; 246 146 31]/255;
 
 for array_i = 1:num_arrays
     

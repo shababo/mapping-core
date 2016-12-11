@@ -22,7 +22,7 @@ function varargout = rotateToolNew(varargin)
 
 % Edit the above text to modify the response to help rotateToolNew
 
-% Last Modified by GUIDE v2.5 23-Nov-2016 14:17:02
+% Last Modified by GUIDE v2.5 06-Dec-2016 12:47:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -145,3 +145,14 @@ assignin('base','theta',theta)
 axes(handles.axes1)
 imagesc(imrotate(handles.merge_image,theta,'bilinear','loose'))
 axis image
+
+
+% --- Executes when user attempts to close figure1.
+function figure1_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+assignin('base','moveon',1)
+% Hint: delete(hObject) closes the figure
+delete(hObject);
