@@ -17,7 +17,8 @@ end
 num_arrays = length(traces_arrays);
 all_axes = [];
 
-colors = [39 168 224; 246 146 31]/255;
+% colors = [39 168 224; 246 146 31]/255;
+colors = [0 0 0; 0 0 0];
 
 for array_i = 1:num_arrays
     
@@ -50,7 +51,7 @@ for array_i = 1:num_arrays
     max_traces
     
     count = 1;
-    grid_offset_y_spacer = 100*max_traces;
+    grid_offset_y_spacer = 1000*max_traces;
     if array_i == 1
         grid_offset_y = -grid_offset_y_spacer;
     end
@@ -72,7 +73,7 @@ for array_i = 1:num_arrays
                 elseif size(these_traces,1) > max_traces
                     these_traces = these_traces(1:max_traces,:);    
                 end
-                these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,50,downsample_rate);
+                these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,500,downsample_rate);
                 if plot_avg
                     these_traces_offset = mean(these_traces_offset);
                 end
