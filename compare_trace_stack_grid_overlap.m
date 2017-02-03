@@ -52,7 +52,7 @@ for array_i = 1:num_arrays
     max_traces
     
     count = 1;
-    grid_offset_y_spacer = 6000*max_traces;
+    grid_offset_y_spacer = 400*max_traces;
     if array_i == 1
         grid_offset_y = -grid_offset_y_spacer;
     end
@@ -73,18 +73,19 @@ for array_i = 1:num_arrays
                 if size(these_traces,1) < max_traces
                     these_traces = [these_traces; zeros(max_traces - size(these_traces,1),size(these_traces,2))];
                 elseif size(these_traces,1) > max_traces
-                    if j > 9
-                    these_traces = these_traces([1 3 6],:);  
-                    else
-                      these_traces = these_traces([2 3 6],:);   
-                    end
+%                     if j > 9
+%                     these_traces = these_traces([1 3 6],:);  
+%                     else
+%                       these_traces = these_traces([2 3 6],:);   
+%                     end
+                    these_traces = these_traces(1:max_traces,:);
                 end
 %                 size_tmp = size(these_traces);
 %                 these_traces = these_traces(:);
 %                 these_traces = zscore(these_traces);
 %                 these_traces = reshape(these_traces,size_tmp(1),size_tmp(2));
 %                 these_traces = zscore(these_traces,0,2);
-                these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,2000,downsample_rate);
+                these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,200,downsample_rate);
                 if plot_avg
                     these_traces_offset = mean(these_traces_offset);
                 end
