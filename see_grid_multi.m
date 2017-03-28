@@ -10,7 +10,9 @@ for i = 1:length(trials)
     stim_starts = find(diff(stim) == 1);
     if length(stim_starts) ~= num_stims %
 %         figure; plot(stim)
+        stim_starts(stim_starts < 200) = [];
         stim_starts(num_stims+1:length(stim_starts)) = [];
+%         stim_starts([1 1002]) = [];
     end
 %     
     maps = build_slm_maps_multi(traces,stim_starts,map_index,.1*20000);
@@ -21,10 +23,10 @@ map_ch1 = stack_grids(traces_ch1);
 map_ch2 = stack_grids(traces_ch2);
 
 if do_plot
-    figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,5,[],0,{'raw','detected events'})
+%     figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,5,[],0,{'raw','detected events'})
     % figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,1,[],1,{'raw','detected events'})
 %     figure;compare_trace_stack_grid_overlap({map_ch1,map_ch2},Inf,1,[],0,{'L4','L5'},1)
-%     plot_trace_stack_grid(map_ch1,Inf,1,0);
+    plot_trace_stack_grid(map_ch1,10,1,0);
 end
 % corr_ch1 = get_corr_image(map_ch1,0,0);
 % corr_ch2 = get_corr_image(map_ch2,0,0);
