@@ -16,9 +16,9 @@ colorbar
 % surf1 = gca;
 % subplot(222)
 % % % 
-corr_image_ch1 = get_corr_image(squeeze(trace_grid_ch1),plot_image,0);
-current_image = corr_image_ch1;
-title('local correlations')
+% corr_image_ch1 = get_corr_image(squeeze(trace_grid_ch1),plot_image,0);
+% current_image = corr_image_ch1;
+title('current peaks')
 axis off
 % % % 
 % % % subplot(223)

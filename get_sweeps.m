@@ -1,6 +1,8 @@
-function [traces, traces_metadata] = get_sweeps(filename,ch_ind,trace_inds,plot_stack,varargin)
+function [traces, traces_metadata] = get_sweeps(data,ch_ind,trace_inds,plot_stack,varargin)
 
-load(filename,'sweeps','data')
+if isstr(data)
+    load(data,'sweeps','data')
+end
 
 
 if ~isempty(varargin)
@@ -29,7 +31,7 @@ p.parse(varargin{2:end})
 
 assignin('base','p',p)
 
-if ~exist('data','var')
+if exist('sweeps','var')
     data.sweeps = sweeps;
 end
 

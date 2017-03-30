@@ -19,8 +19,14 @@ for i = 1:num_stims
         end
         
         for k = 1:size(map_index,1)
+            try
             maps{j}{map_index(k,1,i),map_index(k,2,i)} = ...
                 [maps{j}{map_index(k,1,i),map_index(k,2,i)}; traces(j,trial_start:trial_end)];
+            catch
+                trial_start
+                trial_end
+                return
+            end
         end
     end
 end

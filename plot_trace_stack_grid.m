@@ -17,7 +17,7 @@ end
 [num_rows, num_cols] = size(traces_array);
 
 count = 1;
-grid_offset_y_spacer = 125;
+grid_offset_y_spacer = 75;
 grid_offset_y = -grid_offset_y_spacer;
 grid_offset_x = .015;
 
@@ -35,7 +35,7 @@ else
     max_traces = in_max_traces;
 end
 
-
+trace_stack_offset = 200;
 for i = 1:num_cols
     
     
@@ -49,7 +49,7 @@ for i = 1:num_cols
             elseif size(these_traces,1) > max_traces
                 these_traces = these_traces(1:max_traces,:);    
             end
-            these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,85,downsample_rate);
+            these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,20,downsample_rate);
             if plot_avg
                 these_traces_offset = mean(these_traces_offset);
             end
@@ -71,14 +71,15 @@ for i = 1:num_cols
 %             alpha(this_plot,alphas(i,j))
             hold on;
             if i == 1
-                grid_offset_y(j+1) = grid_offset_y(j) - (max(max(these_traces_offset)) - min(min(these_traces_offset))) - grid_offset_y_spacer;
+%                 grid_offset_y(j+1) = grid_offset_y(j) - (max(max(these_traces_offset)) - min(min(these_traces_offset))) - grid_offset_y_spacer;
+                grid_offset_y(j+1) = grid_offset_y(j) - trace_stack_offset - grid_offset_y_spacer;
             end
 %         elseif j ~= 1 && i == 1
 %             grid_offset_y(j+1) = grid_offset_y(j) + (grid_offset_y(j) - grid_offset_y(j-1)) + grid_offset_y_spacer;
 %         elseif i == 1
 %             grid_offset_y(j+1) = grid_offset_y(j) + (max_traces + 1)*grid_offset_y_spacer;
         elseif i == 1
-             grid_offset_y(j+1) = grid_offset_y(j) - 600 - grid_offset_y_spacer;
+             grid_offset_y(j+1) = grid_offset_y(j) - trace_stack_offset - grid_offset_y_spacer;
         end
     end
     
