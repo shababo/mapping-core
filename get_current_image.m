@@ -1,14 +1,13 @@
 function current_image = get_current_image(trace_array,min_or_max,do_plot)
 
 current_image = zeros(size(trace_array,1),size(trace_array,2));
-start_ind = .015*20000;
-end_ind = .025*20000;
+start_ind = .030*20000;
+end_ind = .035*20000;
 
 for i = 1:size(trace_array,1)
     for j = 1:size(trace_array,2)
         
         if ~isempty(trace_array{i,j,1})
-
 
             mean_trace = mean(trace_array{i,j,1},1);
             if min(mean_trace) < -1000
@@ -26,9 +25,14 @@ for i = 1:size(trace_array,1)
             end
             switch min_or_max
                 case 'min'
-                    starts = median(these_traces(:,.004*20000:.005*20000));
-                    mins = min(these_traces(:,.005*20000:.025*20000),[],2);
-                    current_image(i,j) = mean(median(these_traces,2) - mins);
+                    starts = median(these_traces(:,.290*20000:.299*20000),2);
+                    
+%                     mins = min(these_traces(:,.005*20000:.025*20000),[],2);
+                    mins = min(these_traces(:,.302*20000:.310*20000),[],2);
+                    spikes = find(mins < median(mins) - 1000);
+                    mins(spikes) = [];
+                    starts(spikes) = [];
+                    current_image(i,j) = mean(starts - mins);
                         
                 case 'max'
                     maxes = max(these_traces,[],2);
