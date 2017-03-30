@@ -34,7 +34,7 @@ axis off
 % % % subplot(224)
 % % % 
 % % % corr_image_ch2 = get_corr_image(trace_grid_ch2,plot_image);
-% % % current_image = corr_image_ch2;
+% % % current_image = corr_image_ch2;8
 % % % title('local correlations')
 % % % axis off
 % % % 
