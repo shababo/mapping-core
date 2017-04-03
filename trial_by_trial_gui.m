@@ -132,10 +132,10 @@ timebase = (0:trace_len-1)/20000;
 if isfield(handles.data,'trial_metadata')
     
     if strcmp(handles.data.trial_metadata(trace_ind).stim_type,'LED')
-        stim_sweep = handles.data.sweeps{trace_ind}(:,3);
+        stim_sweep = handles.data.sweeps{trace_ind}(:,2);
     elseif strcmp(handles.data.trial_metadata(trace_ind).stim_type,'2P')
-        disp('uhh...')
-        stim_sweep = handles.data.sweeps{trace_ind}(:,3);
+        
+        stim_sweep = handles.data.sweeps{trace_ind}(:,2);
         if isfield(handles.data.trial_metadata,'lut_used') && handles.data.trial_metadata(trace_ind).lut_used
             stim_sweep = stim_sweep/max(stim_sweep)*handles.data.trial_metadata(trace_ind).pulseamp;
         end
@@ -150,8 +150,16 @@ axes(handles.data_axes);
 if strcmp('current-clamp',handles.data.trial_metadata(trace_ind).cell1_clamp_type)
         gain_mult = 1/20;
 end
-        
-plot(handles.data.sweeps{trace_ind}(:,1)*gain_mult); hold on; plot(handles.data.sweeps{trace_ind}(:,4)*20)
+
+switch handles.data.trial_metadata(trace_ind).cell1_clamp_type
+    case 'current-clamp'
+        this_trace = handles.data.sweeps{trace_ind}(:,1)*1;
+    case 'voltage-clamp'
+        this_trace = handles.data.sweeps{trace_ind}(:,1);
+    case 'cell-attached'
+        this_trace = handles.data.sweeps{trace_ind}(:,1);
+end
+plot(timebase,this_trace); hold on; plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*100)
 % hold on;
 % scatter(handles.data.time(find(handles.data.spikes(trace_ind,:))),100*ones(1,sum(handles.data.spikes(trace_ind,:))),20*ones(1,sum(handles.data.spikes(trace_ind,:))),'filled');
 % hold on;

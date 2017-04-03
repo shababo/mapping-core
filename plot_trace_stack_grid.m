@@ -13,6 +13,10 @@ if length(varargin) > 2 && ~isempty(varargin{3})
     alphas = varargin{3};
 end
 
+if length(varargin) > 3 && ~isempty(varargin{4})
+    events = varargin{4};
+end
+
 
 [num_rows, num_cols] = size(traces_array);
 
@@ -49,7 +53,7 @@ for i = 1:num_cols
             elseif size(these_traces,1) > max_traces
                 these_traces = these_traces(1:max_traces,:);    
             end
-            these_traces_offset = get_trace_stack(these_traces,size(these_traces,2)-1,20,downsample_rate);
+            [these_traces_offset, offsets] = get_trace_stack(these_traces,size(these_traces,2)-1,20,downsample_rate);
             if plot_avg
                 these_traces_offset = mean(these_traces_offset);
             end
@@ -68,8 +72,19 @@ for i = 1:num_cols
                 this_color = [0 0 0];
             end
             plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
-%             alpha(this_plot,alphas(i,j))
-            hold on;
+            hold on
+            if exist('events','var')
+                these_events = events{j,i};
+                event_times = [];
+                event_pos = [];
+                for ii = 1:length(offsets)
+                    event_times = [event_times these_events{ii}];
+                    event_pos = [event_pos (offsets(ii) + grid_offset_y(j))*ones(size(these_events{ii}))];
+                end
+                scatter(time(round(event_times)),event_pos,[],'filled')
+                hold on;
+            end
+            
             if i == 1
 %                 grid_offset_y(j+1) = grid_offset_y(j) - (max(max(these_traces_offset)) - min(min(these_traces_offset))) - grid_offset_y_spacer;
                 grid_offset_y(j+1) = grid_offset_y(j) - trace_stack_offset - grid_offset_y_spacer;
