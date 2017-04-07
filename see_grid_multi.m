@@ -1,62 +1,25 @@
-function [map_ch1,map_ch2,corr_ch1,corr_ch2] = see_grid_multi(data,trials,map_index,do_plot,num_stims)
+function [maps,corr_maps] = see_grid_multi(traces,sequence,stim_key,spacing,do_plot)
 
-traces_ch1 = cell(1,length(trials));
-traces_ch2 = cell(1,length(trials));
-for i = 1:length(trials)
-    
-    trial_ind = trials(i); 
-    traces = [data.sweeps{trial_ind}(:,1)'; data.sweeps{trial_ind}(:,2)'];
-    stim = data.sweeps{trial_ind}(:,4)' > .2; sum(diff(stim) == 1)
-    stim_starts = find(diff(stim) == 1);
-    detected_itis = diff(stim_starts);
-    iti = median(detected_itis);
-    assignin('base','stim_starts',stim_starts)
-    if length(stim_starts) ~= num_stims %
 
-        while abs(detected_itis(1) - iti) > 100
-            stim_starts(1) = [];
-            detected_itis = diff(stim_starts);
-        end
-        stim_starts(num_stims+1:length(stim_starts)) = [];
-%         stim_starts([1 1002]) = [];
-    end
-%     
-    maps = build_slm_maps_multi(traces,stim_starts,map_index,.1*20000);
-    traces_ch1{i} = maps{1};
-    traces_ch2{i} = maps{2};
-end
-map_ch1 = stack_grids(traces_ch1);
-map_ch2 = stack_grids(traces_ch2);
+
+maps = build_slm_maps_multi(...
+    traces,sequence,stim_key,spacing);
 
 if do_plot
-%     figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,5,[],0,{'raw','detected events'})
-    % figure;compare_trace_stack_grid({map_ch1,map_ch2},Inf,1,[],1,{'raw','detected events'})
-%     figure;compare_trace_stack_grid_overlap({map_ch1,map_ch2},Inf,1,[],0,{'L4','L5'},1)
-<<<<<<< HEAD
-    plot_trace_stack_grid(map_ch1,10,1,0);
-=======
-    figure; plot_trace_stack_grid(map_ch1,Inf,1,0);
->>>>>>> origin/master
+    figure
+    subplot(221)
+    plot_trace_stack_grid(maps{1},Inf,1,0);
+    subplot(223)
+    plot_trace_stack_grid(maps{2},Inf,1,0);
 end
-% corr_ch1 = get_corr_image(map_ch1,0,0);
-% corr_ch2 = get_corr_image(map_ch2,0,0);
-corr_ch1 = [];
-corr_ch2 = [];
+
+corr_maps{1} = get_corr_image(maps{1},0,0);
+corr_maps{2} = get_corr_image(maps{2},0,0);
+
+
 if do_plot
-% 
-% figure; 
-% subplot(121); imagesc(corr_ch1); %caxis([0 1])
-% subplot(122); imagesc(corr_ch2); %caxis([0 1])
-% 
-% colormap hot
-end
-% charge_map_ch1 = get_charge_map(map_ch1);
-% charge_map_ch2 = get_charge_map(map_ch2);
-if do_plot
-% 
-% figure; 
-% subplot(121); imagesc(charge_map_ch1); %caxis([0 1])
-% subplot(122); imagesc(charge_map_ch2); %caxis([0 1])
-% 
-% colormap hot
+
+subplot(222); imagesc(corr_maps{1}); %caxis([0 1])
+subplot(224); imagesc(corr_maps{2}); %caxis([0 1])
+
 end

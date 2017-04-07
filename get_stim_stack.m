@@ -6,7 +6,7 @@ for i = 1:length(trials)
     
     trial_ind = trials(i); 
     traces = [data.sweeps{trial_ind}(:,1)'; data.sweeps{trial_ind}(:,2)'];
-    stim = data.sweeps{trial_ind}(:,4)' > .05; sum(diff(stim) == 1)
+    stim = data.sweeps{trial_ind}(:,4)' > .03; sum(diff(stim) == 1)
     stim_starts = find(diff(stim) == 1);
     if stim_starts > num_stims
         while length(stim_starts) ~= num_stims
