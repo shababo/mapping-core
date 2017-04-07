@@ -1,9 +1,9 @@
-function [spike_data, voltage_data, current_data] = view_resp_protocol(data,start_trial,spike_thresh)
+function [spike_data, voltage_data, current_data] = view_resp_protocol(data,start_trial,spike_thresh,num_spike_locs,stim_start)
 
 % power response curves
 spike_data = struct();
 voltage_data = struct();
-for j = 1:5
+for j = 1:num_spike_locs
     
     trial = j+start_trial-1;
     this_seq = data.trial_metadata(trial).sequence;
@@ -16,24 +16,43 @@ for j = 1:5
     for i = 1:length(powers)
         these_traces = trace_stack([this_seq.target_power] == powers(i),:);
         trace_grid{i} = these_traces;
-        spike_times_grid{i} = detect_peaks(-bsxfun(@minus,these_traces,median(these_traces(:,60:100),2)),spike_thresh,200,0,1,10,0,0);
+        spike_times_grid{i} = detect_peaks(-bsxfun(@minus,these_traces,median(these_traces(:,60:100),2)),spike_thresh,200,0,1,10,0,0,1);
     end
-%     figure
-%     if j == 1
-%         subplot(131)
-%     else
-%         subplot(121)
-%     end
+    figure
+    if j == 1
+        subplot(221)
+    else
+        subplot(121)
+    end
     spike_data(j).data = trace_grid;
     spike_data(j).spike_times = spike_times_grid;
     spike_data(j).powers = [10 25 50 100 150];
     stim_ind = this_seq(1).precomputed_target_index;
     stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - [50 50 0];
     spike_data(j).location = stim_pos;
-%     plot_trace_stack_grid(flipud(trace_grid),Inf,1,0,[],[],[],flipud(spike_times_grid));
-%     title(['Cell attached: stim location ' mat2str(stim_pos)])
+    plot_trace_stack_grid(trace_grid,Inf,1,0,[],[],[],spike_times_grid);
+    title(['Cell attached: stim location ' mat2str(stim_pos)])
+    if j == 1
+        subplot(222)
+    else
+        subplot(122)
+    end
     
-%     trial = j+start_trial-1+12;
+%     peak_currents = cellfun(@(y) cellfun(@(x) -min(x(100:200) - mean(x(80:100))),num2cell(y,2)),trace_grid,'UniformOutput',0);
+    num_spike_means = cell2float(cellfun(@(x) nansum(sign(cell2float(x))),spike_times_grid,'UniformOutput',0))./cellfun(@(x) length(x),spike_times_grid);
+    spike_times_means = cell2float(cellfun(@(x) nanmean(cell2float(x) - stim_start),spike_times_grid,'UniformOutput',0));
+%     peak_currents_stds = cellfun(@(x) std(x),peak_currents);
+%     yyaxis left
+%     plot(powers,num_spike_means)
+%     yyaxis right
+%     plot(powers,spike_times_means)
+    ax = plotyy(powers,num_spike_means,powers,spike_times_means/20)
+    title('spike stats')
+    xlabel('power (mW)')
+    ylabel(ax(1),'Prob. Spike')
+    ylabel(ax(2),'Mean 1st Spike Time (ms)')
+    
+%     trial = j+start_trial-1+num_spike_locs+2;
 %     this_seq = data.trial_metadata(trial).sequence;
 %     powers = unique([this_seq.target_power]);
 %     [trace_stack] = ...
@@ -58,7 +77,7 @@ for j = 1:5
 %     title(['Current clamp'])
     
     if j == 1
-        trial = j+start_trial-1+7;
+        trial = j+start_trial-1+num_spike_locs+2;
         this_seq = data.trial_metadata(trial).sequence;
         powers = unique([this_seq.target_power]);
         [trace_stack] = ...
@@ -70,19 +89,44 @@ for j = 1:5
         end  
         stim_ind = this_seq(1).precomputed_target_index;
         stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - [50 50 0];
+        current_data.power_response = trace_grid;
+        current_data.powers = powers;
+        subplot(223)
+        plot_trace_stack_grid(trace_grid,Inf,1,0);
+        title(mat2str(stim_pos))
+        title(['Voltage clamp'])
         
-%         subplot(133)
-%         plot_trace_stack_grid(flipud(trace_grid),Inf,1,0);
-%         title(mat2str(stim_pos))
-%         title(['Voltage clamp'])
+        peak_currents = cellfun(@(y) cellfun(@(x) -min(x(100:200) - mean(x(80:100))),num2cell(y,2)),trace_grid,'UniformOutput',0);
+        peak_currents_means = cellfun(@(x) mean(x),peak_currents);
+        peak_currents_stds = cellfun(@(x) std(x),peak_currents);
+        subplot(224)
+        errorbar(powers,peak_currents_means,peak_currents_stds)
+        hold on
+        
+        title('Current vs. Power Response')
+        xlabel('Power (mW)')
+        ylabel('Peak Current (pA)')
     end
 end
+
+vc_trial_1 = start_trial + num_spike_locs + 3;
+
+% trial = vc_trial_1;
+% this_seq = data.trial_metadata(trial).sequence;
+% powers = unique([this_seq.target_power]);
+% [trace_stack] = ...
+%     get_stim_stack(data,trial,...
+%     length(this_seq));
+% current_power_grid = cell(length(powers),1);
+% for i = 1:length(powers)
+%     these_traces = trace_stack([this_seq.target_power] == powers(i),:);
+%     current_power_grid{i} = these_traces;
+% end
+
 
 % z_depths = [-60 -40 -20 -10 0 10 20 40 60];
 z_depths = [-90 -50 -20 0 20 50 90];
 num_depths = length(z_depths);
-vc_trial_1 = start_trial+8;
-
 largest_grid = 9;
 all_trials = [];
 all_inds = [];
@@ -144,22 +188,28 @@ for i = 1:num_depths
     axis image
     axis off
 end
-
-figure
-max_cur = max(shape_svd(:));
-for i = 1:num_depths
-    subplot(num_depths,1,i)
-    imagesc(shape_svd(:,:,i))
-    caxis([0 max_cur])
-    title(sprintf(['z = ' num2str(z_depths(i))])) %grid size = ' grid_strs{grid_sizes(i)} '\n
-    axis image
-    axis off
-end
+set(gcf,'Position',[680 1 135 973])
+% figure
+% max_cur = max(shape_svd(:));
+% for i = 1:num_depths
+%     subplot(num_depths,1,i)
+%     imagesc(shape_svd(:,:,i))
+%     caxis([0 max_cur])
+%     title(sprintf(['z = ' num2str(z_depths(i))])) %grid size = ' grid_strs{grid_sizes(i)} '\n
+%     axis image
+%     axis off
+% end
     
-% figure;
-% plot(v(:,1))
-%  title('SVD Current Template')
-%     
+figure;
+% subplot(121)
+plot((0:2000)/20,v(:,1))
+title('SVD Current Template')
+xlim([0 100])
+xlabel('time (ms)')
+ylabel('Current Amplitude (a.u.)')
+% subplot(122)
+% plot(u(:,1))
+% title('SVD Spatial Weights')  
     
     
     
