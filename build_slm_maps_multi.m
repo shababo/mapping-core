@@ -1,6 +1,6 @@
 function maps = build_slm_maps_multi(traces,sequence,stim_key,spacing)
 
-num_cells = size(traces,1);
+num_cells = length(traces);
 maps = cell(num_cells,1);
 
 stim_key_bin = floor(stim_key/spacing)*spacing;
@@ -25,23 +25,28 @@ z_bins = stim_z_min:spacing:stim_z_max;
 grid_dims = [length(x_bins) length(y_bins) length(z_bins)];
 
 min_bin = [stim_x_min stim_y_min stim_z_min];
-map_index = (bsxfun(@minus,stim_key_bin,min_bin) + spacing)/spacing;
+map_index = (bsxfun(@minus,stim_key_bin,min_bin) + spacing)/spacing
 
 
 num_traces = length(sequence);
+% size(traces,1)
 
 
 
 for i = 1:num_cells
     
     maps{i} = cell(grid_dims);
-    
+    these_traces = traces{i};
     for j = 1:num_traces
-        for k = 1:size(map_index,1)
-            
-            maps{i}{map_index(j,1,k),map_index(j,2,k),map_index(j,3,k)} = ...
-                [maps{j}{map_index(j,1,k),map_index(j,2,k),map_index(j,3,k)}; ...
-                traces(j,:)];
+        j_stim = sequence(j).precomputed_target_index;
+        for k = 1:size(map_index,3)
+%             i
+%             j
+%             j_stim
+%             k
+            maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
+                [maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
+                these_traces(j,:)];
             
         end
     end
