@@ -1,8 +1,8 @@
-function [maps,corr_maps] = see_grid_multi(traces,sequence,stim_key,spacing,do_plot)
+function [maps,map_index,corr_maps] = see_grid_multi(traces,sequence,stim_key,spacing,do_plot)
 
 
 
-maps = build_slm_maps_multi(...
+[maps, map_index] = build_slm_maps_multi(...
     traces,sequence,stim_key,spacing);
 
 if do_plot
@@ -24,4 +24,4 @@ subplot(224); imagesc(corr_maps{2}); %caxis([0 1])
 
 end
 
-assignin('base','maps',maps)
+% assignin('base','maps',maps)

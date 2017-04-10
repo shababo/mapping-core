@@ -1,4 +1,4 @@
-function maps = build_slm_maps_multi(traces,sequence,stim_key,spacing)
+function [maps, map_index] = build_slm_maps_multi(traces,sequence,stim_key,spacing)
 
 num_cells = length(traces);
 maps = cell(num_cells,1);
@@ -25,7 +25,7 @@ z_bins = stim_z_min:spacing:stim_z_max;
 grid_dims = [length(x_bins) length(y_bins) length(z_bins)];
 
 min_bin = [stim_x_min stim_y_min stim_z_min];
-map_index = (bsxfun(@minus,stim_key_bin,min_bin) + spacing)/spacing
+map_index = (bsxfun(@minus,stim_key_bin,min_bin) + spacing)/spacing;
 
 
 num_traces = length(sequence);
