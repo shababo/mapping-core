@@ -21,7 +21,7 @@ end
 [num_rows, num_cols] = size(traces_array);
 
 count = 1;
-grid_offset_y_spacer = 200;
+grid_offset_y_spacer = 400;
 grid_offset_y = -grid_offset_y_spacer;
 grid_offset_x = .015;
 

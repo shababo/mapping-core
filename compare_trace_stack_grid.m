@@ -18,7 +18,7 @@ num_arrays = length(traces_arrays);
 all_axes = [];
 
 % colors = [39 168 224; 246 146 31]/255;
-colors = [0 0 0; 0 0 0];
+colors = [0 0 0];
 
 for array_i = 1:num_arrays
     
@@ -80,9 +80,9 @@ for array_i = 1:num_arrays
                 time = (1:size(these_traces_offset,2))*downsample_rate + (i-1)*(size(these_traces_offset,2)*downsample_rate + grid_offset_x);
                 
                 if exist('alphas','var')
-                    this_color = [colors(array_i,:) alphas{array_i}(j,i)];
+                    this_color = [colors alphas{array_i}(j,i)];
                 else
-                    this_color = colors(array_i,:);
+                    this_color = colors;
                 end
                 plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
                 hold on;
