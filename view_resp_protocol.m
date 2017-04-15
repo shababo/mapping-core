@@ -1,8 +1,11 @@
-function [spike_data, voltage_data, current_data] = view_resp_protocol(data,start_trial,spike_thresh,num_spike_locs,stim_start)
+function [spike_data, voltage_data, current_data] = view_resp_protocol(data,start_trial,spike_thresh,num_spike_locs,do_cc,do_vc,stim_start)
 
 % power response curves
 spike_data = struct();
 voltage_data = struct();
+current_data = struct();
+
+
 for j = 1:num_spike_locs
     
     trial = j+start_trial-1;
@@ -18,7 +21,7 @@ for j = 1:num_spike_locs
         trace_grid{i} = these_traces;
         spike_times_grid{i} = detect_peaks(-bsxfun(@minus,these_traces,median(these_traces(:,60:100),2)),spike_thresh,200,0,1,10,0,0,1);
     end
-    figure
+    spike_fig = figure;
     if j == 1
         subplot(221)
     else
@@ -52,32 +55,41 @@ for j = 1:num_spike_locs
     ylabel(ax(1),'Prob. Spike')
     ylabel(ax(2),'Mean 1st Spike Time (ms)')
     
-%     trial = j+start_trial-1+num_spike_locs+2;
-%     this_seq = data.trial_metadata(trial).sequence;
-%     powers = unique([this_seq.target_power]);
-%     [trace_stack] = ...
-%         get_stim_stack(data,trial,...
-%         length(this_seq));
-%     trace_grid = cell(length(powers),1);
-%     for i = 1:length(powers)
-%         trace_grid{i} = trace_stack([this_seq.target_power] == powers(i),:);
-%     end
-%     if j == 1
-%         subplot(132)
-%     else
-%         subplot(122)
-%     end
-%     voltage_data(j).data = trace_grid;
-%     voltage_data(j).powers = [10 25 50 100 150];
-%     plot_trace_stack_grid(flipud(trace_grid),Inf,1,0);
-%     stim_ind = this_seq(1).precomputed_target_index;
-%     stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - [50 50 0];
-%     voltage_data(j).location = stim_pos;
-%     title(mat2str(stim_pos))
-%     title(['Current clamp'])
-    
-    if j == 1
+    if do_cc
         trial = j+start_trial-1+num_spike_locs+2;
+        this_seq = data.trial_metadata(trial).sequence;
+        powers = unique([this_seq.target_power]);
+        [trace_stack] = ...
+            get_stim_stack(data,trial,...
+            length(this_seq));
+        trace_grid = cell(length(powers),1);
+        for i = 1:length(powers)
+            trace_grid{i} = trace_stack([this_seq.target_power] == powers(i),:);
+        end
+
+        voltage_data(j).data = trace_grid;
+        voltage_data(j).powers = [10 25 50 100 150];
+
+        stim_ind = this_seq(1).precomputed_target_index;
+        stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - [50 50 0];
+        voltage_data(j).location = stim_pos;
+%         if j == 1
+%             subplot(132)
+%         else
+%             subplot(122)
+%         end
+        figure
+        plot_trace_stack_grid(trace_grid,Inf,1,0);
+        title(mat2str(stim_pos))
+        title(['Current Clamp: stim location ' mat2str(stim_pos)])
+    end
+    
+    if j == 1 && do_vc
+        if do_cc
+            trial = j+start_trial-1+num_spike_locs*2+2;
+        else
+            trial = j+start_trial-1+num_spike_locs+2;
+        end
         this_seq = data.trial_metadata(trial).sequence;
         powers = unique([this_seq.target_power]);
         [trace_stack] = ...
@@ -91,6 +103,7 @@ for j = 1:num_spike_locs
         stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - [50 50 0];
         current_data.power_response = trace_grid;
         current_data.powers = powers;
+        figure(spike_fig)
         subplot(223)
         plot_trace_stack_grid(trace_grid,Inf,1,0);
         title(mat2str(stim_pos))
@@ -109,8 +122,15 @@ for j = 1:num_spike_locs
     end
 end
 
-vc_trial_1 = start_trial + num_spike_locs + 3;
+if ~do_vc
+    return
+end
 
+if do_cc
+    vc_trial_1 = start_trial + num_spike_locs*2 + 3;
+else
+    vc_trial_1 = start_trial + num_spike_locs + 3;
+end
 % trial = vc_trial_1;
 % this_seq = data.trial_metadata(trial).sequence;
 % powers = unique([this_seq.target_power]);
@@ -125,7 +145,9 @@ vc_trial_1 = start_trial + num_spike_locs + 3;
 
 
 % z_depths = [-60 -40 -20 -10 0 10 20 40 60];
-z_depths = [-90 -50 -20 0 20 50 90];
+% z_depths = [-90 -50 -20 0 20 50 90];
+z_depths = [data.trial_metadata.relative_position];
+z_depths = unique(round(z_depths(3:3:end)));
 num_depths = length(z_depths);
 largest_grid = 9;
 all_trials = [];
@@ -137,7 +159,7 @@ count = 1;
 for j = vc_trial_1+(0:num_depths-1)
     
      
-    trial = j;
+    trial = j
     this_seq = data.trial_metadata(trial).sequence;
     stim_key = data.trial_metadata(trial).stim_key([this_seq.precomputed_target_index],:);
     targets = bsxfun(@plus,stim_key,round(data.trial_metadata(trial).relative_position,-1) - [50 50 0]);
