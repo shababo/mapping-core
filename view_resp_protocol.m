@@ -19,7 +19,7 @@ for j = 1:num_spike_locs
     for i = 1:length(powers)
         these_traces = trace_stack([this_seq.target_power] == powers(i),:);
         trace_grid{i} = these_traces;
-        spike_times_grid{i} = detect_peaks(-bsxfun(@minus,these_traces,median(these_traces(:,60:100),2)),spike_thresh,200,0,1,10,0,0,1);
+        spike_times_grid{i} = detect_peaks(-bsxfun(@minus,these_traces,median(these_traces(:,60:100),2)),spike_thresh,200,0,1,10,0,1,0);
     end
     spike_fig = figure;
     if j == 1
