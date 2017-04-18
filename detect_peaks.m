@@ -25,7 +25,7 @@ for i = 1:size(traces,1)
     end
     [~, event_times, w, p] = findpeaks(filtered_trace,...
         'MinPeakHeight',max(threshold_min,threshold*scale),...
-        'MinPeakDistance',min_window);%,'MinPeakProminence',5);%,'MaxPeakWidth',10);
+        'MinPeakDistance',min_window,'MinPeakWidth',2);%,'MinPeakProminence',5);%,'MaxPeakWidth',10);
 %     if ~isempty(w)
 %         event_times
 %         w

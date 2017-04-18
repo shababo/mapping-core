@@ -157,9 +157,9 @@ switch handles.data.trial_metadata(trace_ind).cell1_clamp_type
     case 'voltage-clamp'
         this_trace = handles.data.sweeps{trace_ind}(:,1);
     case 'cell-attached'
-        this_trace = handles.data.sweeps{trace_ind}(:,1);
+        this_trace = handles.data.sweeps{trace_ind}(:,1) - median(handles.data.sweeps{trace_ind}(1:100,1));
 end
-plot(timebase,this_trace); hold on; plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*100)
+plot(timebase,this_trace); %hold on; plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*100)
 % hold on;
 % scatter(handles.data.time(find(handles.data.spikes(trace_ind,:))),100*ones(1,sum(handles.data.spikes(trace_ind,:))),20*ones(1,sum(handles.data.spikes(trace_ind,:))),'filled');
 % hold on;

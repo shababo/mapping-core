@@ -10,6 +10,9 @@ for i = 1:length(trials)
     stim_starts = find(diff(stim) == 1);
     if stim_starts > num_stims
         while length(stim_starts) > num_stims
+            disp('in while')
+            length(stim_starts)
+            num_stims
             itis = diff(stim_starts);
             assignin('base','itis',itis)
     %         early_fails = find(abs(itis - median(itis)) > 40,20,'first');
@@ -38,7 +41,7 @@ for i = 1:length(trials)
 %              return
         end
     end
-    stacks = build_stim_stack_multi(traces,stim_starts,.1*20000);
+    stacks = build_stim_stack_multi(traces,stim_starts,.05*20000);
     traces_ch1{i} = stacks{1};
     traces_ch2{i} = stacks{2};
 end
