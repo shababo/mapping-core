@@ -22,7 +22,7 @@ function varargout = trial_by_trial_gui(varargin)
 
 % Edit the above text to modify the response to help trial_by_trial_gui
 
-% Last Modified by GUIDE v2.5 10-Oct-2015 09:20:24
+% Last Modified by GUIDE v2.5 19-Apr-2017 11:37:00
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -64,7 +64,7 @@ set(handles.num_traces,'String',['Num Traces: ' num2str(handles.data.n_trials)])
 guidata(hObject, handles);
 
 % UIWAIT makes trial_by_trial_gui wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+% uiwait(handles.trial_by_trial_gui);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -159,7 +159,21 @@ switch handles.data.trial_metadata(trace_ind).cell1_clamp_type
     case 'cell-attached'
         this_trace = handles.data.sweeps{trace_ind}(:,1) - median(handles.data.sweeps{trace_ind}(1:100,1));
 end
-plot(timebase,this_trace); %hold on; plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*100)
+if get(handles.hpf,'Value')
+    this_trace = highpass_filter(this_trace,20000);
+end
+
+plot(timebase,this_trace); hold on; plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*10 + 10)
+hold on;
+if get(handles.draw_thresh,'Value')
+    thresh = str2double(get(handles.thresh,'String'));
+    plot(timebase,thresh*ones(size(timebase)))
+    hold on;
+    crossings = find(this_trace < thresh);
+    scatter(timebase(crossings),thresh*ones(size(crossings)))
+    hold on
+end
+
 % hold on;
 % scatter(handles.data.time(find(handles.data.spikes(trace_ind,:))),100*ones(1,sum(handles.data.spikes(trace_ind,:))),20*ones(1,sum(handles.data.spikes(trace_ind,:))),'filled');
 % hold on;
@@ -238,3 +252,48 @@ if ~get(hObject,'Value')
     axes(handles.data_axes)
     axis tight
 end
+
+
+% --- Executes on button press in hpf.
+function hpf_Callback(hObject, eventdata, handles)
+% hObject    handle to hpf (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of hpf
+
+draw_plot(handles)
+
+
+
+function thresh_Callback(hObject, eventdata, handles)
+% hObject    handle to thresh (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of thresh as text
+%        str2double(get(hObject,'String')) returns contents of thresh as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function thresh_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to thresh (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in draw_thresh.
+function draw_thresh_Callback(hObject, eventdata, handles)
+% hObject    handle to draw_thresh (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of draw_thresh
+
+draw_plot(handles)
