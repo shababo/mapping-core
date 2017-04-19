@@ -92,6 +92,9 @@ if ~do_vc
     return
 end
 
+intrinsics_trial = start_trial + num_spike_locs + 1;
+cell.intrinsics.data = data.sweeps{intrinsics_trial}(:,1)';
+
 if do_cc
     vc_trial_1 = start_trial + num_spike_locs*2 + 3;
 else
