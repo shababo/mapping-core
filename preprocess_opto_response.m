@@ -1,10 +1,10 @@
-function [spike_data, voltage_data, current_data] = preprocess_opto_response(data,start_trial,spike_thresh,num_spike_locs,do_cc,do_vc,stim_start,cell_pos)
+function [spike_data, voltage_data, current_data, intrinsics] = preprocess_opto_response(data,start_trial,spike_thresh,num_spike_locs,do_cc,do_vc,stim_start,cell_pos)
 
 % power response curves
 spike_data = struct();
 voltage_data = struct();
 current_data = struct();
-
+intrinsics = struct();
 
 for j = 1:num_spike_locs
     
@@ -93,7 +93,7 @@ if ~do_vc
 end
 
 intrinsics_trial = start_trial + num_spike_locs + 1;
-cell.intrinsics.data = data.sweeps{intrinsics_trial}(:,1)';
+intrinsics.data = data.sweeps{intrinsics_trial}(:,1)';
 
 if do_cc
     vc_trial_1 = start_trial + num_spike_locs*2 + 3;
