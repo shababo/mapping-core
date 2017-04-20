@@ -274,6 +274,8 @@ function thresh_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of thresh as text
 %        str2double(get(hObject,'String')) returns contents of thresh as a double
 
+draw_plot(handles)
+
 
 % --- Executes during object creation, after setting all properties.
 function thresh_CreateFcn(hObject, eventdata, handles)
