@@ -99,7 +99,7 @@ else
 end
 
 z_depths = [data.trial_metadata.relative_position];
-z_depths = unique(round(z_depths(3:3:end),-1));
+z_depths = unique(round(z_depths((2+start_trial):3:end),-1));
 num_depths = length(z_depths);
 largest_grid = 9;
 all_trials = [];
@@ -111,7 +111,7 @@ shape_max = zeros(largest_grid,largest_grid,num_depths);
 for j = vc_trial_1+(0:num_depths-1)
     
      
-    trial = j;
+    trial = j
     this_seq = data.trial_metadata(trial).sequence;
     stim_key = data.trial_metadata(trial).stim_key([this_seq.precomputed_target_index],:);
     targets = bsxfun(@plus,stim_key,round(data.trial_metadata(trial).relative_position,-1) - cell_pos);
