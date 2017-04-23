@@ -30,9 +30,9 @@ for j = 1:num_spike_locs
     spike_data(j).location = stim_pos;
 
     
-    spike_data(j).num_spike_means = cell2float(cellfun(@(x) nansum(sign(cell2float(x))),spike_times_grid,'UniformOutput',0))./cellfun(@(x) length(x),spike_times_grid);
-    spike_data(j).spike_times_means = cell2float(cellfun(@(x) nanmean(cell2float(x) - stim_start),spike_times_grid,'UniformOutput',0));
-    spike_data(j).spike_times_std = cell2float(cellfun(@(x) nanstd(cell2float(x) - stim_start),spike_times_grid,'UniformOutput',0));
+    spike_data(j).num_spike_means = cell2float(cellfun(@(x) sum(cellfun(@(y) ~isempty(y),x)),spike_times_grid,'UniformOutput',0))./cellfun(@(x) length(x),spike_times_grid);
+    spike_data(j).spike_times_means = cell2float(cellfun(@(x) nanmean(cell2float(x)),spike_times_grid,'UniformOutput',0));
+    spike_data(j).spike_times_std = cell2float(cellfun(@(x) nanstd(cell2float(x)),spike_times_grid,'UniformOutput',0));
     
     if do_cc
         trial = j+start_trial-1+num_spike_locs+2;
@@ -79,7 +79,7 @@ for j = 1:num_spike_locs
         current_data.powers = powers;
         current_data.power_response_pos = stim_pos;
         
-        peak_currents = cellfun(@(y) cellfun(@(x) -min(x(100:200) - mean(x(80:100))),num2cell(y,2)),trace_grid,'UniformOutput',0);
+        peak_currents = cellfun(@(y) cellfun(@(x) -min(x(2:100) - mean(x(1:5))),num2cell(y,2)),trace_grid,'UniformOutput',0);
         peak_currents_means = cellfun(@(x) mean(x),peak_currents);
         peak_currents_stds = cellfun(@(x) std(x),peak_currents);
         current_data.power_response_means = peak_currents_means;
@@ -132,7 +132,7 @@ current_data.shape_data = all_trials;
 current_data.shape_locations = all_targets;
 current_data.shape_inds = all_inds;
 
-peak_currents = cellfun(@(x) -min(x(100:200) - mean(x(80:100))),num2cell(all_trials,2));
+peak_currents = cellfun(@(x) -min(x(5:100) - mean(x(1:5))),num2cell(all_trials,2));
 current_data.peak_currents = peak_currents;
 
 [u,s,v] = svd(-all_trials);
@@ -145,6 +145,7 @@ for i = 1:length(peak_currents)
     shape_max(all_inds(i,1),all_inds(i,2),all_inds(i,3)) = peak_currents(i);
     shape_svd(all_inds(i,1),all_inds(i,2),all_inds(i,3)) = svd_weights(i);
 end
+
 current_data.shape_max = shape_max;
 current_data.shape_svd = shape_svd;
 

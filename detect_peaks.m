@@ -34,6 +34,9 @@ for i = 1:size(traces,1)
     
 
     event_times(event_times < start_ind) = [];
+    if ~isempty(event_times)
+        event_times = event_times(1);
+    end
     
     if return_bit_vec
 %         for j = 1:length(event_times)
