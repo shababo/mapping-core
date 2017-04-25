@@ -159,6 +159,7 @@ end
 
 current_shape = current_shape - current_shape(1);
 current_data.current_shape = current_shape/max(current_shape);
+current_data.current_shape_sv = s(1)/sum(diag(s));
     
     
     
