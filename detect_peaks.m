@@ -5,7 +5,7 @@ if return_bit_vec
 else
     detection_results = cell(size(traces,1),1);
 end
-
+warning ('off','all');
 for i = 1:size(traces,1)
     
 
@@ -23,9 +23,10 @@ for i = 1:size(traces,1)
     else
         scale = 1;
     end
+    
     [~, event_times, w, p] = findpeaks(filtered_trace,...
         'MinPeakHeight',max(threshold_min,threshold*scale),...
-        'MinPeakDistance',min_window,'MinPeakWidth',2);%,'MinPeakProminence',5);%,'MaxPeakWidth',10);
+        'MinPeakDistance',min_window,'MinPeakWidth',10);%,'MinPeakProminence',5);%,'MaxPeakWidth',10);
 %     if ~isempty(w)
 %         event_times
 %         w
@@ -34,9 +35,9 @@ for i = 1:size(traces,1)
     
 
     event_times(event_times < start_ind) = [];
-    if ~isempty(event_times)
-        event_times = event_times(1);
-    end
+%     if ~isempty(event_times)
+%         event_times = event_times(1);
+%     end
     
     if return_bit_vec
 %         for j = 1:length(event_times)
@@ -50,3 +51,4 @@ for i = 1:size(traces,1)
         end
     end
 end 
+warning ('on','all');

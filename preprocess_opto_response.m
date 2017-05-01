@@ -1,4 +1,4 @@
-function [spike_data, voltage_data, current_data, intrinsics] = preprocess_opto_response(data,start_trial,spike_thresh,num_spike_locs,do_cc,do_vc,stim_start,cell_pos)
+function [spike_data, voltage_data, current_data, intrinsics] = preprocess_opto_response(data,start_trial,spike_thresh,ca_num_spike_locs,ca_spike_thresh,do_cc,cc_num_spike_locs,do_vc,stim_start,cell_pos,first_spike_only)
 
 % power response curves
 spike_data = struct();
@@ -6,20 +6,21 @@ voltage_data = struct();
 current_data = struct();
 intrinsics = struct();
 
-for j = 1:num_spike_locs
+for j = 1:ca_num_spike_locs
     
-    trial = j+start_trial-1;
+    trial = j+start_trial-1
     this_seq = data.trial_metadata(trial).sequence;
     powers = unique([this_seq.target_power]);
+    expected_stim_starts = [this_seq.start];
     [trace_stack] = ...
         get_stim_stack(data,trial,...
-        length(this_seq));
+        length(this_seq),expected_stim_starts);
     trace_grid = cell(length(powers),1);
     spike_times_grid = cell(length(powers),1);
     for i = 1:length(powers)
         these_traces = trace_stack([this_seq.target_power] == powers(i),:);
         trace_grid{i} = these_traces;
-        spike_times_grid{i} = detect_peaks(-bsxfun(@minus,these_traces,median(these_traces(:,60:100),2)),spike_thresh,200,0,1,-Inf,0,0,0);
+        spike_times_grid{i} = detect_peaks(-bsxfun(@minus,these_traces,median(these_traces(:,60:100),2)),spike_thresh,30,0,1,-Inf,0,0,first_spike_only);
     end
 
     spike_data(j).data = trace_grid;
@@ -34,18 +35,41 @@ for j = 1:num_spike_locs
     spike_data(j).spike_times_means = cell2float(cellfun(@(x) nanmean(cell2float(x)),spike_times_grid,'UniformOutput',0));
     spike_data(j).spike_times_std = cell2float(cellfun(@(x) nanstd(cell2float(x)),spike_times_grid,'UniformOutput',0));
     
-    if do_cc
-        trial = j+start_trial-1+num_spike_locs+2;
+    
+end
+
+if do_cc
+    for j = 1:cc_num_spike_locs
+        
+        
+
+        trial = j+start_trial-1+ca_num_spike_locs+2
         this_seq = data.trial_metadata(trial).sequence;
         powers = unique([this_seq.target_power]);
+        expected_stim_starts = [this_seq.start];
         [trace_stack] = ...
             get_stim_stack(data,trial,...
-            length(this_seq));
+            length(this_seq),expected_stim_starts);
         trace_grid = cell(length(powers),1);
         spike_times_grid = cell(length(powers),1);
+        voltage_data(j).num_spike_means = zeros(1,length(powers));
+        voltage_data(j).spike_times_means = zeros(1,length(powers));
+        voltage_data(j).spike_times_std = zeros(1,length(powers));
+        
         for i = 1:length(powers)
             trace_grid{i} = trace_stack([this_seq.target_power] == powers(i),:);
-            spike_times_grid{i} = detect_peaks(trace_grid{i},-30,200,0,1,-Inf,0,0,0);
+            spike_times_grid{i} = detect_peaks(trace_grid{i},ca_spike_thresh,30,0,1,-Inf,0,0,first_spike_only);
+            spike_times = [];
+            spike_times_first = [];
+            for  k = 1:length(spike_times_grid{i})
+                if ~isempty(spike_times_grid{i}{k})
+                    spike_times = [spike_times spike_times_grid{i}{k}];
+                    spike_times_first = [spike_times_first spike_times_grid{i}{k}(1)];
+                end
+            end
+            voltage_data(j).num_spike_means(i) = length(spike_times)/length(spike_times_grid{i});
+            voltage_data(j).spike_times_means(i) = mean(spike_times_first);
+            voltage_data(j).spike_times_std(i) = std(spike_times_first);
         end
 
         voltage_data(j).data = trace_grid;
@@ -55,51 +79,48 @@ for j = 1:num_spike_locs
         stim_ind = this_seq(1).precomputed_target_index;
         stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - cell_pos;
         voltage_data(j).location = stim_pos;
-
-    end
-    
-    if j == 1 && do_vc
-        if do_cc
-            trial = start_trial+num_spike_locs*2+2;
-        else
-            trial = start_trial+num_spike_locs+2;
-        end
-        this_seq = data.trial_metadata(trial).sequence;
-        powers = unique([this_seq.target_power]);
-        [trace_stack] = ...
-            get_stim_stack(data,trial,...
-            length(this_seq));
-        trace_grid = cell(length(powers),1);
-        for i = 1:length(powers)
-            trace_grid{i} = trace_stack([this_seq.target_power] == powers(i),:);
-        end  
-        stim_ind = this_seq(1).precomputed_target_index;
-        stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - cell_pos;
-        current_data.power_response = trace_grid;
-        current_data.powers = powers;
-        current_data.power_response_pos = stim_pos;
         
-        peak_currents = cellfun(@(y) cellfun(@(x) -min(x(2:100) - mean(x(1:5))),num2cell(y,2)),trace_grid,'UniformOutput',0);
-        peak_currents_means = cellfun(@(x) mean(x),peak_currents);
-        peak_currents_stds = cellfun(@(x) std(x),peak_currents);
-        current_data.power_response_means = peak_currents_means;
-        current_data.power_response_stds = peak_currents_stds;
-        
+%         voltage_data(j).num_spike_means = cell2float(cellfun(@(x) sum(cellfun(@(y) ~isempty(y),x)),spike_times_grid,'UniformOutput',0))./cellfun(@(x) length(x),spike_times_grid);
+%         voltage_data(j).spike_times_means = cell2float(cellfun(@(x) nanmean(cell2float(x)),spike_times_grid,'UniformOutput',0));
+%         voltage_data(j).spike_times_std = cell2float(cellfun(@(x) nanstd(cell2float(x)),spike_times_grid,'UniformOutput',0));
     end
 end
 
-if ~do_vc
+if do_vc
+        
+    trial = start_trial+ca_num_spike_locs+cc_num_spike_locs+2;
+
+    this_seq = data.trial_metadata(trial).sequence;
+    powers = unique([this_seq.target_power]);
+    [trace_stack] = ...
+        get_stim_stack(data,trial,...
+        length(this_seq));
+    trace_grid = cell(length(powers),1);
+    for i = 1:length(powers)
+        trace_grid{i} = trace_stack([this_seq.target_power] == powers(i),:);
+    end  
+    stim_ind = this_seq(1).precomputed_target_index;
+    stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - cell_pos;
+    current_data.power_response = trace_grid;
+    current_data.powers = powers;
+    current_data.power_response_pos = stim_pos;
+
+    peak_currents = cellfun(@(y) cellfun(@(x) -min(x(2:100) - mean(x(1:5))),num2cell(y,2)),trace_grid,'UniformOutput',0);
+    peak_currents_means = cellfun(@(x) mean(x),peak_currents);
+    peak_currents_stds = cellfun(@(x) std(x),peak_currents);
+    current_data.power_response_means = peak_currents_means;
+    current_data.power_response_stds = peak_currents_stds;
+
+end
+
+if ~(do_vc && do_cc)
     return
 end
 
-intrinsics_trial = start_trial + num_spike_locs + 1;
+intrinsics_trial = start_trial + ca_num_spike_locs + 1;
 intrinsics.data = data.sweeps{intrinsics_trial}(:,1)';
 
-if do_cc
-    vc_trial_1 = start_trial + num_spike_locs*2 + 3;
-else
-    vc_trial_1 = start_trial + num_spike_locs + 3;
-end
+vc_trial_1 = start_trial + ca_num_spike_locs+cc_num_spike_locs + 3;
 
 z_depths = [data.trial_metadata.relative_position];
 z_depths = unique(round(z_depths((2+start_trial):3:end),-1));
@@ -114,11 +135,11 @@ shape_max = zeros(largest_grid,largest_grid,num_depths);
 for j = vc_trial_1+(0:num_depths-1)
     
      
-    trial = j
+    trial = j;
     this_seq = data.trial_metadata(trial).sequence;
     stim_key = data.trial_metadata(trial).stim_key([this_seq.precomputed_target_index],:);
     targets = bsxfun(@plus,stim_key,round(data.trial_metadata(trial).relative_position,-1) - cell_pos);
-    inds = [targets(:,[1 2])/10 + 5 repmat(find(z_depths == targets(1,3)),size(targets,1),1)]; % DON'T HARD CODE THIS
+    inds = [targets(:,[1 2])/10 + 5 repmat(find(z_depths == targets(1,3)),size(targets,1),1)]; % DON'T HARD CODE THESE VALUES
     [trace_stack] = ...
         get_stim_stack(data,trial,...
         length(this_seq));   

@@ -163,13 +163,14 @@ if get(handles.hpf,'Value')
     this_trace = highpass_filter(this_trace,20000);
 end
 
-plot(timebase,this_trace); hold on; plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*10 + 10)
+plot(timebase,this_trace); hold on; plot(timebase,handles.data.sweeps{trace_ind}(:,4))%/max(handles.data.sweeps{trace_ind}(:,3))*10 + 10)
 hold on;
 if get(handles.draw_thresh,'Value')
     thresh = str2double(get(handles.thresh,'String'));
     plot(timebase,thresh*ones(size(timebase)))
     hold on;
-    crossings = find(this_trace < thresh);
+    crossings = detect_peaks(this_trace',thresh,30,0,1,-Inf,0,0,0);
+    crossings = crossings{1};
     scatter(timebase(crossings),thresh*ones(size(crossings)))
     hold on
 end
