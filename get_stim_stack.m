@@ -1,6 +1,6 @@
 function [traces_ch1,traces_ch2] = get_stim_stack(data,trials,num_stims,varargin)
 
-varargin
+% varargin
 if ~isempty(varargin) && ~isempty(varargin{1})
     expected_stim_start = varargin{1};
 else
@@ -22,7 +22,7 @@ for i = 1:length(trials)
         for j = 1:num_stims
             [min_diff, best_ind] = ...
                 min(abs(stim_starts_tmp - 20*expected_stim_start(j)));
-            best_ind
+%             best_ind
             stim_starts(j) = stim_starts_tmp(best_ind);
             stim_starts_tmp(best_ind) = [];
         end
