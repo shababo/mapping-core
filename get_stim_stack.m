@@ -22,6 +22,7 @@ for i = 1:length(trials)
         for j = 1:num_stims
             [min_diff, best_ind] = ...
                 min(abs(stim_starts_tmp - 20*expected_stim_start(j)));
+
             stim_starts(j) = stim_starts_tmp(best_ind);
             stim_starts_tmp(best_ind) = [];
         end
