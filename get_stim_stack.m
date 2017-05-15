@@ -1,6 +1,6 @@
 function [traces_ch1,traces_ch2] = get_stim_stack(data,trials,num_stims,varargin)
 
-varargin
+% varargin
 if ~isempty(varargin) && ~isempty(varargin{1})
     expected_stim_start = varargin{1};
 else
@@ -13,16 +13,15 @@ for i = 1:length(trials)
     
     trial_ind = trials(i); 
     traces = [data.sweeps{trial_ind}(:,1)'; data.sweeps{trial_ind}(:,2)'];
-    stim = data.sweeps{trial_ind}(:,3)' > .025; sum(diff(stim) == 1)
+    stim = data.sweeps{trial_ind}(:,3)' > .025; %sum(diff(stim) == 1)
     stim_starts_tmp = find(diff(stim) == 1);
-    assignin('base','stim_starts_tmp',stim_starts_tmp)
+%     assignin('base','stim_starts_tmp',stim_starts_tmp)
     if ~isempty(expected_stim_start)
-        disp('doing exp')
+%         disp('doing exp')
         stim_starts = zeros(size(expected_stim_start));
         for j = 1:num_stims
             [min_diff, best_ind] = ...
                 min(abs(stim_starts_tmp - 20*expected_stim_start(j)));
-            best_ind
             stim_starts(j) = stim_starts_tmp(best_ind);
             stim_starts_tmp(best_ind) = [];
         end
@@ -31,9 +30,9 @@ for i = 1:length(trials)
         
         if stim_starts > num_stims
             while length(stim_starts) > num_stims
-                disp('in while')
+%                 disp('in while')
                 itis = diff(stim_starts);
-                assignin('base','itis',itis)
+%                 assignin('base','itis',itis)
         %         early_fails = find(abs(itis - median(itis)) > 40,20,'first');
         %         if early_fails(1) == 1
         %             early_fails(1:find(diff(early_fails) ~= 1,1,'first')) = [];

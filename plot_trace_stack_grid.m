@@ -49,7 +49,7 @@ for i = 1:num_cols
         if ~isempty(traces_array{j,i})
             these_traces = traces_array{j,i};
             if size(these_traces,1) < max_traces
-                these_traces = [these_traces; zeros(max_traces - size(these_traces,1),size(these_traces,2))];
+%                 these_traces = [these_traces; zeros(max_traces - size(these_traces,1),size(these_traces,2))];
             elseif size(these_traces,1) > max_traces
                 these_traces = these_traces(1:max_traces,:);    
             end
