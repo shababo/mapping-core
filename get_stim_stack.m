@@ -62,7 +62,7 @@ for i = 1:length(trials)
         end
     end
     assignin('base','stim_starts',stim_starts)
-    stacks = build_stim_stack_multi(traces,stim_starts,.05*20000);
+    stacks = build_stim_stack_multi(traces,stim_starts,.040*20000);
     traces_ch1{i} = stacks{1};
     traces_ch2{i} = stacks{2};
 end
