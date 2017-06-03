@@ -49,11 +49,14 @@ for i = 1:num_cols
         if ~isempty(traces_array{j,i})
             these_traces = traces_array{j,i};
             if size(these_traces,1) < max_traces
-                these_traces = [these_traces; zeros(max_traces - size(these_traces,1),size(these_traces,2))];
+%                 these_traces = [these_traces; zeros(max_traces - size(these_traces,1),size(these_traces,2))];
             elseif size(these_traces,1) > max_traces
                 these_traces = these_traces(1:max_traces,:);    
             end
-            [these_traces_offset, offsets] = get_trace_stack(these_traces,size(these_traces,2)-1,50,downsample_rate);
+%             for k = 1:size(these_traces,1)
+%                 these_traces(k,:) = highpass_filter(these_traces(k,:),20000);
+%             end
+            [these_traces_offset, offsets] = get_trace_stack(these_traces,size(these_traces,2)-1,25,downsample_rate);
             if plot_avg
                 these_traces_offset = mean(these_traces_offset);
             end
@@ -78,7 +81,11 @@ for i = 1:num_cols
                 event_times = [];
                 event_pos = [];
                 for ii = 1:length(offsets)
-                    event_times = [event_times these_events{ii}];
+                    if iscell(these_events{ii})
+                        event_times = [event_times these_events{ii}];
+                    else
+                        event_times = [event_times these_events(ii).times];
+                    end
                     event_pos = [event_pos (offsets(ii) + grid_offset_y(j))*ones(size(these_events{ii}))];
                 end
                 scatter(time(round(event_times)),event_pos,[],'filled')

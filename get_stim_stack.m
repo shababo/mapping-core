@@ -13,27 +13,27 @@ for i = 1:length(trials)
     
     trial_ind = trials(i); 
     traces = [data.sweeps{trial_ind}(:,1)'; data.sweeps{trial_ind}(:,2)'];
-    stim = data.sweeps{trial_ind}(:,3)' > .025; sum(diff(stim) == 1)
+    stim = data.sweeps{trial_ind}(:,3)' > .025; %sum(diff(stim) == 1)
     stim_starts_tmp = find(diff(stim) == 1);
-    assignin('base','stim_starts_tmp',stim_starts_tmp)
-    if ~isempty(expected_stim_start)
-        disp('doing exp')
-        stim_starts = zeros(size(expected_stim_start));
-        for j = 1:num_stims
+%     assignin('base','stim_starts_tmp',stim_starts_tmp)
+    if ~isempty(expected_stim_start{i})
+%         disp('doing exp')
+        stim_starts = zeros(size(expected_stim_start{i}));
+        for j = 1:num_stims(i)
             [min_diff, best_ind] = ...
-                min(abs(stim_starts_tmp - 20*expected_stim_start(j)));
-%             best_ind
+                min(abs(stim_starts_tmp - 20*expected_stim_start{i}(j)));
+
             stim_starts(j) = stim_starts_tmp(best_ind);
             stim_starts_tmp(best_ind) = [];
         end
     else
         stim_starts = stim_starts_tmp;
         
-        if stim_starts > num_stims
-            while length(stim_starts) > num_stims
-                disp('in while')
+        if stim_starts > num_stims(i)
+            while length(stim_starts) > num_stims(i)
+%                 disp('in while')
                 itis = diff(stim_starts);
-                assignin('base','itis',itis)
+%                 assignin('base','itis',itis)
         %         early_fails = find(abs(itis - median(itis)) > 40,20,'first');
         %         if early_fails(1) == 1
         %             early_fails(1:find(diff(early_fails) ~= 1,1,'first')) = [];
@@ -61,8 +61,8 @@ for i = 1:length(trials)
             end
         end
     end
-    assignin('base','stim_starts',stim_starts)
-    stacks = build_stim_stack_multi(traces,stim_starts,.05*20000);
+%     assignin('base','stim_starts',stim_starts)
+    stacks = build_stim_stack_multi(traces,stim_starts,.025*20000);
     traces_ch1{i} = stacks{1};
     traces_ch2{i} = stacks{2};
 end
