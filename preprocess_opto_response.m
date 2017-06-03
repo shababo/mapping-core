@@ -14,7 +14,7 @@ for j = 1:ca_num_spike_locs
     trial = j+start_trial-1;
     this_seq = data.trial_metadata(trial).sequence;
     powers = unique([this_seq.target_power]);
-    expected_stim_starts = [this_seq.start];
+    expected_stim_starts = {[this_seq.start]};
     [trace_stack] = ...
         get_stim_stack(data,trial,...
         length(this_seq),expected_stim_starts);
@@ -63,7 +63,7 @@ if do_cc
         trial = j+start_trial-1+ca_num_spike_locs+2;
         this_seq = data.trial_metadata(trial).sequence;
         powers = unique([this_seq.target_power]);
-        expected_stim_starts = [this_seq.start];
+        expected_stim_starts = {[this_seq.start]};
         [trace_stack] = ...
             get_stim_stack(data,trial,...
             length(this_seq),expected_stim_starts);
@@ -115,7 +115,7 @@ if do_vc
     powers = unique([this_seq.target_power]);
     [trace_stack] = ...
         get_stim_stack(data,trial,...
-        length(this_seq));
+        length(this_seq),{[this_seq.start]});
     trace_grid = cell(length(powers),1);
     for i = 1:length(powers)
         trace_grid{i} = trace_stack([this_seq.target_power] == powers(i),:);
@@ -163,7 +163,7 @@ if do_vc
         inds = [targets(:,[1 2])/10 + 5 repmat(find(z_depths == targets(1,3)),size(targets,1),1)]; % DON'T HARD CODE THESE VALUES
         [trace_stack] = ...
             get_stim_stack(data,trial,...
-            length(this_seq),[this_seq.start]);   
+            length(this_seq),{[this_seq.start]});   
         all_trials = [all_trials; trace_stack];
         all_inds = [all_inds; inds];
         all_targets = [all_targets; targets];

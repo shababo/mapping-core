@@ -1,7 +1,8 @@
-function [maps, map_index] = build_slm_maps_multi(traces,sequence,stim_key,spacing)
+function [maps, mpp_maps, map_index] = build_slm_maps_multi(traces,mpp,sequence,stim_key,spacing)
 
 num_cells = length(traces);
 maps = cell(num_cells,1);
+mpp_maps = cell(num_cells,1);
 
 stim_key_bin = round(stim_key/spacing)*spacing;
 
@@ -38,6 +39,7 @@ assignin('base','map_index',map_index)
 for i = 1:num_cells
     
     maps{i} = cell(grid_dims);
+    mpp_maps{i} = cell(grid_dims);
     these_traces = traces{i};
 %     size(these_traces)
     for j = 1:num_traces
@@ -53,7 +55,11 @@ for i = 1:num_cells
             maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
                 [maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
                 these_traces(j,:)];
-            
+            if ~isempty(mpp)
+                mpp_maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
+                    [mpp_maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
+                    mpp(j)];
+            end
         end
     end
 end

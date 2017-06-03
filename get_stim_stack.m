@@ -16,12 +16,12 @@ for i = 1:length(trials)
     stim = data.sweeps{trial_ind}(:,3)' > .025; %sum(diff(stim) == 1)
     stim_starts_tmp = find(diff(stim) == 1);
 %     assignin('base','stim_starts_tmp',stim_starts_tmp)
-    if ~isempty(expected_stim_start)
+    if ~isempty(expected_stim_start{i})
 %         disp('doing exp')
-        stim_starts = zeros(size(expected_stim_start));
-        for j = 1:num_stims
+        stim_starts = zeros(size(expected_stim_start{i}));
+        for j = 1:num_stims(i)
             [min_diff, best_ind] = ...
-                min(abs(stim_starts_tmp - 20*expected_stim_start(j)));
+                min(abs(stim_starts_tmp - 20*expected_stim_start{i}(j)));
 
             stim_starts(j) = stim_starts_tmp(best_ind);
             stim_starts_tmp(best_ind) = [];
@@ -29,8 +29,8 @@ for i = 1:length(trials)
     else
         stim_starts = stim_starts_tmp;
         
-        if stim_starts > num_stims
-            while length(stim_starts) > num_stims
+        if stim_starts > num_stims(i)
+            while length(stim_starts) > num_stims(i)
 %                 disp('in while')
                 itis = diff(stim_starts);
 %                 assignin('base','itis',itis)
@@ -61,8 +61,8 @@ for i = 1:length(trials)
             end
         end
     end
-    assignin('base','stim_starts',stim_starts)
-    stacks = build_stim_stack_multi(traces,stim_starts,.040*20000);
+%     assignin('base','stim_starts',stim_starts)
+    stacks = build_stim_stack_multi(traces,stim_starts,.025*20000);
     traces_ch1{i} = stacks{1};
     traces_ch2{i} = stacks{2};
 end
