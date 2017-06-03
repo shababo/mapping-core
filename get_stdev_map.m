@@ -1,6 +1,6 @@
-function corr_image = get_corr_image(trace_array,do_plot,neighborhood_size)
+function std_dev_map = get_stdev_map(trace_array,do_plot,neighborhood_size)
 
-corr_image = zeros(size(trace_array));
+std_dev_map = zeros(size(trace_array));
 
 for i = 1:size(trace_array,1)
     for j = 1:size(trace_array,2)
@@ -20,22 +20,20 @@ for i = 1:size(trace_array,1)
                 end
             end
         end
-        corrs = triu(corr(traces(:,:)'),1);
-        unique_corrs = unique(corrs(:));
-        unique_corrs = unique_corrs(2:end); % get rid of leading 0
-        corr_image(i,j) = mean(unique_corrs);
+        these_stds = std(these_traces,[],2);
+        std_dev_map(i,j) = mean(these_stds);
 %         switch min_or_max
 %                 case 'min'
-%                     corr_image(i,j) = mean_trace(.005*20000) - min(mean_trace);
+%                     std_dev_map(i,j) = mean_trace(.005*20000) - min(mean_trace);
 %                         
 %                 case 'max'
 %                     maxes = max(trace_array{i,j},[],2);
 %                     starts = trace_array{i,j}(:,.005*20000);
-%                     corr_image(i,j) = mean(max(traces));
-%                     corr_image(i,j) =  mean(maxes - starts);
+%                     std_dev_map(i,j) = mean(max(traces));
+%                     std_dev_map(i,j) =  mean(maxes - starts);
 %             end
         else
-            corr_image(i,j) = NaN;
+            std_dev_map(i,j) = NaN;
         end
         
     end
@@ -43,8 +41,8 @@ end
 
 if do_plot
    
-%     surf(1:size(corr_image,1),size(corr_image,2):-1:1,corr_image)
-    imagesc(corr_image)
+%     surf(1:size(std_dev_map,1),size(std_dev_map,2):-1:1,std_dev_map)
+    imagesc(std_dev_map)
     colormap hot
     colorbar
 end
