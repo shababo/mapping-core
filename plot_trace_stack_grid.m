@@ -80,15 +80,21 @@ for i = 1:num_cols
                 these_events = events{j,i};
                 event_times = [];
                 event_pos = [];
-                for ii = 1:length(offsets)
-                    if iscell(these_events{ii})
-                        event_times = [event_times these_events{ii}];
-                    else
-                        event_times = [event_times these_events(ii).times];
+                if ~ isempty(these_events)
+%                     length(offsets)
+                    for ii = 1:length(offsets)
+                        if iscell(these_events)
+                            this_struct = these_events{ii};
+                        else
+                            this_struct = these_events(ii);                        
+                        end
+                        event_times = [event_times this_struct.times];
+                        event_pos = [event_pos (offsets(ii) + grid_offset_y(j))*ones(size(this_struct.times))];
                     end
-                    event_pos = [event_pos (offsets(ii) + grid_offset_y(j))*ones(size(these_events{ii}))];
+                event_pos(event_times > length(time)-20) = [];
+                event_times(event_times > length(time)-20) = [];
+                scatter(time(round(event_times)),event_pos,20*ones(size(event_pos)),'filled')
                 end
-                scatter(time(round(event_times)),event_pos,[],'filled')
                 hold on;
             end
             

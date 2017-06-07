@@ -4,11 +4,11 @@ function [maps,mpp_maps,map_index,corr_maps] = see_grid_multi(traces,mpp,sequenc
 
 [maps, mpp_maps, map_index] = build_slm_maps_multi(...
     traces,mpp,sequence,stim_key,spacing);
-
+% assignin('base','mpp_maps',mpp_maps)
 if do_plot
     figure
 %     subplot(121)
-    plot_trace_stack_grid(maps{1},Inf,1,0);
+    plot_trace_stack_grid(maps{1},Inf,1,0,[],[],[],mpp_maps{1});
     title(['Power = ' num2str(sequence(1).target_power) ' mW'])
 %     subplot(223)
 %     plot_trace_stack_grid(maps{2},Inf,5,0);

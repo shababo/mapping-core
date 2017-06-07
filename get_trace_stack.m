@@ -28,7 +28,7 @@ for trial = 1:size(traces,1)
     trace_to_plot = traces(trial,this_trial_start:this_trial_start+trial_length);
     
     traces_offset = [traces_offset; downsample(trace_to_plot - offset - trace_to_plot(1),down_sample_rate)];
-    offsets = [offsets  -offset - trace_to_plot(1)];
+    offsets = [offsets  -offset];
    
     offset = offset + offset_step;
     
