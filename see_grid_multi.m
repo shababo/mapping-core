@@ -14,7 +14,6 @@ else
 end
 
 [maps, mpp_maps, map_index] = build_slm_maps_multi(...
-
     traces,mpp,sequence,stim_key,spacing,[-150 150],[-150 150]);
 
 
