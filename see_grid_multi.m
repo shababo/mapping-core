@@ -28,8 +28,8 @@ end
 
 
 if do_std_map
-    stddev_maps{1} = get_stdev_map(trace_array,do_plot,neighborhood_size);
-    stddev_maps{2} = get_stdev_map(trace_array,do_plot,neighborhood_size);
+    stddev_maps{1} = get_stdev_map(maps{1},0,0);
+    stddev_maps{2} = get_stdev_map(maps{2},0,0);
 else
     stddev_maps = cell();
 end
@@ -48,14 +48,14 @@ subplot(221);
 imagesc(corr_maps{1}); caxis([0 0.5])
 title(['Cell 1 Corr Map: Power = ' num2str(sequence(1).target_power) ' mW'])
 figure
-subplot(221); 
+subplot(222); 
 imagesc(stddev_maps{1}); %caxis([0 1])
 title(['Cell 1 Stddev Map: Power = ' num2str(sequence(1).target_power) ' mW'])
-subplot(221); 
+subplot(223); 
 imagesc(corr_maps{2}); caxis([0 0.5])
 title(['Cell 2 Corr Map: Power = ' num2str(sequence(1).target_power) ' mW'])
 figure
-subplot(221); 
+subplot(224); 
 imagesc(stddev_maps{2}); %caxis([0 1])
 title(['Cell 2 Stddev Map: Power = ' num2str(sequence(1).target_power) ' mW'])
 
