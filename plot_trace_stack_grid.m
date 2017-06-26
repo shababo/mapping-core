@@ -17,11 +17,17 @@ if length(varargin) > 3 && ~isempty(varargin{4})
     events = varargin{4};
 end
 
+if length(varargin) > 4 && ~isempty(varargin{5})
+    loc_names = varargin{5};
+else
+    loc_names = [];
+end
+
 
 [num_rows, num_cols] = size(traces_array);
 
 count = 1;
-grid_offset_y_spacer = 400;
+grid_offset_y_spacer = 100;
 grid_offset_y = -grid_offset_y_spacer;
 grid_offset_x = .015;
 
@@ -76,6 +82,15 @@ for i = 1:num_cols
             end
             plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
             hold on
+            
+            x1 = time(20);
+            y1 = these_traces_offset(1,20)' + grid_offset_y(j) + 20;
+            if isempty(loc_names)
+                txt1 = [num2str(j) ', ' num2str(i) ' bins'];
+            else
+                txt1 = loc_names{j,i};
+            end
+            text(x1,y1,txt1)
             if exist('events','var')
                 these_events = events{j,i};
                 event_times = [];
@@ -93,7 +108,7 @@ for i = 1:num_cols
                     end
                 event_pos(event_times > length(time)-20) = [];
                 event_times(event_times > length(time)-20) = [];
-                scatter(time(round(event_times)),event_pos,20*ones(size(event_pos)),'filled')
+                scatter(time(round(event_times)),event_pos+10,20*ones(size(event_pos)),[.0 .5 1],'filled')
                 end
                 hold on;
             end

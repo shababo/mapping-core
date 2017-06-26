@@ -21,7 +21,7 @@ for i = 1:length(trials)
         stim_starts = zeros(size(expected_stim_start{i}));
         for j = 1:num_stims(i)
             [min_diff, best_ind] = ...
-                min(abs(stim_starts_tmp - 20*expected_stim_start{i}(j)));
+                min(abs(stim_starts_tmp - 20*expected_stim_start{i}(j))); % MAGIC NUMBER
 
             stim_starts(j) = stim_starts_tmp(best_ind);
             stim_starts_tmp(best_ind) = [];

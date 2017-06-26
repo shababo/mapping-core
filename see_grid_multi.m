@@ -16,11 +16,24 @@ end
 [maps, mpp_maps, map_index] = build_slm_maps_multi(...
     traces,mpp,sequence,stim_key,spacing,[-150 150],[-150 150]);
 
+loc_names = cell(size(maps{1}));
+center = ceil((size(maps{1})-1)*spacing/2) + 1;
+
+for i = 1:size(maps{1},1)
+    for j = 1:size(maps{1},2)
+        
+        loc_names{i,j} = [num2str((i-1)*spacing - center(1)) ', ' ...
+                         num2str((j-1)*spacing - center(2)) ' um'];
+                     
+    end
+end
+
+assignin('base','loc_names',loc_names)
 
 if show_raw_data
     figure
 %     subplot(121)
-    plot_trace_stack_grid(maps{1},Inf,1,0,[],[],[],mpp_maps{1});
+    plot_trace_stack_grid(maps{1},Inf,1,0,[],[],[],mpp_maps{1},loc_names);
     title(['Power = ' num2str(sequence(1).target_power) ' mW'])
 %     subplot(223)
 %     plot_trace_stack_grid(maps{2},Inf,5,0);
@@ -28,18 +41,19 @@ end
 
 
 if do_std_map
-    stddev_maps{1} = get_stdev_map(trace_array,do_plot,neighborhood_size);
-    stddev_maps{2} = get_stdev_map(trace_array,do_plot,neighborhood_size);
+    figure
+    stddev_maps{1} = get_stdev_map(maps{1},1,0);
+    stddev_maps{2} = get_stdev_map(maps{2},0,0);
 else
-    stddev_maps = cell();
+    stddev_maps = cell(2,1);
 end
 
-
+ 
 if do_corr_map
     corr_maps{1} = get_corr_image(maps{1},0,0);
     corr_maps{2} = get_corr_image(maps{2},0,0);
 else
-    corr_maps = cell();
+    corr_maps = cell(2,1);
 end
 
 if do_corr_map

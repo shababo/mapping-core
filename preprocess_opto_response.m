@@ -1,23 +1,38 @@
 function [spike_data, voltage_data, current_data, intrinsics] = ...
-    preprocess_opto_response(data,start_trial,cc_spike_thresh,...
-    ca_num_spike_locs,ca_spike_thresh,do_cc,cc_num_spike_locs,do_vc,...
-    stim_start,cell_pos,first_spike_only,trial_dur,do_hpf)
+    preprocess_opto_response(data,cell_ch,cc_spike_thresh,...
+    ca_trials,ca_spike_thresh,do_cc,cc_trials,intrinsics_trial,...
+    do_vc,vc_shape_trials,vc_power_curve_trial,...
+    cell_pos_offset,first_spike_only,trial_dur,do_hpf)
 
 % power response curves
 spike_data = struct();
 voltage_data = struct();
 current_data = struct();
 intrinsics = struct();
+ca_num_spike_locs = length(ca_trials);
+cc_num_spike_locs = length(cc_trials);
 
+% if isnan(cell_pos_offset)
+%     cell_pos_offset = 
 for j = 1:ca_num_spike_locs
     
-    trial = j+start_trial-1;
+%     trial = j+start_trial-1;
+    trial = ca_trials(j);
     this_seq = data.trial_metadata(trial).sequence;
     powers = unique([this_seq.target_power]);
     expected_stim_starts = {[this_seq.start]};
-    [trace_stack] = ...
+    [trace_stack_ch1, trace_stack_ch2] = ...
         get_stim_stack(data,trial,...
         length(this_seq),expected_stim_starts);
+    if cell_ch == 1
+        trace_stack = trace_stack_ch1;
+        cell_pos = data.trial_metadata(trial).cell_position;
+    elseif cell_ch == 2
+        trace_stack = trace_stack_ch2;
+        cell_pos = data.trial_metadata(trial).cell2_position;
+    else
+        disp('BAD CHANNEL ID')
+    end
     trace_grid = cell(length(powers),1);
     spike_times_grid = cell(length(powers),1);
     spike_data(j).num_spike_means = zeros(1,length(powers));
@@ -44,7 +59,9 @@ for j = 1:ca_num_spike_locs
     spike_data(j).spike_times = spike_times_grid;
     spike_data(j).powers = powers;
     stim_ind = this_seq(1).precomputed_target_index;
-    stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - cell_pos;
+    stim_pos = ...
+        data.trial_metadata(trial).stim_key(stim_ind,:) + ...
+        data.trial_metadata(trial).ref_obj_position - cell_pos - cell_pos_offset;
     spike_data(j).location = stim_pos;
 
     
@@ -59,14 +76,25 @@ if do_cc
     for j = 1:cc_num_spike_locs
         
         
-
-        trial = j+start_trial-1+ca_num_spike_locs+2;
+        trial = ca_trials(j);
+%         trial = j+start_trial-1+ca_num_spike_locs+2;
         this_seq = data.trial_metadata(trial).sequence;
         powers = unique([this_seq.target_power]);
         expected_stim_starts = {[this_seq.start]};
-        [trace_stack] = ...
+        [trace_stack_ch1,trace_stack_ch2] = ...
             get_stim_stack(data,trial,...
             length(this_seq),expected_stim_starts);
+        
+        if cell_ch == 1
+            trace_stack = trace_stack_ch1;
+            cell_pos = data.trial_metadata(trial).cell_position;
+        elseif cell_ch == 2
+            trace_stack = trace_stack_ch2;
+            cell_pos = data.trial_metadata(trial).cell2_position;
+        else
+            disp('BAD CHANNEL ID')
+        end
+        
         trace_grid = cell(length(powers),1);
         spike_times_grid = cell(length(powers),1);
         voltage_data(j).num_spike_means = zeros(1,length(powers));
@@ -98,7 +126,10 @@ if do_cc
         voltage_data(j).powers = powers;
 
         stim_ind = this_seq(1).precomputed_target_index;
-        stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - cell_pos;
+%         stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - cell_pos_offset;
+        stim_pos = ...
+            data.trial_metadata(trial).stim_key(stim_ind,:) + ...
+            data.trial_metadata(trial).ref_obj_position - cell_pos - cell_pos_offset;
         voltage_data(j).location = stim_pos;
         
 %         voltage_data(j).num_spike_means = cell2float(cellfun(@(x) sum(cellfun(@(y) ~isempty(y),x)),spike_times_grid,'UniformOutput',0))./cellfun(@(x) length(x),spike_times_grid);
@@ -109,8 +140,8 @@ end
 
 if do_vc
         
-    trial = start_trial+ca_num_spike_locs+cc_num_spike_locs+2;
-
+%     trial = start_trial+ca_num_spike_locs+cc_num_spike_locs+2;
+    trial = vc_power_curve_trial;
     this_seq = data.trial_metadata(trial).sequence;
     powers = unique([this_seq.target_power]);
     [trace_stack] = ...
@@ -121,7 +152,7 @@ if do_vc
         trace_grid{i} = trace_stack([this_seq.target_power] == powers(i),:);
     end  
     stim_ind = this_seq(1).precomputed_target_index;
-    stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - cell_pos;
+    stim_pos = data.trial_metadata(trial).stim_key(stim_ind,:) + round(data.trial_metadata(trial).relative_position) - cell_pos_offset;
     current_data.power_response = trace_grid;
     current_data.powers = powers;
     current_data.power_response_pos = stim_pos;
@@ -135,17 +166,23 @@ if do_vc
 end
 
 if do_vc || do_cc
-    intrinsics_trial = start_trial + ca_num_spike_locs + 1;
+%     intrinsics_trial = start_trial + ca_num_spike_locs + 1;
     intrinsics.data = data.sweeps{intrinsics_trial}(:,1)';
 end
 
+
+% THIS NEEDS TO BE FIXED UP TO PROPERLY COMPUTE LOCATIONS GIVEN NEW DATA
+% STRUCT
 if do_vc
+    
+    
+%     vc_trial_1 = start_trial + ca_num_spike_locs+cc_num_spike_locs + 3;
 
-    vc_trial_1 = start_trial + ca_num_spike_locs+cc_num_spike_locs + 3;
-
-    z_depths = [data.trial_metadata(vc_trial_1:end).relative_position];
-    z_depths = unique(round(z_depths(3:3:end),-1))
-    num_depths = length(z_depths);
+%     z_depths = [data.trial_metadata(vc_shape_trials).relative_position];
+    z_depths = [data_fix_ex.trial_metadata(vc_shape_trials).stim_key];
+    z_depths = unique(round(z_depths(3:3:end),-1));
+%     num_depths = length(z_depths);
+    num_depths = length(vc_shape_trials);
     largest_grid = 9;
     all_trials = [];
     all_inds = [];
@@ -153,13 +190,14 @@ if do_vc
     shape_svd = zeros(largest_grid,largest_grid,num_depths);
     shape_max = zeros(largest_grid,largest_grid,num_depths);
 
-    for j = vc_trial_1+(0:num_depths-1)
+    for j = 1:length(vc_shape_trials);
 
 
-        trial = j;
+%         trial = j;
+        trial = vc_shape_trials(j);
         this_seq = data.trial_metadata(trial).sequence;
         stim_key = data.trial_metadata(trial).stim_key([this_seq.precomputed_target_index],:);
-        targets = bsxfun(@plus,stim_key,round(data.trial_metadata(trial).relative_position,-1) - cell_pos);
+        targets = bsxfun(@plus,stim_key,round(data.trial_metadata(trial).relative_position,-1) - cell_pos_offset);
         inds = [targets(:,[1 2])/10 + 5 repmat(find(z_depths == targets(1,3)),size(targets,1),1)]; % DON'T HARD CODE THESE VALUES
         [trace_stack] = ...
             get_stim_stack(data,trial,...

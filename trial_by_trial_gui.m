@@ -22,7 +22,7 @@ function varargout = trial_by_trial_gui(varargin)
 
 % Edit the above text to modify the response to help trial_by_trial_gui
 
-% Last Modified by GUIDE v2.5 19-Apr-2017 11:37:00
+% Last Modified by GUIDE v2.5 14-Jun-2017 14:56:47
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -153,26 +153,54 @@ end
 
 switch handles.data.trial_metadata(trace_ind).cell1_clamp_type
     case 'current-clamp'
-        this_trace = handles.data.sweeps{trace_ind}(:,1)*1;
+        this_trace_ch1 = handles.data.sweeps{trace_ind}(:,1)*1;
     case 'voltage-clamp'
-        this_trace = handles.data.sweeps{trace_ind}(:,1);
+        this_trace_ch1 = handles.data.sweeps{trace_ind}(:,1);
     case 'cell-attached'
-        this_trace = -(handles.data.sweeps{trace_ind}(:,1) - median(handles.data.sweeps{trace_ind}(1:10,1)));
+        this_trace_ch1 = (handles.data.sweeps{trace_ind}(:,1) - median(handles.data.sweeps{trace_ind}(1:10,1)));
+end
+switch handles.data.trial_metadata(trace_ind).cell2_clamp_type
+    case 'current-clamp'
+        this_trace_ch2 = handles.data.sweeps{trace_ind}(:,2)*1;
+        flip = 1;
+    case 'voltage-clamp'
+        this_trace_ch2 = handles.data.sweeps{trace_ind}(:,2);
+        flip = 1;
+    case 'cell-attached'
+        flip = -1;
+        this_trace_ch2 = (handles.data.sweeps{trace_ind}(:,2) - ...
+            median(handles.data.sweeps{trace_ind}(1:10,2)));
 end
 if get(handles.hpf,'Value')
-    this_trace = highpass_filter(this_trace,20000);
+    this_trace_ch1 = highpass_filter(this_trace_ch1,20000);
+    this_trace_ch2 = highpass_filter(this_trace_ch1,20000);
 end
 
-plot(timebase,this_trace); hold on; plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*10 + 10)
+if get(handles.ch1_on,'Value')
+    plot(timebase,this_trace_ch1); hold on;
+end
+plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*10 + 10)
 hold on;
+if get(handles.ch2_on,'Value')
+    plot(timebase,this_trace_ch2);
+    hold on
+end
 if get(handles.draw_thresh,'Value')
     thresh = str2double(get(handles.thresh,'String'));
-    plot(timebase,thresh*ones(size(timebase)))
+    plot(timebase,flip*thresh*ones(size(timebase)))
     hold on;
-    crossings = detect_peaks(this_trace',thresh,30,0,length(this_trace),-Inf,0,0,0);
-    crossings = crossings{1};
-    scatter(timebase(crossings),thresh*ones(size(crossings)))
-    hold on
+    if get(handles.ch1_on,'Value')
+        crossings1 = detect_peaks(flip*this_trace_ch1',thresh,30,0,length(this_trace_ch1),-Inf,0,0,0);
+        crossings1 = crossings1{1};
+        scatter(timebase(crossings1),flip*thresh*ones(size(crossings1)))
+        hold on
+    end
+    if get(handles.ch2_on,'Value')
+        crossings2 = detect_peaks(flip*this_trace_ch2',thresh,30,0,length(this_trace_ch2),-Inf,0,0,0);
+        crossings2 = crossings2{1};
+        scatter(timebase(crossings2),flip*thresh*ones(size(crossings2)))
+        hold on
+    end
 end
 
 % hold on;
@@ -299,4 +327,24 @@ function draw_thresh_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of draw_thresh
 
+draw_plot(handles)
+
+
+% --- Executes on button press in ch1_on.
+function ch1_on_Callback(hObject, eventdata, handles)
+% hObject    handle to ch1_on (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of ch1_on
+draw_plot(handles)
+
+
+% --- Executes on button press in ch2_on.
+function ch2_on_Callback(hObject, eventdata, handles)
+% hObject    handle to ch2_on (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of ch2_on
 draw_plot(handles)

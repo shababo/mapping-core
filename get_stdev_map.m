@@ -1,5 +1,5 @@
 function std_dev_map = get_stdev_map(trace_array,do_plot,neighborhood_size)
-
+size(trace_array)
 std_dev_map = zeros(size(trace_array));
 
 for i = 1:size(trace_array,1)
@@ -20,7 +20,7 @@ for i = 1:size(trace_array,1)
                 end
             end
         end
-        these_stds = std(these_traces,[],2);
+        these_stds = std(traces,[],2);
         std_dev_map(i,j) = mean(these_stds);
 %         switch min_or_max
 %                 case 'min'
