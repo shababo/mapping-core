@@ -1,4 +1,4 @@
-function [maps,map_index,corr_maps,stddev_maps] = ...
+function [maps,mpp_maps,map_index,corr_maps,stddev_maps] = ...
     summarize_map(data,trials,show_raw_data,do_stdmap,do_corrmap)
 
 
@@ -31,6 +31,10 @@ for i = 1:length(trials)
 end
 power_curve_num = unique([power_curve_num{:}]);
 maps = cell(length(power_curve_num),1);
+mpp_maps = cell(length(power_curve_num),1);
+map_index = cell(length(power_curve_num),1);
+corr_maps = cell(length(power_curve_num),1);
+stddev_maps = cell(length(power_curve_num),1);
 this_seq = [this_seq{:}];
 max_trial = length(this_seq);
 % max_trial = 1200;
@@ -39,7 +43,7 @@ max_trial = length(this_seq);
         stims_per_trial,stim_starts);
 stim_inds = [full_seq.precomputed_target_index];
 % on_cell_trials = isnan(full_stim_key(stim_inds,1,2));
-on_cell_trials = ones(size(on_cell_trials));
+on_cell_trials = ones(size([full_seq.target_power]))';
 for i = 1:length(power_curve_num)
     
     
@@ -48,8 +52,8 @@ for i = 1:length(power_curve_num)
     traces_pow{2} = traces_ch2(on_cell_trials' & [full_seq.target_power] == power_curve_num(i),:);
     this_seq_power = full_seq(on_cell_trials' & [full_seq.target_power] == power_curve_num(i));
 %     mpp_pow = mpp(on_cell_trials' & [full_seq.target_power] == power_curve_num(i));
-    [maps,map_index,corr_maps,stddev_maps] = ...
-        see_grid_multi(traces_pow,this_seq_power,full_stim_key,5,show_raw_data,do_stdmap,do_corrmap);
+    [maps{i},mpp_maps{i},map_index{i},corr_maps{i},stddev_maps{i}] = ...
+        see_grid_multi(traces_pow,[],this_seq_power,full_stim_key,5,show_raw_data,do_stdmap,do_corrmap);
     if show_raw_data
         title(['Power = ' num2str(power_curve_num(j)) ' mW'])
     end
@@ -71,7 +75,8 @@ for j = 1:length(power_curve_num)
     traces_pow{1} = traces_ch1([this_seq_plot.target_power] == power_curve_num(j),:);
     traces_pow{2} = traces_ch2([this_seq_plot.target_power] == power_curve_num(j),:);
     this_seq_power = this_seq_plot([this_seq_plot.target_power] == power_curve_num(j));
-    [~,~,~,stddev_maps] = ...
+    maps,mpp_maps,map_index,corr_maps,stddev_maps
+    [maps{j},mpp_maps{j},map_index{j},corr_maps{j},stddev_maps{j}] = ...
         see_grid_multi(traces_pow,this_seq_power,this_stim_key,5,show_raw_data);
     if show_raw_data
         title(['Power = ' num2str(power_curve_num(j)) ' mW'])
