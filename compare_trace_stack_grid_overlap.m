@@ -52,7 +52,7 @@ for array_i = 1:num_arrays
     max_traces
     
     count = 1;
-    grid_offset_y_spacer = 400*max_traces;
+    grid_offset_y_spacer = 50*max_traces;
     if array_i == 1
         grid_offset_y = -grid_offset_y_spacer;
     end

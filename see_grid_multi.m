@@ -36,7 +36,8 @@ if show_raw_data
     plot_trace_stack_grid(maps{1},Inf,1,0,[],[],[],mpp_maps{1},loc_names);
     title(['Power = ' num2str(sequence(1).target_power) ' mW'])
 %     subplot(223)
-%     plot_trace_stack_grid(maps{2},Inf,5,0);
+    figure
+	plot_trace_stack_grid(maps{2},Inf,1,0,[],[],[],mpp_maps{2},loc_names);
 end
 
 
@@ -75,7 +76,7 @@ title(['Cell 2 Stddev Map: Power = ' num2str(sequence(1).target_power) ' mW'])
 
 end
 
-maps = maps{1};
+maps = maps;
 corr_maps = corr_maps{1};
 mpp_maps = mpp_maps{1};
 % assignin('base','maps',maps)
