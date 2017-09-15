@@ -7,6 +7,12 @@ else
     expected_stim_start = [];
 end
 
+if length(varargin) > 1 && ~isempty(varargin{2})
+    Fs = varargin{2};
+else
+    Fs = 20000;
+end
+
 traces_ch1 = cell(1,length(trials));
 traces_ch2 = cell(1,length(trials));
 for i = 1:length(trials)

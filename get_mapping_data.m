@@ -1,71 +1,84 @@
-function [trace_grids, current_image] = get_mapping_data(filename,run,min_or_max,plot_grid,plot_image,varargin)%,max_traces,trace_limits, plot_grid,min_or_max,plot_image)
+function [maps, power_curve_num, varargout] = get_mapping_data(data,trials,varargin)
 
-%% corr images - 2 cells
+mpp_pow = [];
+if ~isempty(varargin) && ~isempty(varargin{1})
+    mpp_pow = varargin{1};
+end
 
-figure
-subplot(121)
-varargin{:}
+if length(varargin) > 1 && ~isempty(varargin{2})
+    Fs = varargin{2};
+else
+    Fs = 20000;
+end
 
-trace_grid_ch1 = build_trace_grid(filename, run, 1, 20, [], 1,[],0,varargin{:});
-title('Cell 1')
-subplot(122)
-current_image = get_current_image(squeeze(trace_grid_ch1),min_or_max,1);
-title('amplitude')
-axis off
-colorbar
-% surf1 = gca;
-% subplot(222)
-% % % 
-% corr_image_ch1 = get_corr_image(squeeze(trace_grid_ch1),plot_image,0);
-% current_image = corr_image_ch1;
-title('current peaks')
-axis off
-% % % 
-% % % subplot(223)
-% % %  varargin{:}
-% % % 
-% % % trace_grid_ch2 = build_trace_grid(filename, run, 2, 20, [], 1,[],0,varargin{:});
-% % % title('Cell 2')
-% % % % subplot(132)
-% % % % current_image = get_current_image(trace_grid,min_or_max,1);
-% % % % title('amplitude')
-% % % % axis off
-% % % % surf1 = gca;
-% % % subplot(224)
-% % % 
-% % % corr_image_ch2 = get_corr_image(trace_grid_ch2,plot_image);
-% % % current_image = corr_image_ch2;8
-% % % title('local correlations')
-% % % axis off
-% % % 
-% % % disp('corr of images: ')
-% % % corr([corr_image_ch1(:) corr_image_ch2(:)])
-% % % 
-% % % trace_grids = {trace_grid_ch1, trace_grid_ch2};
+% load(filename)
 
-trace_grids = trace_grid_ch1;
+this_seq = cell(length(trials),1);
+this_stim_key = cell(length(trials),1);
+power_curve_num = cell(length(trials),1);
+stim_starts = cell(length(trials),1);
 
-% compare_trace_stack_grid(trace_grids,3,1,[subplot(221) subplot(223)],0,{'cell1','cell2'},1)
+full_stim_key = [];
 
-% set(gcf,'units','inches')
-% set(gcf,'Position',[3.0521   -0.0521   14.6979   11.4062])
-% 
-% set(gcf,'PaperSize',[15 12])
-% set(gcf,'PaperPosition',[.2   .2   14.6979   11.4062])
-% 
-% 
-% fig_save_str = ['quickfigs/' filename(1:end-4) '_' num2str(run) '.pdf'];
-% export_fig(fig_save_str,'-opengl')
+for i = 1:length(trials)
+    cur_trial = trials(i);
+    this_seq{i} = data.trial_metadata(cur_trial).sequence;
+    stims_per_trial(i) = length(this_seq{i});
+    this_stim_key{i} = data.trial_metadata(cur_trial).stim_key;
+    power_curve_num{i} = unique([this_seq{i}.target_power]);
+    stim_starts{i} = [data.trial_metadata(cur_trial).sequence.start];
+    for j = 1:length(this_seq{i})
+        if i == 1 && j == 1
+            full_seq(1) = this_seq{i}(j);
+        else
+            full_seq(end+1) = this_seq{i}(j);
+        end
+        full_seq(end).precomputed_target_index = ...
+            full_seq(end).precomputed_target_index + size(full_stim_key,1);
+    end
+    full_stim_key = [full_stim_key; this_stim_key{i}];
+end
+power_curve_num = unique([power_curve_num{:}]);
+maps = cell(length(power_curve_num),1);
+this_seq = [this_seq{:}];
+max_trial = length(this_seq);
+% max_trial = 1200;
+[traces_ch1,traces_ch2] = ...
+    get_stim_stack(data,trials,...
+        stims_per_trial,stim_starts,Fs);
+stim_inds = [full_seq.precomputed_target_index];
+% on_cell_trials = isnan(full_stim_key(stim_inds,1,2));
+on_cell_trials = ones(size(stim_inds))';
+% power_curve_num = 150;
+traces = [];
+stim_pow = [];
+target_locs = [];
+stim_inds = [];
+deorder = [];
+num_trials = 0;
+spacing = 1;
+% power_curve_num = power_curve_num(end-1:end);
+for i = 1:length(power_curve_num)
+    
+    
+%     this_seq = this_seq(1:max_trial);
+    traces_pow{1} = traces_ch1(on_cell_trials' & [full_seq.target_power] == power_curve_num(i),:);
+%     traces = [traces; traces_pow{1}];
+%     deorder = [deorder find(on_cell_trials' & [full_seq.target_power] == power_curve_num(i))]; 
+    traces_pow{2} = traces_ch2(on_cell_trials' & [full_seq.target_power] == power_curve_num(i),:);
+    this_seq_power = full_seq(on_cell_trials' & [full_seq.target_power] == power_curve_num(i));
+%     mpp_pow = mpp(on_cell_trials' & [full_seq.target_power] == power_curve_num(i));
+%     mpp_pow = mpp(num_trials+(1:length(this_seq_power)));
+    mpp_pow = [];
+    num_trials = num_trials + length(this_seq_power);
+    [maps{i}, mpp_maps{i}] = see_grid_multi(traces_pow,mpp_pow,this_seq_power,full_stim_key,spacing,0);
+%     title(['Power = ' num2str(power_curve_num(i)) ' mW'])
+%     xlim(xlims); ylim(ylims);
+%     get_mean_events_image(mpp_maps{i}, 2000, 1, 1);
+%     title(['Event Counts, Power = ' num2str(power_curve_num(i)) ' mW'])
+%     caxis([0 2])
+end
 
-% saveas(gcf,['quickfigs/' filename(1:end-4) '_' num2str(run) '.pdf'])
-
-
-% saveas(gcf,['quickfigs/' filename(1:end-4) '_' num2str(run) '.jpg'])
-
-        
-%% 1 cell multi z spiking
-% figure
-% varargin{:}
-% 
-% trace_grids = build_trace_grid(filename, run, 2, 3, [], 1,[],1,varargin{:});
-
+if ~isempty(mpp_pow)
+    varargout{1} = mpp_maps;
+end

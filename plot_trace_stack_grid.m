@@ -103,11 +103,13 @@ for i = 1:num_cols
                         else
                             this_struct = these_events(ii);                        
                         end
-                        event_times = [event_times this_struct.times];
+                        event_times = [event_times this_struct.times]
                         event_pos = [event_pos (offsets(ii) + grid_offset_y(j))*ones(size(this_struct.times))];
                     end
                 event_pos(event_times > length(time)-20) = [];
                 event_times(event_times > length(time)-20) = [];
+                event_pos(event_times < 20) = [];
+                event_times(event_times < 20) = [];
                 scatter(time(round(event_times)),event_pos+10,20*ones(size(event_pos)),[.0 .5 1],'filled')
                 end
                 hold on;

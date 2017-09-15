@@ -1,46 +1,70 @@
 function [spike_data, voltage_data, current_data, intrinsics] = ...
-    preprocess_opto_response(data,cell_ch,cc_spike_thresh,...
+    preprocess_opto_response_v2(data,cell_ch,cc_spike_thresh,...
     ca_trials,ca_spike_thresh,do_cc,cc_trials,intrinsics_trial,...
-    do_vc,vc_shape_trials,vc_power_curve_trial,...
-    cell_pos_offset,first_spike_only,trial_dur,do_hpf,start_trial)
+    do_vc,vc_shape_trials,vc_power_curve_trial,cell_pos,first_spike_only,...
+    trial_dur,do_hpf,targ_dist_lims,stim_z)
 
 % power response curves
 spike_data = struct();
 voltage_data = struct();
 current_data = struct();
 intrinsics = struct();
-ca_num_spike_locs = length(ca_trials);
-cc_num_spike_locs = length(cc_trials);
 
-% if isnan(cell_pos_offset)
-%     cell_pos_offset = 
-for j = 1:ca_num_spike_locs
-    
-%     trial = j+start_trial-1;
-    trial = ca_trials(j)+start_trial-1;
-    this_seq = data.trial_metadata(trial).sequence;
-    powers = unique([this_seq.target_power]);
-    expected_stim_starts = {[this_seq.start]};
-    [trace_stack_ch1, trace_stack_ch2] = ...
-        get_stim_stack(data,trial,...
-        length(this_seq),expected_stim_starts);
-    if cell_ch == 1
-        trace_stack = trace_stack_ch1;
-        cell_pos = data.trial_metadata(trial).cell_position;
-    elseif cell_ch == 2
-        trace_stack = trace_stack_ch2;
-        cell_pos = data.trial_metadata(trial).cell2_position;
-    else
-        disp('BAD CHANNEL ID')
+distmat = squareform(pdist([data.trial_metadata(ca_trials(1)).nuclear_locs; cell_pos]));
+targ_dists = distmat(end,1:end-3);
+[~, detected_cell_ind] = min(targ_dists);
+
+if ~isfield(data,'image_um_per_px')
+    data.image_um_per_px = 1.89;
+end
+
+if ~isfield(data,'image_zero_order_coord')
+    data.image_zero_order_coord = [145;147];
+end
+
+if ~isfield(data.trial_metadata,'fluor_vals')
+    [nuclear_locs,~,fluor_vals] = detect_nuclei(data.trial_metadata(ca_trials(1)).stackname,...
+        data.image_um_per_px,data.image_zero_order_coord,[],0);
+end
+
+intrinsics.cell_pos = cell_pos;
+intrinsics.fluor_vals = fluor_vals(detected_cell_ind);
+intrinsics.tissue_depth = nuclear_locs(detected_cell_ind,4);
+
+
+[maps, powers] = get_mapping_data(data,ca_trials);
+% powers = powers(1:end-1);
+% maps = maps(1:end-1);
+
+all_targets = [];
+for i= 1:length(ca_trials)
+    for j = 1:size(data.trial_metadata(ca_trials(i)).stim_key,1)
+        for k = 1:size(data.trial_metadata(ca_trials(i)).stim_key,3)
+            if ~isnan(data.trial_metadata(ca_trials(i)).stim_key(j,1,k))
+                all_targets = [all_targets; [data.trial_metadata(ca_trials(i)).stim_key(j,1:2,k) stim_z]];
+            end
+        end
     end
-    trace_grid = cell(length(powers),1);
+end
+
+all_targets = unique(all_targets,'rows');
+distmat = squareform(pdist([all_targets; cell_pos]));
+targ_dists = distmat(end,1:end-1);
+all_targets = all_targets(targ_dists < targ_dist_lims,:);
+
+for j = 1:size(all_targets,1)
+    spike_power_data = cell(length(powers),1);
     spike_times_grid = cell(length(powers),1);
     spike_data(j).num_spike_means = zeros(1,length(powers));
     spike_data(j).spike_times_means = zeros(1,length(powers));
     spike_data(j).spike_times_std = zeros(1,length(powers));
     for i = 1:length(powers)
-        these_traces = trace_stack([this_seq.target_power] == powers(i),:);
-        trace_grid{i} = these_traces;
+        
+        this_map = maps{i}{cell_ch};
+        x_offset = ceil(size(this_map,1)/2);
+        y_offset = ceil(size(this_map,2)/2);
+        these_traces = this_map{round(all_targets(j,1))+x_offset,round(all_targets(j,2)) + y_offset};
+        spike_power_data{i} = these_traces;
         spike_times = [];
         spike_times_first = [];
         spike_times_grid{i} = detect_peaks(-bsxfun(@minus,these_traces,median(these_traces(:,1:10),2)),ca_spike_thresh,30,0,trial_dur,-Inf,0,do_hpf,first_spike_only);
@@ -53,30 +77,30 @@ for j = 1:ca_num_spike_locs
         spike_data(j).num_spike_means(i) = length(spike_times)/length(spike_times_grid{i});
         spike_data(j).spike_times_means(i) = mean(spike_times_first);
         spike_data(j).spike_times_std(i) = std(spike_times_first);
+        
     end
 
-    spike_data(j).data = trace_grid;
+    spike_data(j).data = spike_power_data;
     spike_data(j).spike_times = spike_times_grid;
     spike_data(j).powers = powers;
-    stim_ind = this_seq(1).precomputed_target_index;
-    stim_pos = ...
-        data.trial_metadata(trial).stim_key(stim_ind,:) + ...
-        data.trial_metadata(trial).ref_obj_position - cell_pos - cell_pos_offset;
+%     stim_ind = this_seq(1).precomputed_target_index;
+    stim_pos = all_targets(j,:) - cell_pos;
     spike_data(j).location = stim_pos;
-
+    
+end
     
 %     spike_data(j).num_spike_means = cell2float(cellfun(@(x) sum(cellfun(@(y) ~isempty(y),x)),spike_times_grid,'UniformOutput',0))./cellfun(@(x) length(x),spike_times_grid);
 %     spike_data(j).spike_times_means = cell2float(cellfun(@(x) nanmean(cell2float(x)),spike_times_grid,'UniformOutput',0));
 %     spike_data(j).spike_times_std = cell2float(cellfun(@(x) nanstd(cell2float(x)),spike_times_grid,'UniformOutput',0));
     
     
-end
+% end
 
 if do_cc
     for j = 1:cc_num_spike_locs
         
         
-        trial = ca_trials(j)+start_trial+1;
+        trial = ca_trials(j);
 %         trial = j+start_trial-1+ca_num_spike_locs+2;
         this_seq = data.trial_metadata(trial).sequence;
         powers = unique([this_seq.target_power]);
@@ -141,7 +165,7 @@ end
 if do_vc
         
 %     trial = start_trial+ca_num_spike_locs+cc_num_spike_locs+2;
-    trial = vc_power_curve_trial+start_trial+1;
+    trial = vc_power_curve_trial;
     this_seq = data.trial_metadata(trial).sequence;
     powers = unique([this_seq.target_power]);
     [trace_stack] = ...
@@ -190,11 +214,11 @@ if do_vc
     shape_svd = zeros(largest_grid,largest_grid,num_depths);
     shape_max = zeros(largest_grid,largest_grid,num_depths);
 
-    for j = 1:length(vc_shape_trials)
+    for j = 1:length(vc_shape_trials);
 
 
 %         trial = j;
-        trial = vc_shape_trials(j)+start_trial-1;
+        trial = vc_shape_trials(j);
         this_seq = data.trial_metadata(trial).sequence;
         stim_key = data.trial_metadata(trial).stim_key([this_seq.precomputed_target_index],:);
         targets = bsxfun(@plus,stim_key,round(data.trial_metadata(trial).relative_position,-1) - cell_pos_offset);
