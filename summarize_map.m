@@ -53,9 +53,9 @@ for i = 1:length(power_curve_num)
     this_seq_power = full_seq(on_cell_trials' & [full_seq.target_power] == power_curve_num(i));
 %     mpp_pow = mpp(on_cell_trials' & [full_seq.target_power] == power_curve_num(i));
     [maps{i},mpp_maps{i},map_index{i},corr_maps{i},stddev_maps{i}] = ...
-        see_grid_multi(traces_pow,[],this_seq_power,full_stim_key,5,show_raw_data,do_stdmap,do_corrmap);
+        see_grid_multi(traces_pow,[],this_seq_power,full_stim_key,1,show_raw_data,do_stdmap,do_corrmap);
     if show_raw_data
-        title(['Power = ' num2str(power_curve_num(j)) ' mW'])
+        title(['Power = ' num2str(power_curve_num(i)) ' mW'])
     end
 %     get_mean_events_image(mpp_maps{i}, 2000, 1, 1);
 %     title(['Event Counts, Power = ' num2str(power_curve_num(i)) ' mW'])
