@@ -80,5 +80,24 @@ set(gcf, 'Color', 'w');
 export_fig(gcf, 'figures/st-chr2-spatial-shape-comparison.pdf','-pdf')
 
 %%
+sock = -1;
+while sock < 0
+    disp('attempting to open socket')
+    sock = msconnect('128.32.177.239',3001);
+    drawnow
+end
+pause(.1)
+instruction = [];
+while isempty(instruction)
+    disp('check for instruction...')
+    [instruction, success] = msrecv(sock,.5);
+end
+
+pause(10)
+return_info.stuff = zeros(678,3);
+mssend(sock,return_info);
 
 
+%%
+msclose(sock)
+clear sock
