@@ -1,10 +1,20 @@
 
-function [maps, mpp_maps, map_index] = build_slm_maps_multi(traces,mpp,sequence,stim_key,spacing,varargin)
+function [maps, mpp_maps, map_index, color_maps] = build_slm_maps_multi(traces,mpp,sequence,stim_key,spacing,varargin)
 
+
+if length(varargin) > 2 && ~isempty(varargin{3})
+    these_colors = varargin{3};
+else
+    for i = 1:length(traces)        
+        these_colors{i} = zeros(size(traces{i},1),3);
+    end
+end
 
 num_cells = length(traces);
 maps = cell(num_cells,1);
 mpp_maps = cell(num_cells,1);
+color_maps = cell(num_cells,1);
+
 
 stim_key_bin = round(stim_key/spacing)*spacing;
 
@@ -58,7 +68,10 @@ for i = 1:num_cells
     
     maps{i} = cell(grid_dims);
     mpp_maps{i} = cell(grid_dims);
+    color_maps{i} = cell(grid_dims);
     these_traces = traces{i};
+    this_mpp = mpp{i};
+    this_color = these_colors{i};
 %     size(these_traces)
     for j = 1:num_traces
         j_stim = sequence(j).precomputed_target_index;
@@ -70,13 +83,17 @@ for i = 1:num_cells
             if isnan(map_index(j_stim,1,k))
                 break
             end
+
             maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
                 [maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
                 these_traces(j,:)];
-            if ~isempty(mpp)
+            color_maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
+                [color_maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
+                this_color(j,:)];
+            if ~isempty(mpp{i})
                 mpp_maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
                     [mpp_maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
-                    mpp(j)];
+                    mpp{i}(j)];
             end
         end
     end
