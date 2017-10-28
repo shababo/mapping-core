@@ -8,7 +8,7 @@ else
 end
 
 if length(varargin) > 1 && ~isempty(varargin{2})
-    do_corr_map = varargin{1};
+    do_corr_map = varargin{2};
 else
     do_corr_map = 0;
 end
@@ -33,11 +33,11 @@ assignin('base','loc_names',loc_names)
 if show_raw_data
     figure
 %     subplot(121)
-    plot_trace_stack_grid(maps{1},Inf,1,0,[],[],[],mpp_maps{1},loc_names);
-    title(['Power = ' num2str(sequence(1).target_power) ' mW'])
+    plot_trace_stack_grid(maps{1},Inf,1,1,[],[],[],mpp_maps{1});%,loc_names);
+%     title(['Power = ' num2str(sequence(1).target_power) ' mW'])
 %     subplot(223)
-    figure
-	plot_trace_stack_grid(maps{2},Inf,1,0,[],[],[],mpp_maps{2},loc_names);
+%     figure
+% 	plot_trace_stack_grid(maps{2},Inf,1,0,[],[],[],mpp_maps{2},loc_names);
 end
 
 
@@ -62,14 +62,14 @@ figure
 subplot(221); 
 imagesc(corr_maps{1}); caxis([0 0.5])
 title(['Cell 1 Corr Map: Power = ' num2str(sequence(1).target_power) ' mW'])
-figure
+
 subplot(222); 
 imagesc(stddev_maps{1}); %caxis([0 1])
 title(['Cell 1 Stddev Map: Power = ' num2str(sequence(1).target_power) ' mW'])
 subplot(223); 
 imagesc(corr_maps{2}); caxis([0 0.5])
 title(['Cell 2 Corr Map: Power = ' num2str(sequence(1).target_power) ' mW'])
-figure
+
 subplot(224); 
 imagesc(stddev_maps{2}); %caxis([0 1])
 title(['Cell 2 Stddev Map: Power = ' num2str(sequence(1).target_power) ' mW'])

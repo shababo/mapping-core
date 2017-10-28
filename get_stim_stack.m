@@ -13,6 +13,12 @@ else
     Fs = 20000;
 end
 
+if length(varargin) > 2 && ~isempty(varargin{3})
+    duration = varargin{3};
+else
+    duration = .050;
+end
+
 traces_ch1 = cell(1,length(trials));
 traces_ch2 = cell(1,length(trials));
 for i = 1:length(trials)
@@ -68,7 +74,7 @@ for i = 1:length(trials)
         end
     end
 %     assignin('base','stim_starts',stim_starts)
-    stacks = build_stim_stack_multi(traces,stim_starts,.025*20000);
+    stacks = build_stim_stack_multi(traces,stim_starts,duration*20000);
     traces_ch1{i} = stacks{1};
     traces_ch2{i} = stacks{2};
 end

@@ -27,7 +27,7 @@ end
 [num_rows, num_cols] = size(traces_array);
 
 count = 1;
-grid_offset_y_spacer = 100;
+grid_offset_y_spacer = 75;
 grid_offset_y = -grid_offset_y_spacer;
 grid_offset_x = .015;
 
@@ -63,14 +63,12 @@ for i = 1:num_cols
 %                 these_traces(k,:) = highpass_filter(these_traces(k,:),20000);
 %             end
             [these_traces_offset, offsets] = get_trace_stack(these_traces,size(these_traces,2)-1,25,downsample_rate);
-            if plot_avg
-                these_traces_offset = mean(these_traces_offset);
-            end
+            
             time = (1:size(these_traces_offset,2))/20000*downsample_rate + (i-1)*(size(these_traces_offset,2)/20000*downsample_rate + grid_offset_x);
 
             if exist('grid_colors','var')
                 if grid_colors.color_i(j,i) == 0
-                    this_color = [0 0 0];
+                    this_color = [1 1 1]*.6;
                 else
                     this_color_i = fix((grid_colors.color_i(j,i)-grid_colors.clims(1))/(grid_colors.clims(2)-grid_colors.clims(1))*size(grid_colors.colormap,1))+1;
                     this_color = grid_colors.colormap(min(this_color_i,size(grid_colors.colormap,1)),:);
@@ -78,17 +76,23 @@ for i = 1:num_cols
             elseif exist('alphas','var')
                 this_color = [0 0 0 alphas(j,i)];
             else
-                this_color = [0 0 0];
+                this_color = [.6 .6 .6];
             end
             plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
             hold on
+            if plot_avg
+                this_color = [0 0 0];
+                these_traces_offset = mean(these_traces_offset);
             
+                plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color,'linewidth',2)
+            end
+            hold on
             x1 = time(20);
             y1 = these_traces_offset(1,20)' + grid_offset_y(j) + 20;
             if isempty(loc_names)
-                txt1 = [num2str(j) ', ' num2str(i) ' bins'];
+                txt1 = '';[num2str(j) ', ' num2str(i) ' bins'];
             else
-                txt1 = loc_names{j,i};
+                txt1 = '';loc_names{j,i};
             end
             text(x1,y1,txt1)
             if exist('events','var')
@@ -103,16 +107,24 @@ for i = 1:num_cols
                         else
                             this_struct = these_events(ii);                        
                         end
-                        event_times = [event_times this_struct.times]
+                        event_times = [event_times this_struct.times];
                         event_pos = [event_pos (offsets(ii) + grid_offset_y(j))*ones(size(this_struct.times))];
                     end
-                event_pos(event_times > length(time)-20) = [];
-                event_times(event_times > length(time)-20) = [];
-                event_pos(event_times < 20) = [];
-                event_times(event_times < 20) = [];
-                scatter(time(round(event_times)),event_pos+10,20*ones(size(event_pos)),[.0 .5 1],'filled')
+                    event_pos(event_times > length(time)-20) = [];
+                    event_times(event_times > length(time)-20) = [];
+                    event_pos(event_times < 20) = [];
+                    event_times(event_times < 20) = [];
+                    scatter(time(round(event_times)),event_pos+10,20*ones(size(event_pos)),[.0 .5 1],'filled')
+                    hold on
+                    histtime = downsample(time,20);
+                    histedge = 0:20:length(time);
+                    event_counts = histcounts(event_times,histedge)*5;
+                    hist_pos = max(these_traces_offset' + grid_offset_y(j)) + 10;
+                    assignin('base','histtime',histtime)
+                    assignin('base','event_counts',event_counts)
+                    plot(histtime(1:end-1),event_counts + hist_pos,'linewidth',2)
                 end
-                hold on;
+                hold on
             end
             
             if i == 1
