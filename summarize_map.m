@@ -44,7 +44,7 @@ max_trial = length(this_seq);
 stim_inds = [full_seq.precomputed_target_index];
 % on_cell_trials = isnan(full_stim_key(stim_inds,1,2));
 on_cell_trials = ones(size([full_seq.target_power]))';
-for i = 1:length(power_curve_num)
+for i = length(power_curve_num):length(power_curve_num)
     
     
 %     this_seq = this_seq(1:max_trial);
@@ -52,8 +52,8 @@ for i = 1:length(power_curve_num)
     traces_pow{2} = traces_ch2(on_cell_trials' & [full_seq.target_power] == power_curve_num(i),:);
     this_seq_power = full_seq(on_cell_trials' & [full_seq.target_power] == power_curve_num(i));
 %     mpp_pow = mpp(on_cell_trials' & [full_seq.target_power] == power_curve_num(i));
-    [maps{i},mpp_maps{i},map_index{i},corr_maps{i},stddev_maps{i}] = ...
-        see_grid_multi(traces_pow,[],this_seq_power,full_stim_key,1,show_raw_data,do_stdmap,do_corrmap);
+    [~,~,~,~,stddev_maps{i}] = ...
+        see_grid_multi(traces_pow,[],this_seq_power,full_stim_key,1,show_raw_data,do_stdmap);
     if show_raw_data
         title(['Power = ' num2str(power_curve_num(i)) ' mW'])
     end
