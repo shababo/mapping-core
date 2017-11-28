@@ -69,22 +69,27 @@ for i = 1:num_cols
             time = (1:size(these_traces_offset,2))/20000*downsample_rate + (i-1)*(size(these_traces_offset,2)/20000*downsample_rate + grid_offset_x);
 
             if exist('grid_colors','var')
-                if grid_colors.color_i(j,i) == 0
-                    this_color = [0 0 0];
-                else
-                    this_color_i = fix((grid_colors.color_i(j,i)-grid_colors.clims(1))/(grid_colors.clims(2)-grid_colors.clims(1))*size(grid_colors.colormap,1))+1;
-                    this_color = grid_colors.colormap(min(this_color_i,size(grid_colors.colormap,1)),:);
-                end
+%                 if grid_colors.color_i(j,i) == 0
+%                     this_color = [0 0 0];
+%                 else
+%                     this_color_i = fix((grid_colors.color_i(j,i)-grid_colors.clims(1))/(grid_colors.clims(2)-grid_colors.clims(1))*size(grid_colors.colormap,1))+1;
+%                     this_color = grid_colors.colormap(min(this_color_i,size(grid_colors.colormap,1)),:);
+%                 end
+                these_colors = grid_colors{j,i};
             elseif exist('alphas','var')
-                this_color = [0 0 0 alphas(j,i)];
+                these_colors = [0 0 0 alphas(j,i)];
             else
-                this_color = [0 0 0];
+                these_colors = [0 0 0];
             end
-            plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
-            hold on
+            for k = 1:size(these_traces_offset,1)
+                plot(time,these_traces_offset(k,:) + grid_offset_y(j),'Color',these_colors(k,:))
+                hold on
+            end
+%             plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',these_colors)
+%             hold on
             
             x1 = time(20);
-            y1 = these_traces_offset(1,20)' + grid_offset_y(j) + 20;
+            y1 = these_traces_offset(1,20)' + grid_offset_y(j) + 50;
             if isempty(loc_names)
                 txt1 = [num2str(j) ', ' num2str(i) ' bins'];
             else
@@ -103,7 +108,7 @@ for i = 1:num_cols
                         else
                             this_struct = these_events(ii);                        
                         end
-                        event_times = [event_times this_struct.times]
+                        event_times = [event_times this_struct.times];
                         event_pos = [event_pos (offsets(ii) + grid_offset_y(j))*ones(size(this_struct.times))];
                     end
                 event_pos(event_times > length(time)-20) = [];
