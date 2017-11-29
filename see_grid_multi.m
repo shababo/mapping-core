@@ -33,7 +33,7 @@ assignin('base','loc_names',loc_names)
 if show_raw_data
     figure
 %     subplot(121)
-    plot_trace_stack_grid(maps{1},Inf,1,1,[],[],[],mpp_maps{1});%,loc_names);
+    plot_trace_stack_grid(maps{1},2,1,0,[],[],[],mpp_maps{1});%,loc_names);
 %     title(['Power = ' num2str(sequence(1).target_power) ' mW'])
 %     subplot(223)
 %     figure

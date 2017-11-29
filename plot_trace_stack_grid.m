@@ -76,7 +76,7 @@ for i = 1:num_cols
             elseif exist('alphas','var')
                 this_color = [0 0 0 alphas(j,i)];
             else
-                this_color = [.6 .6 .6];
+                this_color = [0 0 0];
             end
             plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
             hold on
@@ -116,13 +116,13 @@ for i = 1:num_cols
                     event_times(event_times < 20) = [];
                     scatter(time(round(event_times)),event_pos+10,20*ones(size(event_pos)),[.0 .5 1],'filled')
                     hold on
-                    histtime = downsample(time,20);
-                    histedge = 0:20:length(time);
-                    event_counts = histcounts(event_times,histedge)*5;
-                    hist_pos = max(these_traces_offset' + grid_offset_y(j)) + 10;
-                    assignin('base','histtime',histtime)
-                    assignin('base','event_counts',event_counts)
-                    plot(histtime(1:end-1),event_counts + hist_pos,'linewidth',2)
+%                     histtime = downsample(time,20);
+%                     histedge = 0:20:length(time);
+%                     event_counts = histcounts(event_times,histedge)*5;
+%                     hist_pos = max(these_traces_offset' + grid_offset_y(j)) + 10;
+%                     assignin('base','histtime',histtime)
+%                     assignin('base','event_counts',event_counts)
+%                     plot(histtime(1:end-1),event_counts + hist_pos,'linewidth',2)
                 end
                 hold on
             end
