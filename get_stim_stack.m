@@ -14,7 +14,7 @@ else
 end
 
 if length(varargin) > 2 && ~isempty(varargin{3})
-    duration = varargin{2};
+    duration = varargin{3};
 else
     duration = .025;
 end
@@ -74,7 +74,7 @@ for i = 1:length(trials)
         end
     end
 %     assignin('base','stim_starts',stim_starts)
-    stacks = build_stim_stack_multi(traces,stim_starts,duration*20000);
+    stacks = build_stim_stack_multi(traces,stim_starts,duration*Fs);
     traces_ch1{i} = stacks{1};
     traces_ch2{i} = stacks{2};
 end
