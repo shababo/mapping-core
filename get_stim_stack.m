@@ -16,7 +16,8 @@ end
 if length(varargin) > 2 && ~isempty(varargin{3})
     duration = varargin{3};
 else
-    duration = .050;
+    duration = .025;
+
 end
 
 traces_ch1 = cell(1,length(trials));

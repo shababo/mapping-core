@@ -67,28 +67,36 @@ for i = 1:num_cols
             time = (1:size(these_traces_offset,2))/20000*downsample_rate + (i-1)*(size(these_traces_offset,2)/20000*downsample_rate + grid_offset_x);
 
             if exist('grid_colors','var')
+
                 if grid_colors.color_i(j,i) == 0
                     this_color = [1 1 1]*.6;
                 else
                     this_color_i = fix((grid_colors.color_i(j,i)-grid_colors.clims(1))/(grid_colors.clims(2)-grid_colors.clims(1))*size(grid_colors.colormap,1))+1;
                     this_color = grid_colors.colormap(min(this_color_i,size(grid_colors.colormap,1)),:);
                 end
+
             elseif exist('alphas','var')
-                this_color = [0 0 0 alphas(j,i)];
+                these_colors = [0 0 0 alphas(j,i)];
             else
-                this_color = [0 0 0];
+                these_colors = [0 0 0];
             end
+            for k = 1:size(these_traces_offset,1)
+                plot(time,these_traces_offset(k,:) + grid_offset_y(j),'Color',these_colors(k,:))
+                hold on
+            end
+
             plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
             hold on
             if plot_avg
                 this_color = [0 0 0];
                 these_traces_offset = mean(these_traces_offset);
+
             
                 plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color,'linewidth',2)
             end
             hold on
             x1 = time(20);
-            y1 = these_traces_offset(1,20)' + grid_offset_y(j) + 20;
+            y1 = these_traces_offset(1,20)' + grid_offset_y(j) + 50;
             if isempty(loc_names)
                 txt1 = '';[num2str(j) ', ' num2str(i) ' bins'];
             else
