@@ -42,15 +42,16 @@ center = ceil((size(maps{1})-1)*spacing/2) + 1;
 
 % assignin('base','loc_names',loc_names)
 
+trials_per_stack = 15;
 if show_raw_data
     figure
-%     subplot(121)
+    subplot(121)
 
-    plot_trace_stack_grid(maps{1},2,1,0,[],[],[],mpp_maps{1});%,loc_names);
+    plot_trace_stack_grid(maps{1},trials_per_stack,1,0,[],[],[],mpp_maps{1});%,loc_names);
 %     title(['Power = ' num2str(sequence(1).target_power) ' mW'])
-%     subplot(223)
+    subplot(122)
 %     figure
-% 	plot_trace_stack_grid(maps{2},Inf,1,0,[],[],[],mpp_maps{2},loc_names);
+	plot_trace_stack_grid(maps{2},trials_per_stack,1,0,[],[],[],mpp_maps{2},loc_names);
 
 
 end
@@ -71,31 +72,36 @@ if do_corr_map
 else
     corr_maps = cell(2,1);
 end
+% 
+% if do_corr_map
+%     
+%     figure
+%     
+%     subplot(121); 
+%     imagesc(corr_maps{1}); caxis([0 0.5])
+%     title(['Cell 1 Corr Map: Power = ' num2str(sequence(1).target_power) ' mW'])
+% 
+%     subplot(122); 
+%     imagesc(stddev_maps{1}); %caxis([0 1])
+%     title(['Cell 1 Stddev Map: Power = ' num2str(sequence(1).target_power) ' mW'])
+%     
+% end
+% if do_std_map
+%     
+%     figure 
+%     
+%     subplot(121);
+%     imagesc(corr_maps{2}); caxis([0 0.5])
+%     title(['Cell 2 Corr Map: Power = ' num2str(sequence(1).target_power) ' mW'])
+% 
+%     subplot(122); 
+%     imagesc(stddev_maps{2}); %caxis([0 1])
+%     title(['Cell 2 Stddev Map: Power = ' num2str(sequence(1).target_power) ' mW'])
+% 
+% 
+% end
 
-if do_corr_map || do_std_map
-    
-    figure
-    
-    subplot(221); 
-    imagesc(corr_maps{1}); caxis([0 0.5])
-    title(['Cell 1 Corr Map: Power = ' num2str(sequence(1).target_power) ' mW'])
-
-    subplot(222); 
-    imagesc(stddev_maps{1}); %caxis([0 1])
-    title(['Cell 1 Stddev Map: Power = ' num2str(sequence(1).target_power) ' mW'])
-    
-    subplot(223); 
-    imagesc(corr_maps{2}); caxis([0 0.5])
-    title(['Cell 2 Corr Map: Power = ' num2str(sequence(1).target_power) ' mW'])
-
-    subplot(224); 
-    imagesc(stddev_maps{2}); %caxis([0 1])
-    title(['Cell 2 Stddev Map: Power = ' num2str(sequence(1).target_power) ' mW'])
-
-
-end
-
-maps = maps;
+% maps = maps;
 corr_maps = corr_maps{1};
 mpp_maps = mpp_maps{1};
 % assignin('base','maps',maps)

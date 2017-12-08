@@ -1,7 +1,7 @@
 
 function [maps, mpp_maps, map_index, color_maps] = build_slm_maps_multi(traces,mpp,sequence,stim_key,spacing,varargin)
 
-
+assignin('base','mpp_build_slm',mpp)
 if length(varargin) > 2 && ~isempty(varargin{3})
     these_colors = varargin{3};
 else
@@ -70,7 +70,7 @@ for i = 1:num_cells
     mpp_maps{i} = cell(grid_dims);
     color_maps{i} = cell(grid_dims);
     these_traces = traces{i};
-    this_mpp = mpp{i};
+%     this_mpp = mpp{i};
     this_color = these_colors{i};
 %     size(these_traces)
     for j = 1:num_traces

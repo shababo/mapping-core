@@ -76,14 +76,14 @@ for i = 1:num_cols
                 end
 
             elseif exist('alphas','var')
-                these_colors = [0 0 0 alphas(j,i)];
+                this_color = [0 0 0 alphas(j,i)];
             else
-                these_colors = [0 0 0];
+                this_color = [0 0 0];
             end
-            for k = 1:size(these_traces_offset,1)
-                plot(time,these_traces_offset(k,:) + grid_offset_y(j),'Color',these_colors(k,:))
-                hold on
-            end
+%             for k = 1:size(these_traces_offset,1)
+%                 plot(time,these_traces_offset(k,:) + grid_offset_y(j),'Color',these_colors(k,:))
+%                 hold on
+%             end
 
             plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
             hold on
