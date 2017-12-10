@@ -1,72 +1,50 @@
-
 function [vclamp_map, psc_time_map, map_index, color_maps] = build_vclamp_grid(experiment_setup,trials,spacing,varargin)
 
 num_trials = length(trials);
 
-if length(varargin) > 2 && ~isempty(varargin{3})
-    these_colors = varargin{3};
-else
-    for i = 1:num_trials        
-        these_colors{i} = zeros(1,3);
-    end
-end
+% if length(varargin) > 2 && ~isempty(varargin{3})
+%     these_colors = varargin{3};
+% else
+%     for i = 1:num_trials        
+%         these_colors{i} = zeros(1,3);
+%     end
+% end
 
-x_bins = stim_x_min:spacing:stim_x_max;
-y_bins = stim_y_min:spacing:stim_y_max;
+x_bins = experiment_setup.neighbourhood_params.x_bounds(1):spacing:experiment_setup.neighbourhood_params.x_bounds(2);
+y_bins = experiment_setup.neighbourhood_params.y_bounds(1):spacing:experiment_setup.neighbourhood_params.y_bounds(2);
 z_bins = 0;%stim_z_min:spacing:stim_z_max;
 
 grid_dims = [length(x_bins) length(y_bins) length(z_bins)];
 
-vclamp_map = cell(num_cells,1);
-psc_time_map = cell(num_cells,1);
-color_maps = cell(num_cells,1);
+vclamp_map = cell(grid_dims);
+psc_time_map = cell(grid_dims);
+color_maps = cell(grid_dims);
 
-
-
-
-num_traces = length(sequence);
-% size(traces,1)
-% assignin('base','map_index',map_index)
-
-
-for i = 1:num_cells
+min_bin = [experiment_setup.neighbourhood_params.x_bounds(1) experiment_setup.neighbourhood_params.y_bounds(1) 0];
     
-    vclamp_map{i} = cell(grid_dims);
-    psc_time_map{i} = cell(grid_dims);
-    color_maps{i} = cell(grid_dims);
-    these_traces = traces{i};
-%     this_mpp = mpp{i};
-    this_color = these_colors{i};
-%     size(these_traces)
-    for j = 1:num_traces
-        j_stim = sequence(j).precomputed_target_index;
-        for k = 1:size(map_index,3)
-%             i
-%             j
-%             j_stim
-%             k
 
-            min_bin = [stim_x_min stim_y_min stim_z_min];
-map_index = (bsxfun(@minus,stim_key_bin,min_bin) + spacing)/spacing;
-
-map_index(:,3,:) = 1;
-            if isnan(map_index(j_stim,1,k))
-                break
-            end
-
-            vclamp_map{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
-                [vclamp_map{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
-                these_traces(j,:)];
-
-            color_maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
-                [color_maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
-                this_color(j,:)];
-
-            if ~isempty(mpp{i})
-                psc_time_map{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
-                    [psc_time_map{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
-                    mpp{i}(j)];
-            end
+for j = 1:num_trials
+    for k = 1:size(trials(j).locations,1)
+        
+        this_loc = round(trials(j).locations(k,:)/spacing)*spacing;
+        map_index = (this_loc - min_bin + spacing)/spacing;
+        map_index(3) = 1;
+        if any(isnan(map_index))
+            continue
         end
+
+        vclamp_map{map_index(1),map_index(2),map_index(3)} = ...
+            [vclamp_map{map_index(1),map_index(2),map_index(3)}; ...
+            trials(j).voltage_clamp];
+
+%         color_maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
+%             [color_maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
+%             this_color(j,:)];
+        if isempty(psc_time_map{map_index(1),map_index(2),map_index(3)})
+            psc_time_map{map_index(1),map_index(2),map_index(3)} = cell(0);
+        end
+        psc_time_map{map_index(1),map_index(2),map_index(3)}{end+1} = trials(j).event_times;
+
     end
 end
+
