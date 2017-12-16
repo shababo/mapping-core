@@ -5,12 +5,16 @@ if ~isempty(varargin) && ~isempty(varargin{1})
 end
 
 if length(varargin) > 1 && ~isempty(varargin{2})
-    in_axes = varargin{2};
-    axes(in_axes);
+    linewidth_map = varargin{2};
 end
 
+% if length(varargin) > 1 && ~isempty(varargin{2})
+%     in_axes = varargin{2};
+%     axes(in_axes);
+% end
+
 if length(varargin) > 2 && ~isempty(varargin{3})
-    alphas = varargin{3};
+    cell_map = varargin{3};
 end
 
 if length(varargin) > 3 && ~isempty(varargin{4})
@@ -46,12 +50,33 @@ else
 end
 
 trace_stack_offset = 0;
+
+% for i = 1:num_cols
+%     for j= 1:num_rows
+%         if exist('cell_map','var') && cell_map(j,i)
+%             
+%             scatter((i-1)*(500/20000*downsample_rate + grid_offset_x),grid_offset_y(j),2000,[1 .6 .6],'filled')
+%             hold on
+%         end
+%     end
+% end
+
+
 for i = 1:num_cols
     
     
     
     for j = 1:num_rows
         
+        if exist('cell_map','var') && cell_map(j,i)
+            
+            scatter((i-1)*(500/20000*downsample_rate + grid_offset_x),grid_offset_y(j),2000,[1 0 cell_map(j,i)/100],'filled')
+%             text((i-1)*(500/20000*downsample_rate + grid_offset_x),grid_offset_y(j),txt1)
+            
+            hold on
+        end
+        
+            
         if ~isempty(traces_array{j,i})
             these_traces = traces_array{j,i};
             if size(these_traces,1) < max_traces
@@ -67,15 +92,17 @@ for i = 1:num_cols
             time = (1:size(these_traces_offset,2))/20000*downsample_rate + (i-1)*(size(these_traces_offset,2)/20000*downsample_rate + grid_offset_x);
 
             if exist('color_map','var')
-
                 these_colors = color_map{j,i};
-                
             else
-                
                 these_colors = zeros(size(these_traces,1),3);
-                
             end
-
+            
+            if exist('linewidth_map','var')
+                these_lws = linewidth_map{j,i};
+            else
+                these_lws = zeros(size(these_traces,1),1);
+            end
+            these_lws(isinf(these_lws)) = 0.01;
 %             elseif exist('alphas','var')
 %                 this_color = [0 0 0 alphas(j,i)];
 %             else
@@ -88,7 +115,7 @@ for i = 1:num_cols
 
 %             plot(repmat(time',1,size(these_traces_offset,1)),these_traces_offset' + grid_offset_y(j),'Color',this_color)
             for k = 1:size(these_traces_offset,1)
-                plot(time,these_traces_offset(k,:) + grid_offset_y(j),'Color',these_colors(k,:))
+                plot(time,these_traces_offset(k,:) + grid_offset_y(j),'Color',these_colors(k,:),'Linewidth',these_lws(k))
             end
             hold on
             if plot_avg
@@ -102,7 +129,7 @@ for i = 1:num_cols
             x1 = time(20);
             y1 = these_traces_offset(1,20)' + grid_offset_y(j) + 50;
             if isempty(loc_names)
-                txt1 = '';[num2str(j) ', ' num2str(i) ' bins'];
+                txt1 = [num2str(j - 150) ', ' num2str(i - 150)];
             else
                 txt1 = '';loc_names{j,i};
             end
