@@ -70,7 +70,7 @@ for i = 1:num_cols
         
         if exist('cell_map','var') && cell_map(j,i)
             
-            scatter((i-1)*(500/20000*downsample_rate + grid_offset_x),grid_offset_y(j),2000,[1 0 cell_map(j,i)/100],'filled')
+            scatter((i-1)*(500/20000*downsample_rate + grid_offset_x),grid_offset_y(j),2000,[1 0 cell_map(j,i)/max(cell_map(:))],'filled')
 %             text((i-1)*(500/20000*downsample_rate + grid_offset_x),grid_offset_y(j),txt1)
             
             hold on
