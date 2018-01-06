@@ -68,9 +68,8 @@ for i = 1:num_cols
     
     for j = 1:num_rows
         
-        if exist('cell_map','var') && cell_map(j,i)
-            
-            scatter((i-1)*(500/20000*downsample_rate + grid_offset_x),grid_offset_y(j),2000,[1 0 cell_map(j,i)/max(cell_map(:))],'filled')
+        if exist('cell_map','var') && sum(cell_map(j,i,1,:))
+            scatter((i-1)*(500/20000*downsample_rate + grid_offset_x),grid_offset_y(j),1000,reshape(cell_map(j,i,1,:),1,3),'filled')
 %             text((i-1)*(500/20000*downsample_rate + grid_offset_x),grid_offset_y(j),txt1)
             
             hold on

@@ -22,6 +22,7 @@ end
 
 traces_ch1 = cell(1,length(trials));
 traces_ch2 = cell(1,length(trials));
+
 for i = 1:length(trials)
     
     trial_ind = trials(i); 
@@ -31,14 +32,15 @@ for i = 1:length(trials)
 %     assignin('base','stim_starts_tmp',stim_starts_tmp)
     if ~isempty(expected_stim_start{i})
 %         disp('doing exp')
-        stim_starts = zeros(size(expected_stim_start{i}));
-        for j = 1:num_stims(i)
-            [min_diff, best_ind] = ...
-                min(abs(stim_starts_tmp - 20*expected_stim_start{i}(j))); % MAGIC NUMBER
-
-            stim_starts(j) = stim_starts_tmp(best_ind);
-            stim_starts_tmp(best_ind) = [];
-        end
+        stim_starts = expected_stim_start{i};
+%         stim_starts = zeros(size(expected_stim_start{i}));
+%         for j = 1:num_stims(i)
+%             [min_diff, best_ind] = ...
+%                 min(abs(stim_starts_tmp - 20*expected_stim_start{i}(j))); % MAGIC NUMBER
+% 
+%             stim_starts(j) = stim_starts_tmp(best_ind);
+%             stim_starts_tmp(best_ind) = [];
+%         end
     else
         stim_starts = stim_starts_tmp;
         
