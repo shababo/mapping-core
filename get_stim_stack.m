@@ -29,51 +29,55 @@ for i = 1:length(trials)
     stim = data.sweeps{trial_ind}(:,3)' > .025; %sum(diff(stim) == 1)
     stim_starts_tmp = find(diff(stim) == 1);
 %     assignin('base','stim_starts_tmp',stim_starts_tmp)
-    if ~isempty(expected_stim_start{i})
-%         disp('doing exp')
-        stim_starts = zeros(size(expected_stim_start{i}));
-        for j = 1:num_stims(i)
-            [min_diff, best_ind] = ...
-                min(abs(stim_starts_tmp - 20*expected_stim_start{i}(j))); % MAGIC NUMBER
-
-            stim_starts(j) = stim_starts_tmp(best_ind);
-            stim_starts_tmp(best_ind) = [];
-        end
-    else
-        stim_starts = stim_starts_tmp;
-        
-        if stim_starts > num_stims(i)
-            while length(stim_starts) > num_stims(i)
-%                 disp('in while')
-                itis = diff(stim_starts);
-%                 assignin('base','itis',itis)
-        %         early_fails = find(abs(itis - median(itis)) > 40,20,'first');
-        %         if early_fails(1) == 1
-        %             early_fails(1:find(diff(early_fails) ~= 1,1,'first')) = [];
-        % %             early_fails(early_fails > length(itis)/2) = [];
-        %             stim_starts(early_fails) = [];
-        %         end
-        %         itis = diff(stim_starts);
-        %         late_fails = find(abs(itis - median(itis)) > 40,20,'last');
-        %         if late_fails(end) == length(itis)
-        %             late_fails(1:find(diff(late_fails) ~= 1,1,'first')) = [];
-        %             late_fails(late_fails < length(itis)/2) = [];
-        %             stim_starts(late_fails+1) = [];
-        %         end
-
-                 bad_itis = find(itis);
-                 if ~isempty(bad_itis)
-                     if bad_itis(1) == 1 && bad_itis(2) ~= 2
-                         stim_starts(1) = [];
-                     else
-                         stim_starts(bad_itis(1)+1) = [];
-                     end
-
-                 end
-    %              return
-            end
-        end
-    end
+    stim_starts = expected_stim_start{i};
+%     try
+%         if ~isempty(expected_stim_start{i})
+%     %         disp('doing exp')
+%             stim_starts = zeros(size(expected_stim_start{i}));
+%             for j = 1:num_stims(i)
+%                 [min_diff, best_ind] = ...
+%                     min(abs(stim_starts_tmp - 20*expected_stim_start{i}(j))); % MAGIC NUMBER
+% 
+%                 stim_starts(j) = stim_starts_tmp(best_ind);
+%                 stim_starts_tmp(best_ind) = [];
+%             end
+%         else
+%             stim_starts = stim_starts_tmp;
+% 
+%             if stim_starts > num_stims(i)
+%                 while length(stim_starts) > num_stims(i)
+%     %                 disp('in while')
+%                     itis = diff(stim_starts);
+%     %                 assignin('base','itis',itis)
+%             %         early_fails = find(abs(itis - median(itis)) > 40,20,'first');
+%             %         if early_fails(1) == 1
+%             %             early_fails(1:find(diff(early_fails) ~= 1,1,'first')) = [];
+%             % %             early_fails(early_fails > length(itis)/2) = [];
+%             %             stim_starts(early_fails) = [];
+%             %         end
+%             %         itis = diff(stim_starts);
+%             %         late_fails = find(abs(itis - median(itis)) > 40,20,'last');
+%             %         if late_fails(end) == length(itis)
+%             %             late_fails(1:find(diff(late_fails) ~= 1,1,'first')) = [];
+%             %             late_fails(late_fails < length(itis)/2) = [];
+%             %             stim_starts(late_fails+1) = [];
+%             %         end
+% 
+%                      bad_itis = find(itis);
+%                      if ~isempty(bad_itis)
+%                          if bad_itis(1) == 1 && bad_itis(2) ~= 2
+%                              stim_starts(1) = [];
+%                          else
+%                              stim_starts(bad_itis(1)+1) = [];
+%                          end
+% 
+%                      end
+%         %              return
+%                 end
+%             end
+%         end
+%     catch e
+%     end
 %     assignin('base','stim_starts',stim_starts)
     stacks = build_stim_stack_multi(traces,stim_starts,duration*Fs);
     traces_ch1{i} = stacks{1};
