@@ -30,6 +30,7 @@ for i = 1:length(trials)
     stim = data.sweeps{trial_ind}(:,3)' > .025; %sum(diff(stim) == 1)
     stim_starts_tmp = find(diff(stim) == 1);
 %     assignin('base','stim_starts_tmp',stim_starts_tmp)
+
     if ~isempty(expected_stim_start{i})
 %         disp('doing exp')
         stim_starts = expected_stim_start{i};
