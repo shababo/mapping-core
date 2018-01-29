@@ -12,7 +12,7 @@ for i = 1:num_locs
         case 'current'
             result.max_curr{pos_order(i)} = traces(:,1) - min(traces,[],2);
         case 'spikes'
-            result.spike_times{pos_order(i)} = detect_peaks(-bsxfun(@minus,traces,traces(:,1)),30,30,0,Inf,-Inf,0,0,1);
+            result.spike_times{pos_order(i)} = detect_peaks(-bsxfun(@minus,traces,traces(:,1)),20,30,0,Inf,-Inf,0,0,1);
     end
     
 end
