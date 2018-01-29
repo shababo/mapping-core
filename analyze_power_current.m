@@ -8,37 +8,37 @@ filenames = {'1_23_slice1_cell1.mat'
              '1_25_slice1_cell1.mat'
              '1_25_slice1_cell3.mat'
              '1_25_slice2_cell1.mat'
-             '1_25_slice2_cell2.mat'};
+             '1_25_slice2_cell2.mat'
+             '1_26_slice1_cell1.mat'
+             '1_26_slice1_cell2.mat'
+             '1_26_slice1_cell3.mat'
+             '1_27_slice1_cell1.mat'
+             '1_27_slice1_cell2.mat'
+             '1_27_slice1_cell3.mat'};        
         
-trial_inds = {4,4,4};
+spike_trial_inds = {1,1,1,1,1,1,1,[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
+current_trial_inds = {4,4,4,4,4,4,4,5,5,5,5,5,4};
 
 % pos_order = [1 2 4 3 5 6
 %              3 2 5 1 4 6
 %              6 1 3 4 5 2
 %              4 6 3 5 2 1];
 
-colors = {'r','b','g','k','c','y','m'};
+% colors = {'r','b','g','k','c','y','m'};
 
-%%
 
-measure_type = 'spikes';
-switch measure_type
-    case 'spikes'
-        sweep_trial = 1;%trial_inds{j};
-        clear result_spikes
-    case 'current'
-        sweep_trial = 4;
-        clear result_current
-end
-% 
-figure 
+spike_figure = figure;
+current_figure = figure;
+both_figure = figure;
+%% 
+
 for j = 1:size(filenames,1)
     
     
     
-    load(filenames{j,1}); 
+    load(filenames{j}); 
     
-    result_tmp = analyze_current_diffraction_map(data,1,sweep_trial,measure_type);
+    result_tmp_spike = analyze_current_diffraction_map(data,1,sweep_trial,measure_type);
     switch measure_type
         case 'spikes'
             cell_spike_times = result_tmp.spike_times{1};
@@ -54,6 +54,7 @@ for j = 1:size(filenames,1)
     result_tmp.power = {zeros(size(result_tmp.stim_size{1}))};
     
     unique_powers = unique(round(result_tmp.stim_size{1},2));
+    unique_powers(unique_powers > .49) = [];
 %     unique_powers = sort(unique(round(trial_powers)));
     result_tmp.these_powers = unique_powers;
     result_tmp.power_means = zeros(size(unique_powers))';
@@ -90,10 +91,14 @@ for j = 1:size(filenames,1)
 %     subplot(211)
     switch measure_type
         case 'current'
-            scatter(result_tmp.power{1}.^1,result_tmp.max_curr{1},15,colors{j});
+            figure(current_figure)
+            gca
+            scatter(result_tmp.power{1}.^1,result_tmp.max_curr{1},15,'jitter','on','jitteramount',.3);
             result_current(j) = result_tmp;
         case 'spikes'
-            scatter(result_tmp.power{1}.^1,result_tmp.spike_times{1}/20,15,colors{j},'jitter','on','jitteramount',1);
+            figure(spike_figure)
+            gca
+            scatter(result_tmp.power{1}.^1,result_tmp.spike_times{1}/20,15,'jitter','on','jitteramount',.3);
             result_spikes(j) = result_tmp;
     end
     
@@ -136,14 +141,14 @@ switch measure_type
     case 'current'
         title('Power vs. Peak Current')
         xlabel('Power (mW)')
-        xlim([0 80])
+        xlim([10 90])
         ylabel('Peak Current (pA)')
-        ylim([0 2250])
+        ylim([0 2500])
 
     case 'spikes'
         title('Power vs. Spike Times')
         xlabel('Power (mW)')
-        xlim([0 80])
+        xlim([10 90])
         ylabel('Spike Times (msec)')
         ylim([0 15])
 end
@@ -161,10 +166,11 @@ plot(0:85,678.5*ones(size(0:85)),'r--')
 
 %%
 
-figure;
+figure(both_figure)
 for i = 1:length(result_current)
+    gca
     [shared_powers, current_i, spikes_i] = intersect(result_current(i).these_powers,result_spikes(i).these_powers);
-    semilogy(result_current(i).power_means(current_i),result_spikes(i).power_ranges(spikes_i)/20,[colors{i} 'o'])
+    plot(result_current(i).power_means(current_i),result_spikes(i).power_means(spikes_i)/20,'o-')
     hold on
 end
 
@@ -172,4 +178,4 @@ title('peak current vs. spike time range')
 xlabel('mean peak current (pA)')
 ylabel('spike time range (msec)')
 xlim([0 2500])
-% ylim([-.1 1.1])
+ylim([0 15])

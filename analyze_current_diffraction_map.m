@@ -5,7 +5,7 @@ num_locs = length(trials);
 
 for i = 1:num_locs
     
-    [traces, ~,~, stim_traces] = get_traces(data,trials(i));
+    [traces, ~,~, stim_traces] = get_traces(data,trials{i});
     result.traces{pos_order(i)} = traces;
     result.stim_size{pos_order(i)} = mean(stim_traces(:,.0005*20000:.0025*20000),2);
     switch measure_type
