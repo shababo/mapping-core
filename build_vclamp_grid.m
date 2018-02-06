@@ -16,17 +16,23 @@ z_bins = 0;%stim_z_min:spacing:stim_z_max;
 
 grid_dims = [length(x_bins) length(y_bins) length(z_bins)];
 
-cell_map = zeros(grid_dims);
+cell_map = zeros([grid_dims 3]);
 vclamp_map = cell(grid_dims);
 psc_time_map = cell(grid_dims);
 color_map = cell(grid_dims);
 linewidth_map = cell(grid_dims);
 
 min_bin = [experiment_setup.neighbourhood_params.x_bounds(1) experiment_setup.neighbourhood_params.y_bounds(1) 0];
-    
+targeted_cell_IDs = [];
+% cell_colors = zeros(length(experiment_setup.neurons),3);
 
 for j = 1:num_trials
+
+    targeted_cell_IDs = union(targeted_cell_IDs,trials(j).cell_IDs);
+    
     for k = 1:size(trials(j).locations,1)
+        
+        
         
         this_loc = round(trials(j).locations(k,:)/spacing)*spacing;
         map_index = (this_loc - min_bin + spacing)/spacing;
@@ -39,25 +45,17 @@ for j = 1:num_trials
             [vclamp_map{map_index(1),map_index(2),map_index(3)}; ...
             trials(j).voltage_clamp];
 
-%         switch trials(j).group_ID
-%             case 'undefined'
-%                 this_color = rgb('FireBrick');
-% %             case 'connected'
-% %                 this_color = rgb('Olive');
-% %             case 'alive'
-% %                 this_color = rgb('DarkBlue');
-%             otherwise
-%                 if trials(j).location_IDs(k) == 1
-%                     this_color = [0 0 0];
-%                 else
-%                     this_color = [.6 .6 .6];
-%                 end
+
+%         for i = 1:length(trials(j).cell_IDs)
+%             if ~isnan(trials(j).cell_IDs(i))
+%                 cell_colors(trials(j).cell_IDs(i),:) = cell_color;
+%             end
 %         end
         switch trials(j).location_IDs(k)
             case 1
                 this_color = [0 0 0];
             otherwise
-                this_color = [.6 .6 .6];
+                this_color = [.4 .4 .4];
         end
         color_map{map_index(1),map_index(2),map_index(3)} = ...
             [color_map{map_index(1),map_index(2),map_index(3)}; ...
@@ -75,18 +73,35 @@ for j = 1:num_trials
     end
 end
 
-for j = 1:length(experiment_setup.neurons)
+targeted_cell_IDs(isnan(targeted_cell_IDs)) = [];
+assignin('base','targeted_cell_IDs',targeted_cell_IDs)
+
+for j = 1:length(targeted_cell_IDs)
     
-        
-    
-    this_loc = round(experiment_setup.neurons(j).location/spacing)*spacing;
+    i_neuron = [experiment_setup.neurons.cell_ID] == targeted_cell_IDs(j);
+    this_loc = round(experiment_setup.neurons(i_neuron).location/spacing)*spacing;
     map_index = (this_loc - min_bin + spacing)/spacing;
     map_index(3) = 1;
     if any(isnan(map_index) | map_index < 1 | map_index > [300 300 100])
         continue
     end
+    
+    switch experiment_setup.neurons(i_neuron).group_ID
+        case 'undefined'
+            cell_color = rgb('DarkGray');
+        case 'connected'
+            cell_color = rgb('ForestGreen');
+        case 'alive'
+            cell_color = rgb('BlueViolet');
+        case 'disconnected'
+            cell_color = rgb('DarkRed');
+        case 'secondary'
+            cell_color = rbg('Snow');
+        otherwise
+            cell_color = zeros(1,3);
+    end
 
-    cell_map(map_index(1),map_index(2),map_index(3)) = this_loc(3);
+    cell_map(map_index(1),map_index(2),map_index(3),:) = cell_color;
 
 
     
