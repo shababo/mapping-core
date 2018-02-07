@@ -15,6 +15,22 @@ filenames = {'1_23_slice1_cell1.mat'
              '1_27_slice1_cell1.mat'
              '1_27_slice1_cell2.mat'
              '1_27_slice1_cell3.mat'};        
+         
+stacknames = {'/media/shababo/data/01232018images/s2c1-pre - 1_C0'
+              '/media/shababo/data/01232018images/s2c1-pre - 2_C0'
+              '/media/shababo/data/01232018images/s2c1-pre - 5_C0'
+              '/media/shababo/data/01252018images/s2c1-pre_C0'
+              '/media/shababo/data/01252018images/s2c1-pre - 1_C0'
+              '/media/shababo/data/01252018images/s2c1-pre - 3_C0'
+              '/media/shababo/data/01252018images/s2c1-pre - 4_C0'
+              '/media/shababo/data/0126272018images/s2c1-pre_C0'
+              '/media/shababo/data/0126272018images/s2c1-pre - 1_C0'
+              '/media/shababo/data/0126272018images/s2c1-pre - 2_C0'
+              '/media/shababo/data/0126272018images/s2c1-pre - 10_C0'
+              '/media/shababo/data/0126272018images/s2c1-pre - 11_C0'
+              '/media/shababo/data/0126272018images/s2c1-pre - 12_C0'};
+
+cell_pos = [118 135];
         
 spike_trial_inds = {1,1,1,1,1,1,1,[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
 current_trial_inds = {4,4,4,4,4,4,4,5,5,5,5,5,4};
@@ -25,7 +41,7 @@ current_trial_inds = {4,4,4,4,4,4,4,5,5,5,5,5,4};
 %              4 6 3 5 2 1];
 
 % colors = {'r','b','g','k','c','y','m'};
-
+colors = jet(length(filenames));
 
 spike_figure = figure;
 current_figure = figure;
@@ -105,24 +121,33 @@ for j = 1:size(filenames,1)
 
     end
 %         
-    
-    
+    if j > 0
+        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(stacknames{j});
+        offsets = nuclear_locs_image_coord([1 2],:) - cell_pos';
+
+        [targ_error, index] = min(sqrt(sum(offsets.^2,1)))
+        result_tmp_current.fluor_val = fluor_vals(index);
+        result_tmp_spike.fluor_val = fluor_vals(index);
+        result_tmp_current.cell_pos = nuclear_locs_image_coord(:,index);
+        result_tmp_spike.cell_pos = nuclear_locs_image_coord(:,index);
+    end
 %     subplot(211)
 
             figure(current_figure)
             gca
             hold on
-            scatter(result_tmp_current.power{1}.^1,result_tmp_current.max_curr{1},15,'jitter','on','jitteramount',.3);
+            scatter(result_tmp_current.power{1}.^1,result_tmp_current.max_curr{1},15,colors(j,:),'jitter','on','jitteramount',.3);
             result_current(j) = result_tmp_current;
    
             figure(spike_figure)
             gca
             hold on
-            scatter(result_tmp_spike.power{1}.^1,result_tmp_spike.spike_times{1}/20,15,'jitter','on','jitteramount',.3);
+            scatter(result_tmp_spike.power{1}.^1,result_tmp_spike.spike_times{1}/20,15,colors(j,:),'jitter','on','jitteramount',.3);
             result_spikes(j) = result_tmp_spike;
     
     
     hold on
+    
     
     
 end
@@ -161,12 +186,36 @@ figure
 for i = 1:length(result_current)
     gca
     [shared_powers, current_i, spikes_i] = intersect(result_current(i).these_powers,result_spikes(i).these_powers);
-    plot(result_current(i).power_means(current_i),result_spikes(i).prob_spike(spikes_i),'o')
+    semilogy(result_current(i).power_means(current_i),result_spikes(i).power_jitter(spikes_i)/20,'color',colors(i,:))
     hold on
 end
 
 title('peak current vs. p(spike)')
 xlabel('mean peak current (pA)')
-ylabel('prob spike')
+ylabel('spike jitter')
 xlim([0 2500])
 % ylim([0 15])
+%%
+
+% range = 8:13;
+
+[fluor_order,sort_order] = sort([result_spikes.fluor_val])
+colors = copper(100);
+% close all
+current_figure = figure;
+spike_figure = figure;
+for i = 8:13
+    
+%     if result_current(i).inj_ratio == 10
+        figure(current_figure)
+        gca
+        hold on
+        scatter(result_current(i).power{1}.^1,result_current(i).max_curr{1},15,colors(min(round(result_current(i).fluor_val),100),:),'jitter','on','jitteramount',.3);
+
+
+        figure(spike_figure)
+        gca
+        hold on
+        scatter(result_spikes(i).power{1}.^1,result_spikes(i).spike_times{1}/20,15,colors(min(round(result_spikes(i).fluor_val),100),:),'jitter','on','jitteramount',.3);
+%     end
+end

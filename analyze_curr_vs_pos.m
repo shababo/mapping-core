@@ -91,7 +91,7 @@ colors = {'r','b','g','k','c'};
 
 %%
 
-figure
+% figure
 
 
     
@@ -105,7 +105,7 @@ for j = 1:size(filenames,1)
     pos_order(j,:) = experiment_setup.pos_order
 %     
     
-    result = analyze_current_diffraction_map(data,pos_order(j,:),these_trials);
+    result = analyze_current_diffraction_map(data,pos_order(j,:),mat2cell(these_trials,ones(size(these_trials,1),1),ones(1,size(these_trials,2))),'current');
     this_cell_cur = zeros(size(these_trials));
     
     subset_pos = sort(pos_order(j,1:6));
@@ -114,70 +114,70 @@ for j = 1:size(filenames,1)
         pos_ind = subset_pos(i);
         these_cur = result.max_curr{pos_ind}(abs(result.stim_size{pos_ind} - .25) < .05);
         this_cell_cur(pos_ind) = mean(these_cur);
-        subplot(311)
+%         subplot(311)
         scatter(disk_power_meas_new_post(pos_ind)*ones(size(these_cur)),these_cur,5,colors{j},'filled');
         hold on
 %         subplot(312)
 %         scatter(disk_fluor_meas2D(pos_ind)*ones(size(these_cur)),these_cur,5,colors{j},'filled');
 %         hold on
-        subplot(312)
-        scatter(disk_fluor_meas3D(pos_ind)*ones(size(these_cur)),these_cur,5,colors{j},'filled');
-        hold on
-        subplot(313)
-        scatter(disk_power_meas_new_post(pos_ind).^2*ones(size(these_cur)),these_cur,5,colors{j},'filled');
-        hold on
+%         subplot(312)
+%         scatter(disk_fluor_meas3D(pos_ind)*ones(size(these_cur)),these_cur,5,colors{j},'filled');
+%         hold on
+%         subplot(313)
+%         scatter(disk_power_meas_new_post(pos_ind).^2*ones(size(these_cur)),these_cur,5,colors{j},'filled');
+%         hold on
 %         scatter(result.stim_size{i},result.max_curr{i},10,colors{j}); 
 %         hold on
     end
     
     [sorted_power,order_power] = sort(disk_power_meas_new_post(subset_pos));
-    [sorted_fluor2D,order_fluor2D] = sort(disk_fluor_meas2D(subset_pos));
-    [sorted_fluor3D,order_fluor3D] = sort(disk_fluor_meas3D(subset_pos));
+%     [sorted_fluor2D,order_fluor2D] = sort(disk_fluor_meas2D(subset_pos));
+%     [sorted_fluor3D,order_fluor3D] = sort(disk_fluor_meas3D(subset_pos));
 
-    subplot(311)
+%     subplot(311)
 	plot(sorted_power,this_cell_cur(subset_pos(order_power)),'-','color',colors{j})
     title('Power Measure vs. Current')
     ylabel('Peak Current (pA)')
     xlabel('Power (mW)')
     hold on
+% %     subplot(312)
+% % 	plot(sorted_fluor2D,this_cell_cur(subset_pos(order_fluor2D)),'-','color',colors{j})
+% %     hold on
 %     subplot(312)
-% 	plot(sorted_fluor2D,this_cell_cur(subset_pos(order_fluor2D)),'-','color',colors{j})
+% 	plot(sorted_fluor3D,this_cell_cur(subset_pos(order_fluor3D)),'-','color',colors{j})
+%     title('Fluor Measure vs. Current')
+%     ylabel('Peak Current (pA)')
+%     xlabel('Fluor (a.u.)')
 %     hold on
-    subplot(312)
-	plot(sorted_fluor3D,this_cell_cur(subset_pos(order_fluor3D)),'-','color',colors{j})
-    title('Fluor Measure vs. Current')
-    ylabel('Peak Current (pA)')
-    xlabel('Fluor (a.u.)')
-    hold on
-    subplot(313)
-	plot(sorted_power.^2,this_cell_cur(subset_pos(order_power)),'-','color',colors{j})
-    hold on
-    title('Power Measure Squared vs. Current')
-    ylabel('Peak Current (pA)')
-    xlabel('Power Measure Squared (mW^2)')
+%     subplot(313)
+% 	plot(sorted_power.^2,this_cell_cur(subset_pos(order_power)),'-','color',colors{j})
+%     hold on
+%     title('Power Measure Squared vs. Current')
+%     ylabel('Peak Current (pA)')
+%     xlabel('Power Measure Squared (mW^2)')
 end
 
 figure
 
- subplot(311)
+%  subplot(311)
 plot(sorted_power/max(sorted_power),this_cell_cur(subset_pos(order_power))/max(this_cell_cur(subset_pos)),'-','color',colors{j})
 title('Power Measure vs. Current')
 ylabel('Peak Current (pA)')
 xlabel('Power (mW)')
 hold on
-%     subplot(312)
-% 	plot(sorted_fluor2D,this_cell_cur(subset_pos(order_fluor2D)),'-','color',colors{j})
-%     hold on
-subplot(312)
-plot(sorted_fluor3D/max(sorted_fluor3D),this_cell_cur(subset_pos(order_fluor3D))/max(this_cell_cur(subset_pos)),'-','color',colors{j})
-title('Fluor Measure vs. Current')
-ylabel('Peak Current (pA)')
-xlabel('Fluor (a.u.)')
-hold on
-subplot(313)
-plot((sorted_power.^2)/max((sorted_power.^2)),this_cell_cur(subset_pos(order_power)/max(this_cell_cur(subset_pos))),'-','color',colors{j})
-hold on
-title('Power Measure Squared vs. Current')
-ylabel('Peak Current (pA)')
-xlabel('Power Measure Squared (mW^2)')
+% %     subplot(312)
+% % 	plot(sorted_fluor2D,this_cell_cur(subset_pos(order_fluor2D)),'-','color',colors{j})
+% %     hold on
+% subplot(312)
+% plot(sorted_fluor3D/max(sorted_fluor3D),this_cell_cur(subset_pos(order_fluor3D))/max(this_cell_cur(subset_pos)),'-','color',colors{j})
+% title('Fluor Measure vs. Current')
+% ylabel('Peak Current (pA)')
+% xlabel('Fluor (a.u.)')
+% hold on
+% subplot(313)
+% plot((sorted_power.^2)/max((sorted_power.^2)),this_cell_cur(subset_pos(order_power)/max(this_cell_cur(subset_pos))),'-','color',colors{j})
+% hold on
+% title('Power Measure Squared vs. Current')
+% ylabel('Peak Current (pA)')
+% xlabel('Power Measure Squared (mW^2)')
 
