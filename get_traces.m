@@ -9,7 +9,7 @@ for i = 1:length(trials)
     
     cur_trial = trials(i);
 %     this_seq{i} = data.trial_metadata(cur_trial).sequence;
-    stim_starts{i} =  20*[data.trial_metadata(cur_trial).sequence.start]; % MAGIC NUMBER  20*[data.sequence.start];%
+    stim_starts{i} =  20*[data.sequence.start]; % MAGIC NUMBER  %20*[data.trial_metadata(cur_trial).sequence.start];
     stims_per_trial(i) = length(stim_starts{i});
 %     for j = 1:length(this_seq{i})
 %         if i == 1 && j == 1

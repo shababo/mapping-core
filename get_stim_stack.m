@@ -25,7 +25,7 @@ traces_ch2 = cell(1,length(trials));
 
 for i = 1:length(trials)
     
-    trial_ind = trials(i); 
+    trial_ind = trials(i) 
     traces = [data.sweeps{trial_ind}(:,1)'; data.sweeps{trial_ind}(:,2)'; data.sweeps{trial_ind}(:,3)'];
     stim = data.sweeps{trial_ind}(:,3)' > .025; %sum(diff(stim) == 1)
     stim_starts_tmp = find(diff(stim) == 1);

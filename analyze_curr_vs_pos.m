@@ -91,7 +91,7 @@ colors = {'r','b','g','k','c'};
 
 %%
 
-% figure
+figure
 
 
     

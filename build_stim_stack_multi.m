@@ -9,8 +9,8 @@ stacks = cell(num_traces,1);
 
 for i = 1:num_stims
     
-    trial_start = stim_starts(i)
-    trial_end = trial_start + trial_length
+    trial_start = stim_starts(i);
+    trial_end = trial_start + trial_length;
     
     for j = 1:num_traces
         

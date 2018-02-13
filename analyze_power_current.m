@@ -200,22 +200,54 @@ xlim([0 2500])
 % range = 8:13;
 
 [fluor_order,sort_order] = sort([result_spikes.fluor_val])
-colors = copper(100);
+colors = copper(300);
 % close all
 current_figure = figure;
 spike_figure = figure;
-for i = 8:13
+for i = 1:7
     
 %     if result_current(i).inj_ratio == 10
         figure(current_figure)
         gca
         hold on
-        scatter(result_current(i).power{1}.^1,result_current(i).max_curr{1},15,colors(min(round(result_current(i).fluor_val),100),:),'jitter','on','jitteramount',.3);
+        scatter(result_current(i).power{1}.^1,result_current(i).max_curr{1},15,colors(min(round(result_current(i).fluor_val),300),:),'jitter','on','jitteramount',.3);
 
 
         figure(spike_figure)
         gca
         hold on
-        scatter(result_spikes(i).power{1}.^1,result_spikes(i).spike_times{1}/20,15,colors(min(round(result_spikes(i).fluor_val),100),:),'jitter','on','jitteramount',.3);
+        scatter(result_spikes(i).power{1}.^1,result_spikes(i).spike_times{1}/20,15,colors(min(round(result_spikes(i).fluor_val),300),:),'jitter','on','jitteramount',.3);
 %     end
 end
+
+%%
+
+% range = 8:13;
+
+[fluor_order,sort_order] = sort([result_spikes.fluor_val])
+colors = copper(20);
+% close all
+current_figure = figure;
+spike_figure = figure;
+for i = 1:7
+    min(round(result_current(i).vm_rest+80),20)
+%     if result_current(i).inj_ratio == 10
+        figure(current_figure)
+        gca
+        hold on
+        scatter(result_current(i).power{1}.^1,result_current(i).max_curr{1},15,colors(min(round(result_current(i).vm_rest+80),20),:),'jitter','on','jitteramount',.3);
+
+
+        figure(spike_figure)
+        gca
+        hold on
+        scatter(result_spikes(i).power{1}.^1,result_spikes(i).spike_times{1}/20,15,colors(min(round(result_current(i).vm_rest+80),20),:),'jitter','on','jitteramount',.3);
+%     end
+end
+
+%%
+
+% figure; 
+hold on
+plot([result_current(1:7).vm_rest],[result_current(1:7).fluor_val],'or')
+xlim([-80 -50])
