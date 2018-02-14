@@ -38,7 +38,7 @@ current_trial_inds = {4,4,4,4,4,4,4,5,5,5,5,5,4};
 % pos_order = [1 2 4 3 5 6
 %              3 2 5 1 4 6
 %              6 1 3 4 5 2
-%              4 6 3 5 2 1];
+%              4 6 3 5 2 1]z
 
 % colors = {'r','b','g','k','c','y','m'};
 colors = jet(length(filenames));
