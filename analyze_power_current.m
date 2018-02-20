@@ -181,19 +181,28 @@ plot(0:85,678.5*ones(size(0:85)),'r--')
 % plot(14.9*ones(size(0:3000)),0:3000,'r--')
 
 %%
-figure
+curr_vs_time = figure;
 % figure(both_figure)
 for i = 1:length(result_current)
-    gca
+    subplot(121)
     [shared_powers, current_i, spikes_i] = intersect(result_current(i).these_powers,result_spikes(i).these_powers);
-    semilogy(result_current(i).power_means(current_i),result_spikes(i).power_jitter(spikes_i)/20,'color',colors(i,:))
+    plot(result_current(i).current_means(current_i),result_spikes(i).spike_time_means(spikes_i)/20,'color',[0 0 1],'Linewidth',2)
     hold on
+    title('peak current vs. spike time')
+    xlabel('mean peak current (pA)')
+    ylabel('spike time (msec)')
+    xlim([0 2500])
+    ylim([0 15])
+    subplot(122)
+    semilogy(result_current(i).current_means(current_i),result_spikes(i).spike_time_stddev(spikes_i)/20,'color',[0 0 1],'Linewidth',2)
+    hold on
+    title('peak current vs. spike time')
+    xlabel('mean peak current (pA)')
+    ylabel('spike time std. dev. (msec)')
+    xlim([0 2500])
 end
 
-title('peak current vs. p(spike)')
-xlabel('mean peak current (pA)')
-ylabel('spike jitter')
-xlim([0 2500])
+
 % ylim([0 15])
 %%
 
