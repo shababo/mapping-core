@@ -125,7 +125,7 @@ for j = 1:size(filenames,1)
         [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(stacknames{j});
         offsets = nuclear_locs_image_coord([1 2],:) - cell_pos';
 
-        [targ_error, index] = min(sqrt(sum(offsets.^2,1)))
+        [targ_error, index] = min(sqrt(sum(offsets.^2,1)));
         result_tmp_current.fluor_val = fluor_vals(index);
         result_tmp_spike.fluor_val = fluor_vals(index);
         result_tmp_current.cell_pos = nuclear_locs_image_coord(:,index);
@@ -258,5 +258,6 @@ end
 
 % figure; 
 hold on
-plot([result_current(1:7).vm_rest],[result_current(1:7).fluor_val],'or')
-xlim([-80 -50])
+cell_select = [1:6 9:10 12]; 
+plot([result_current(cell_select).fluor_val],[result_current(cell_select).vm_rest],'or')
+% xlim([-80 -50])
