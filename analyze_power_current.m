@@ -2,34 +2,34 @@
 
 %%
 
-filenames = {'1_23_slice1_cell1.mat'
-             '1_23_slice1_cell2.mat'
-             '1_23_slice2_cell1.mat' % spkes 1 and currents 4
-             '1_23_slice2_cell2.mat'
-             '1_25_slice1_cell1.mat'
-             '1_25_slice1_cell2.mat' % spikes 1 only
-             '1_25_slice1_cell3.mat'
-             '1_25_slice2_cell1.mat'
-             '1_25_slice2_cell2.mat'
-             '1_25_slice2_cell3x.mat' % spikes 1 only
-             '1_25_slice2_cell4.mat'  % spikes 1 only
-             '1_25_slice3_cell1.mat'  % spikes 1, kinda shitty currents 3
-             '1_25_slice3_cell1next.mat'  % spikes 1
-             '1_26_slice1_cell1.mat'
-             '1_26_slice1_cell2.mat'
-             '1_26_slice1_cell3.mat'
-             '1_26_slice2_cell2.mat'  % spikes [1 2] only
-             '1_26_slice2_cell3.mat'  % spikes [1 2] only
-             '1_26_slice3_cell1next.mat'  % spikes [1 2] only
-             '1_26_slice3_cell2next.mat'  % spikes [1 2] only
-             '1_26_slice3_cell3.mat'  % spikes [1 2] only
-             '1_27_slice1_cell1.mat'
-             '1_27_slice1_cell2.mat'
-             '1_27_slice1_cell3.mat'
-             '1_27_slice2_cell1.mat'  % spikes [1 2] only 
-             '1_27_slice2_cell2.mat'  % spikes [1 2], current 4 - bad holding
-             '1_27_slice3_cell1.mat'  % spikes [1 2] only
-             '1_27_slice3_cell2.mat'  % spikes [1 2] and current 5 - no evoked spikes
+filenames = {'1_23_slice1_cell1.mat', '/media/shababo/data/01232018images/s2c1-pre - 1_C0'
+             '1_23_slice1_cell2.mat', '/media/shababo/data/01232018images/s2c1-pre - 2_C0'
+             '1_23_slice2_cell1.mat', '/media/shababo/data/01232018images/s2c1-pre - 4_C0' % spkes 1 and currents 4
+             '1_23_slice2_cell2.mat', '/media/shababo/data/01232018images/s2c1-pre - 5_C0'
+             '1_25_slice1_cell1.mat', ''
+             '1_25_slice1_cell2.mat', '/media/shababo/data/01252018images/s2c1-pre_C0' % spikes 1 only
+             '1_25_slice1_cell3.mat', '/media/shababo/data/01252018images/s2c1-pre - 1_C0'
+             '1_25_slice2_cell1.mat', '/media/shababo/data/01252018images/s2c1-pre - 3_C0'
+             '1_25_slice2_cell2.mat', '/media/shababo/data/01252018images/s2c1-pre - 4_C0' % MAYBE THIS CELL'S IMAGE??
+             '1_25_slice2_cell3x.mat', '/media/shababo/data/01252018images/s2c1-pre - 6_C0' % spikes 1 only
+             '1_25_slice2_cell4.mat', '/media/shababo/data/01252018images/s2c1-pre - 7_C0'  % spikes 1 only
+             '1_25_slice3_cell1.mat', '/media/shababo/data/01252018images/s2c1-pre - 8_C0'  % spikes 1, kinda shitty currents 3
+             '1_25_slice3_cell1next.mat', '/media/shababo/data/01252018images/s2c1-pre - 9_C0'  % spikes 1
+             '1_26_slice1_cell1.mat', '/media/shababo/data/0126272018images/s2c1-pre_C0'
+             '1_26_slice1_cell2.mat', '/media/shababo/data/0126272018images/s2c1-pre - 1_C0'
+             '1_26_slice1_cell3.mat', '/media/shababo/data/0126272018images/s2c1-pre - 2_C0'
+             '1_26_slice2_cell2.mat', '/media/shababo/data/0126272018images/s2c1-pre - 4_C0'  % spikes [1 2] only
+             '1_26_slice2_cell3.mat', '/media/shababo/data/0126272018images/s2c1-pre - 6_C0'  % spikes [1 2] only
+             '1_26_slice3_cell1next.mat', '/media/shababo/data/0126272018images/s2c1-pre - 7_C0'  % spikes [1 2] only
+             '1_26_slice3_cell2next.mat', '/media/shababo/data/0126272018images/s2c1-pre - 8_C0'  % spikes [1 2] only
+             '1_26_slice3_cell3.mat', '/media/shababo/data/0126272018images/s2c1-pre - 9_C0'  % spikes [1 2] only
+             '1_27_slice1_cell1.mat', '/media/shababo/data/0126272018images/s2c1-pre - 10_C0'
+             '1_27_slice1_cell2.mat', '/media/shababo/data/0126272018images/s2c1-pre - 11_C0'
+             '1_27_slice1_cell3.mat', '/media/shababo/data/0126272018images/s2c1-pre - 12_C0'
+             '1_27_slice2_cell1.mat', '/media/shababo/data/0126272018images/s2c1-pre - 13_C0'  % spikes [1 2] only 
+             '1_27_slice2_cell2.mat', '/media/shababo/data/0126272018images/s2c1-pre - 14_C0'  % spikes [1 2], current 4 - bad holding
+             '1_27_slice3_cell1.mat', '/media/shababo/data/0126272018images/s2c1-pre - 16_C0'  % spikes [1 2] only
+             '1_27_slice3_cell2.mat', '/media/shababo/data/0126272018images/s2c1-pre - 17_C0'  % spikes [1 2] and current 5 - no evoked spikes
              };
          
 stacknames = {'/media/shababo/data/01232018images/s2c1-pre - 1_C0'
@@ -62,7 +62,7 @@ current_trial_inds = {4,4,4,4,4,4,4,4,5,5,5,5,5,4};
 
 % colors = {'r','b','g','k','c','y','m'};
 
-colors = jet(length(filenames));
+colors = jet(size(filenames),1);
 
 spike_figure = figure;
 current_figure = figure;
@@ -75,7 +75,7 @@ for j = 1:size(filenames,1)
     
     
     
-    load(filenames{j}); 
+    load(filenames{j,1}); 
     
     result_tmp_spike = analyze_current_diffraction_map(data,1,spike_trial_inds(j),'spikes');
     result_tmp_current = analyze_current_diffraction_map(data,1,current_trial_inds(j),'current');
@@ -145,7 +145,7 @@ for j = 1:size(filenames,1)
     end
 %         
 %     if j > 0
-        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(stacknames{j},[],[],[],do_detect);
+        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,2},[],[],[],do_detect);
         offsets = nuclear_locs_image_coord([1 2],:) - cell_pos';
 
         [targ_error, index] = min(sqrt(sum(offsets.^2,1)));
