@@ -41,11 +41,14 @@ current_trial_inds = {4,4,4,4,4,4,4,5,5,5,5,5,4};
 %              4 6 3 5 2 1]z
 
 % colors = {'r','b','g','k','c','y','m'};
+
 colors = jet(length(filenames));
 
 spike_figure = figure;
 current_figure = figure;
-both_figure = figure;
+
+
+do_detect = 0;
 %% 
 
 for j = 1:size(filenames,1)
@@ -72,11 +75,11 @@ for j = 1:size(filenames,1)
     
     unique_powers_spike = unique(round(result_tmp_spike.stim_size{1},2));
     result_tmp_spike.these_powers = unique_powers_spike;
-    result_tmp_spike.power_means = zeros(size(unique_powers_spike))';
+    result_tmp_spike.spike_time_means = zeros(size(unique_powers_spike))';
     
     unique_powers_current = unique(round(result_tmp_current.stim_size{1},2));
     result_tmp_current.these_powers = unique_powers_current;
-    result_tmp_current.power_means = zeros(size(unique_powers_current))';
+    result_tmp_current.peak_current_means = zeros(size(unique_powers_current))';
     
 
     for i = 1:length(unique_powers_spike)
@@ -94,9 +97,9 @@ for j = 1:size(filenames,1)
 %         result_tmp.power{1}(these_trials) = pockels_map_fine(lower_ind,2) + interp_dist*step_size_power;
         
 
-                result_tmp_spike.power_means(i) = nanmean(result_tmp_spike.spike_times{1}(these_trials));
-                result_tmp_spike.power_ranges(i) = max(result_tmp_spike.spike_times{1}(these_trials)) - min(result_tmp_spike.spike_times{1}(these_trials));
-                result_tmp_spike.power_jitter(i) = nanstd(result_tmp_spike.spike_times{1}(these_trials));
+                result_tmp_spike.spike_time_means(i) = nanmean(result_tmp_spike.spike_times{1}(these_trials));
+                result_tmp_spike.spike_time_ranges(i) = max(result_tmp_spike.spike_times{1}(these_trials)) - min(result_tmp_spike.spike_times{1}(these_trials));
+                result_tmp_spike.spike_time_jitter(i) = nanstd(result_tmp_spike.spike_times{1}(these_trials));
                 result_tmp_spike.prob_spike(i) = sum(~isnan(result_tmp_spike.spike_times{1}(these_trials)))/length(these_trials);
                 
         
@@ -117,12 +120,12 @@ for j = 1:size(filenames,1)
 %         result_tmp.power{1}(these_trials) = pockels_map_fine(lower_ind,2) + interp_dist*step_size_power;
         
 
-        result_tmp_current.power_means(i) = mean(result_tmp_current.max_curr{1}(these_trials));
+        result_tmp_current.peak_current_means(i) = mean(result_tmp_current.max_curr{1}(these_trials));
 
     end
 %         
-    if j > 0
-        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(stacknames{j});
+%     if j > 0
+        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(stacknames{j},[],[],[],do_detect);
         offsets = nuclear_locs_image_coord([1 2],:) - cell_pos';
 
         [targ_error, index] = min(sqrt(sum(offsets.^2,1)));
@@ -130,7 +133,7 @@ for j = 1:size(filenames,1)
         result_tmp_spike.fluor_val = fluor_vals(index);
         result_tmp_current.cell_pos = nuclear_locs_image_coord(:,index);
         result_tmp_spike.cell_pos = nuclear_locs_image_coord(:,index);
-    end
+%     end
 %     subplot(211)
 
             figure(current_figure)
@@ -181,12 +184,17 @@ plot(0:85,678.5*ones(size(0:85)),'r--')
 % plot(14.9*ones(size(0:3000)),0:3000,'r--')
 
 %%
-curr_vs_time = figure;
-% figure(both_figure)
+new_fig = 0;
+if ~exist('curr_vs_time','var')
+    new_fig = 1;
+    curr_vs_time = figure;
+else
+    figure(curr_vs_time)
+end
 for i = 1:length(result_current)
     subplot(121)
     [shared_powers, current_i, spikes_i] = intersect(result_current(i).these_powers,result_spikes(i).these_powers);
-    plot(result_current(i).current_means(current_i),result_spikes(i).spike_time_means(spikes_i)/20,'color',[0 0 1],'Linewidth',2)
+    plot(result_current(i).peak_current_means(current_i),result_spikes(i).spike_time_means(spikes_i)/20,'-b','Linewidth',2)
     hold on
     title('peak current vs. spike time')
     xlabel('mean peak current (pA)')
@@ -194,7 +202,7 @@ for i = 1:length(result_current)
     xlim([0 2500])
     ylim([0 15])
     subplot(122)
-    semilogy(result_current(i).current_means(current_i),result_spikes(i).spike_time_stddev(spikes_i)/20,'color',[0 0 1],'Linewidth',2)
+    semilogy(result_current(i).peak_current_means(current_i),result_spikes(i).spike_time_jitter(spikes_i)/20,'-b','Linewidth',2)
     hold on
     title('peak current vs. spike time')
     xlabel('mean peak current (pA)')
@@ -256,8 +264,8 @@ end
 
 %%
 
-% figure; 
-hold on
-cell_select = [1:6 9:10 12]; 
-plot([result_current(cell_select).fluor_val],[result_current(cell_select).vm_rest],'or')
+figure; 
+% hold on
+cell_select = [1:12]; 
+plot([result_current_bu(cell_select).vm_rest],[result_current(cell_select).fluor_val],'or')
 % xlim([-80 -50])

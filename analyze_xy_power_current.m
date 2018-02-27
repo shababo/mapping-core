@@ -63,39 +63,7 @@ for j = 1:size(filenames,1)
         end
     end
 
-    figure(pos_vs_cur_and_spike_time)
-    subplot(221)
-    these_trials = result_xy(j).spike_targ_pos(:,1) == 0;
-    scatter(result_xy(j).spike_targ_pos(these_trials,2),result_xy(j).spike_times(these_trials)/20,[],colors(experiment_setup.quadrant,:));
-    hold on
-    xlim([-20 20])
-    xlabel('Horizontal Distance (um)')
-    ylabel('Spike Time (msec)')
-    title('Horizontal Distance vs. Spike Time')
-    subplot(222)
-    these_trials = result_xy(j).current_targ_pos(:,1) == 0;
-    scatter(result_xy(j).current_targ_pos(these_trials,2),result_xy(j).max_curr(these_trials),[],colors(experiment_setup.quadrant,:));
-    hold on
-    xlim([-20 20])
-    xlabel('Horizontal Distance (um)')
-    ylabel('Peak Current (pA)')
-    title('Horizontal Distance vs. Peak Current')
-    subplot(223)
-    these_trials = result_xy(j).spike_targ_pos(:,2) == 0;
-    scatter(result_xy(j).spike_targ_pos(these_trials,1),result_xy(j).spike_times(these_trials)/20,[],colors(experiment_setup.quadrant,:));
-    hold on
-    xlim([-20 20])
-    xlabel('Vertical Distance (um)')
-    ylabel('Spike Time (msec)')
-    title('Vertical Distance vs. Spike Time')
-    subplot(224)
-    these_trials = result_xy(j).current_targ_pos(:,2) == 0;
-    scatter(result_xy(j).current_targ_pos(these_trials,1),result_xy(j).max_curr(these_trials),[],colors(experiment_setup.quadrant,:));
-    hold on
-    xlim([-20 20])
-    xlabel('Vertical Distance (um)')
-    ylabel('Peak Current (pA)')
-    title('Vertical Distance vs. Peak Current')
+    
     
     tested_pos = unique(result_xy(j).spike_targ_pos(:,1));
     if ~isempty(setdiff(tested_pos,unique(result_xy(j).current_targ_pos(:,1))))
@@ -124,13 +92,51 @@ for j = 1:size(filenames,1)
         result_xy(j).y_max_curr_means(i) = nanmean(result_xy(j).max_curr(these_trials));
     end
     
+    figure(pos_vs_cur_and_spike_time)
+    subplot(221)
+    these_trials = result_xy(j).spike_targ_pos(:,1) == 0;
+    scatter(result_xy(j).spike_targ_pos(these_trials,2),result_xy(j).spike_times(these_trials)/20,[],colors(experiment_setup.quadrant,:));
+    hold on
+    plot(tested_pos,result_xy(j).x_spike_time_means/20,'color',colors(experiment_setup.quadrant,:))
+    xlim([-20 20])
+    xlabel('Horizontal Distance (um)')
+    ylabel('Spike Time (msec)')
+    title('Horizontal Distance vs. Spike Time')
+    subplot(222)
+    these_trials = result_xy(j).current_targ_pos(:,1) == 0;
+    scatter(result_xy(j).current_targ_pos(these_trials,2),result_xy(j).max_curr(these_trials),[],colors(experiment_setup.quadrant,:));
+    plot(tested_pos,result_xy(j).x_max_curr_means,'color',colors(experiment_setup.quadrant,:))
+    hold on
+    xlim([-20 20])
+    xlabel('Horizontal Distance (um)')
+    ylabel('Peak Current (pA)')
+    title('Horizontal Distance vs. Peak Current')
+    subplot(223)
+    these_trials = result_xy(j).spike_targ_pos(:,2) == 0;
+    scatter(result_xy(j).spike_targ_pos(these_trials,1),result_xy(j).spike_times(these_trials)/20,[],colors(experiment_setup.quadrant,:));
+    hold on
+    plot(tested_pos,result_xy(j).y_spike_time_means/20,'color',colors(experiment_setup.quadrant,:))
+    xlim([-20 20])
+    xlabel('Vertical Distance (um)')
+    ylabel('Spike Time (msec)')
+    title('Vertical Distance vs. Spike Time')
+    subplot(224)
+    these_trials = result_xy(j).current_targ_pos(:,2) == 0;
+    scatter(result_xy(j).current_targ_pos(these_trials,1),result_xy(j).max_curr(these_trials),[],colors(experiment_setup.quadrant,:));
+    hold on
+    plot(tested_pos,result_xy(j).y_max_curr_means,'color',colors(experiment_setup.quadrant,:))
+    xlim([-20 20])
+    xlabel('Vertical Distance (um)')
+    ylabel('Peak Current (pA)')
+    title('Vertical Distance vs. Peak Current')
+    
     figure(curr_vs_time)
     subplot(121)
     [ordered_curr, curr_order_x] = sort(result_xy(j).x_max_curr_means);
-    plot(result_xy(j).x_max_curr_means(curr_order_x),result_xy(j).x_spike_time_means(curr_order_x)/20,'-','color',colors(experiment_setup.quadrant,:),'Linewidth',2);
+    plot(result_xy(j).x_max_curr_means(curr_order_x),result_xy(j).x_spike_time_means(curr_order_x)/20,'-r','Linewidth',2);
     hold on
     [ordered_curr, curr_order_y] = sort(result_xy(j).y_max_curr_means);
-    plot(result_xy(j).y_max_curr_means(curr_order_y),result_xy(j).y_spike_time_means(curr_order_y)/20,'--','color',colors(experiment_setup.quadrant,:),'Linewidth',2);
+    plot(result_xy(j).y_max_curr_means(curr_order_y),result_xy(j).y_spike_time_means(curr_order_y)/20,'-r','Linewidth',2);
     ylim([0 15])
     if new_fig
         xlabel('Peak Current Mean (pA)')
@@ -138,9 +144,9 @@ for j = 1:size(filenames,1)
         title('Peak Current vs. Spike Time')
     end
     subplot(122)
-    semilogy(result_xy(j).x_max_curr_means(curr_order_x),result_xy(j).x_spike_time_jitter(curr_order_x)/20,'-','color',colors(experiment_setup.quadrant,:),'Linewidth',2);
+    semilogy(result_xy(j).x_max_curr_means(curr_order_x),result_xy(j).x_spike_time_jitter(curr_order_x)/20,'-r','Linewidth',2);
     hold on
-    semilogy(result_xy(j).y_max_curr_means(curr_order_y),result_xy(j).y_spike_time_jitter(curr_order_y)/20,'--','color',colors(experiment_setup.quadrant,:),'Linewidth',2);
+    semilogy(result_xy(j).y_max_curr_means(curr_order_y),result_xy(j).y_spike_time_jitter(curr_order_y)/20,'-r','Linewidth',2);
     if new_fig
         xlabel('Peak Current Mean (pA)')
         ylabel('Spike Time Std. Dev. (msec)')
