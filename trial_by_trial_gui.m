@@ -56,7 +56,7 @@ function trial_by_trial_gui_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 handles.data = varargin{1};
-
+set(handles.trial_number,'String','1')
 draw_plot(handles)
 set(handles.num_traces,'String',['Num Traces: ' num2str(handles.data.n_trials)])
 

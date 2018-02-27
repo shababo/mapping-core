@@ -4,25 +4,45 @@
 
 filenames = {'1_23_slice1_cell1.mat'
              '1_23_slice1_cell2.mat'
+             '1_23_slice2_cell1.mat' % spkes 1 and currents 4
              '1_23_slice2_cell2.mat'
              '1_25_slice1_cell1.mat'
+             '1_25_slice1_cell2.mat' % spikes 1 only
              '1_25_slice1_cell3.mat'
              '1_25_slice2_cell1.mat'
              '1_25_slice2_cell2.mat'
+             '1_25_slice2_cell3x.mat' % spikes 1 only
+             '1_25_slice2_cell4.mat'  % spikes 1 only
+             '1_25_slice3_cell1.mat'  % spikes 1, kinda shitty currents 3
+             '1_25_slice3_cell1next.mat'  % spikes 1
              '1_26_slice1_cell1.mat'
              '1_26_slice1_cell2.mat'
              '1_26_slice1_cell3.mat'
+             '1_26_slice2_cell2.mat'  % spikes [1 2] only
+             '1_26_slice2_cell3.mat'  % spikes [1 2] only
+             '1_26_slice3_cell1next.mat'  % spikes [1 2] only
+             '1_26_slice3_cell2next.mat'  % spikes [1 2] only
+             '1_26_slice3_cell3.mat'  % spikes [1 2] only
              '1_27_slice1_cell1.mat'
              '1_27_slice1_cell2.mat'
-             '1_27_slice1_cell3.mat'};        
+             '1_27_slice1_cell3.mat'
+             '1_27_slice2_cell1.mat'  % spikes [1 2] only 
+             '1_27_slice2_cell2.mat'  % spikes [1 2], current 4 - bad holding
+             '1_27_slice3_cell1.mat'  % spikes [1 2] only
+             '1_27_slice3_cell2.mat'  % spikes [1 2] and current 5 - no evoked spikes
+             };
          
 stacknames = {'/media/shababo/data/01232018images/s2c1-pre - 1_C0'
               '/media/shababo/data/01232018images/s2c1-pre - 2_C0'
+              '/media/shababo/data/01232018images/s2c1-pre - 4_C0'
               '/media/shababo/data/01232018images/s2c1-pre - 5_C0'
+              'NA'
               '/media/shababo/data/01252018images/s2c1-pre_C0'
               '/media/shababo/data/01252018images/s2c1-pre - 1_C0'
               '/media/shababo/data/01252018images/s2c1-pre - 3_C0'
               '/media/shababo/data/01252018images/s2c1-pre - 4_C0'
+              '/media/shababo/data/01252018images/s2c1-pre - 5_C0'
+              
               '/media/shababo/data/0126272018images/s2c1-pre_C0'
               '/media/shababo/data/0126272018images/s2c1-pre - 1_C0'
               '/media/shababo/data/0126272018images/s2c1-pre - 2_C0'
@@ -32,8 +52,8 @@ stacknames = {'/media/shababo/data/01232018images/s2c1-pre - 1_C0'
 
 cell_pos = [118 135];
         
-spike_trial_inds = {1,1,1,1,1,1,1,[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
-current_trial_inds = {4,4,4,4,4,4,4,5,5,5,5,5,4};
+spike_trial_inds = {1,1,1,1,1,1,1,1,[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
+current_trial_inds = {4,4,4,4,4,4,4,4,5,5,5,5,5,4};
 
 % pos_order = [1 2 4 3 5 6
 %              3 2 5 1 4 6
