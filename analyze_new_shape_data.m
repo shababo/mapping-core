@@ -210,30 +210,83 @@ z_pos = [160 200 240];
 count = 1;
 [xq, yq] = meshgrid(-35:35,-35:35);
 spatial_maps = zeros(length(xq),length(yq),length(z_pos),length(result_shape));
+spatial_maps_per_cell = struct();
 
-for i = 1:length(z_pos)
+all_curr = [];
+all_pos = [];
+
     
 
-    for j = 1:length(result_shape)
-        these_xy = unique(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,1:2),'rows');
-        curr_means = zeros(size(these_xy,1),1);
+for j = 1:length(result_shape)
         x = [];
         y = [];
+        z = [];
         curr = [];
+    for i = 1:length(z_pos)
+        these_xy = unique(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,1:2),'rows');
+        curr_means = zeros(size(these_xy,1),1);
+        
+        
         for k = 1:size(these_xy,1)
             curr_mean = nanmean(result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000 & ...
                 result_shape(j).current_targ_pos(:,1) == these_xy(k,1) & result_shape(j).current_targ_pos(:,2) == these_xy(k,2)));
             if ~isnan(curr_mean)
                 x = [x these_xy(k,1)];
                 y = [y these_xy(k,2)];
+                z = [z z_pos(i)];
                 curr = [curr curr_mean];
             end
         end
-        
-       spatial_maps(:,:,i,j) = griddata(x,y,curr,xq,yq) 
+        if z_pos(i) == 200
+            [max_curr, max_pos] = max(curr);
+            max_pos = [x(max_pos) y(max_pos) z(max_pos)];
+        end
+%        spatial_maps(:,:,i,j) = griddata(x,y,curr,xq,yq) 
     end
+    spatial_maps_per_cell(j).curr = curr/max(curr);
+    spatial_maps_per_cell(j).pos = [x; y; z]' - max_pos;
+    all_curr = [all_curr spatial_maps_per_cell(j).curr];
+    all_pos = [all_pos; spatial_maps_per_cell(j).pos];
 end
 
+%%
+
+[all_unique_pos, all_unique_pos_inds, all_pos_inds] = unique(all_pos,'rows');
+mean_curr_all_cells = zeros(size(all_unique_pos,1),1);
+var_curr_all_cells = zeros(size(all_unique_pos,1),1);
+
+for i = 1:length(mean_curr_all_cells)
+    
+    mean_curr_all_cells(i) = nanmean(all_curr(all_pos_inds == i));
+    var_curr_all_cells(i) = nanvar(all_curr(all_pos_inds == i));
+    
+end
+
+mean_curr_all_cells = mean_curr_all_cells/max(mean_curr_all_cells);
+
+mean_curr_map = zeros(length(xq),length(yq),length(z_pos));
+var_curr_map = zeros(length(xq),length(yq),length(z_pos));
+
+z_pos = [-40 0 40];
+for i = 1:length(z_pos)
+    these_z_pos = all_unique_pos(:,3) == z_pos(i);
+    these_xy = all_unique_pos(these_z_pos,1:2);
+    mean_curr_map(:,:,i) = griddata(these_xy(:,1),these_xy(:,2),mean_curr_all_cells(these_z_pos),xq,yq);
+    var_curr_map(:,:,i) = griddata(these_xy(:,1),these_xy(:,2),var_curr_all_cells(these_z_pos),xq,yq);
+end
+
+figure;
+for i = 1:size(mean_cell,3)
+    subplot(3,2,(i-1)*2+1)
+    imagesc(mean_curr_map(:,:,i)')
+    caxis([0 max(mean_curr_map(:))])
+    title(['Mean Cell Shape (Z = ' num2str(z_pos(i) - 200) ' um)'])
+    
+    subplot(3,2,(i-1)*2+2)
+    imagesc(var_curr_map(:,:,i)')
+    caxis([0 max(var_curr_map(:))])
+    title(['Variance Cell Shape (Z = ' num2str(z_pos(i) - 200) ' um)'])
+end
 %%
 
 figure
@@ -250,13 +303,15 @@ end
 
 %%
 
-for i = 1:size(spatial_maps,4)
-    
-    spatial_maps_norm(:,:,:,i) = spatial_maps(:,:,:,i)/max(max(max(spatial_maps(:,:,:,i))));
-end
+% for i = 1:size(spatial_maps,4)
+%     
+%     spatial_maps_norm(:,:,:,i) = spatial_maps(:,:,:,i)/max(max(max(spatial_maps(:,:,:,i))));
+% end
 
-mean_cell = mean(spatial_maps_norm,4);
-std_cell = var(spatial_maps_norm,[],4);
+
+
+mean_cell = mean(spatial_maps,4);
+std_cell = var(spatial_maps,[],4);
 figure;
 for i = 1:size(mean_cell,3)
     subplot(3,2,(i-1)*2+1)
