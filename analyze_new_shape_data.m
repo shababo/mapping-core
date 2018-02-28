@@ -244,7 +244,7 @@ for j = 1:length(result_shape)
 %        spatial_maps(:,:,i,j) = griddata(x,y,curr,xq,yq) 
     end
     spatial_maps_per_cell(j).curr = curr/max(curr);
-    spatial_maps_per_cell(j).pos = [x; y; z]' - max_pos;
+    spatial_maps_per_cell(j).pos = [x; y; z]';% - max_pos;
     all_curr = [all_curr spatial_maps_per_cell(j).curr];
     all_pos = [all_pos; spatial_maps_per_cell(j).pos];
 end
@@ -267,7 +267,7 @@ mean_curr_all_cells = mean_curr_all_cells/max(mean_curr_all_cells);
 mean_curr_map = zeros(length(xq),length(yq),length(z_pos));
 var_curr_map = zeros(length(xq),length(yq),length(z_pos));
 
-z_pos = [-40 0 40];
+z_pos = [160 200 240];
 for i = 1:length(z_pos)
     these_z_pos = all_unique_pos(:,3) == z_pos(i);
     these_xy = all_unique_pos(these_z_pos,1:2);
