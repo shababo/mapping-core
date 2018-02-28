@@ -30,7 +30,7 @@ filenames = {'2_24_slice1_cell1.mat', '2_24_13_57_data.mat'
 spike_trials = {[],[],[],[],1,1,1,1,1,1,1};
 current_trials = {3:8,3:8,3,3:8,4:9,4:6,4:9,4:9,4:9,4:9,4:9};
 intrinsic_trials = {2,2,2,2,3,3,3,3,3,3,3};
-z_center = 200*ones(size(filenames,1),1);
+z_center = z_pos(i)*ones(size(filenames,1),1);
 
 colors = jet(4);
 % colors(:) = 0;
@@ -198,15 +198,22 @@ end
 
 %%
 
+z_pos = [160 200 240];
 figure
-for j = 1:size(filenames,1)
+count = 1;
+for i = 1:length(z_pos)
     
-    subplot(3,4,j)
-    scatter3(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == 200 & result_shape(j).max_curr < 2000,1), ...
-             result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == 200 & result_shape(j).max_curr < 2000,2), ...
-             result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == 200 & result_shape(j).max_curr < 2000),[], ...
-             result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == 200 & result_shape(j).max_curr < 2000)/...
-             max(result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == 200 & result_shape(j).max_curr < 2000)))
-         zlim([0 2000])
-         
+
+    for j = 1:size(filenames,1)
+        count
+        subplot(length(z_pos),size(filenames,1),count)
+        scatter3(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,1), ...
+                 result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,2), ...
+                 result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000),[], ...
+                 result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000)/...
+                 max(result_shape(j).max_curr(result_shape(j).max_curr < 2000)))
+             zlim([0 2000])
+         count = count + 1;
+
+    end
 end
