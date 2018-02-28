@@ -1,30 +1,17 @@
 %%
      
-stacknames = {'/media/shababo/data/01232018images/s2c1-pre - 1_C0'
-              '/media/shababo/data/01232018images/s2c1-pre - 2_C0'
-              '/media/shababo/data/01232018images/s2c1-pre - 5_C0'
-              '/media/shababo/data/01252018images/s2c1-pre_C0'
-              '/media/shababo/data/01252018images/s2c1-pre - 1_C0'
-              '/media/shababo/data/01252018images/s2c1-pre - 3_C0'
-              '/media/shababo/data/01252018images/s2c1-pre - 4_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre - 1_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre - 2_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre - 10_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre - 11_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre - 12_C0'};
 
-filenames = {'1_31_slice1_cell2.mat', '1_31_15_3_data.mat'
-             '1_31_slice1_cell3.mat', '1_31_15_13_data.mat'
-             '2_21_slice1_cell1.mat', '2_21_16_57_data.mat'
-             '2_22_slice1_cell1.mat', '2_22_15_17_data.mat'
-             '2_23_slice1_cell1.mat', '2_23_12_15_data.mat'
-             '2_23_slice1_cell2.mat', '2_23_12_27_data.mat'
-             '2_23_slice2_cell1.mat', '2_23_12_59_data.mat'
-             '2_23_slice2_cell2.mat', '2_23_13_24_data.mat'
-             '2_23_slice3_cell1.mat', '2_23_14_5_data.mat'
-             '2_23_slice3_cell2.mat', '2_23_14_28_data.mat'
-             '2_23_slice3_cell3.mat', '2_23_14_40_data.mat'};     
+filenames = {'1_31_slice1_cell2.mat', '1_31_15_3_data.mat', '/media/shababo/data/01312018images/s2c1-pre - 2_C0'
+             '1_31_slice1_cell3.mat', '1_31_15_13_data.mat', '/media/shababo/data/01312018images/s2c1-pre - 3_C0'
+             '2_21_slice1_cell1.mat', '2_21_16_57_data.mat', '/media/shababo/data/0221232018_zdata/s2c1-pre - 1_C0'
+             '2_22_slice1_cell1.mat', '2_22_15_17_data.mat', '/media/shababo/data/0221232018_zdata/s2c1-pre - 2_C0'
+             '2_23_slice1_cell1.mat', '2_23_12_15_data.mat', '/media/shababo/data/0221232018_zdata/s2c1-pre - 4_C0'
+             '2_23_slice1_cell2.mat', '2_23_12_27_data.mat', '/media/shababo/data/0221232018_zdata/s2c1-pre - 5_C0'
+             '2_23_slice2_cell1.mat', '2_23_12_59_data.mat', '/media/shababo/data/0221232018_zdata/s2c1-pre - 6_C0'
+             '2_23_slice2_cell2.mat', '2_23_13_24_data.mat', '/media/shababo/data/0221232018_zdata/s2c1-pre - 7_C0'
+             '2_23_slice3_cell1.mat', '2_23_14_5_data.mat', '/media/shababo/data/0221232018_zdata/s2c1-pre - 8_C0'
+             '2_23_slice3_cell2.mat', '2_23_14_28_data.mat', '/media/shababo/data/0221232018_zdata/s2c1-pre - 9_C0'
+             '2_23_slice3_cell3.mat', '2_23_14_40_data.mat', '/media/shababo/data/0221232018_zdata/s2c1-pre - 10_C0'};     
          
 spike_trials = {1,1,1,1,1,1,1,1,1,1,1};
 current_trials = {4,4,4,4,4,4,4,4,4,4,4};
