@@ -2,38 +2,43 @@
 
 %%
 
-filenames = {'1_23_slice1_cell1.mat'
-             '1_23_slice1_cell2.mat'
-             '1_23_slice2_cell2.mat'
-             '1_25_slice1_cell1.mat'
-             '1_25_slice1_cell3.mat'
-             '1_25_slice2_cell1.mat'
-             '1_25_slice2_cell2.mat'
-             '1_26_slice1_cell1.mat'
-             '1_26_slice1_cell2.mat'
-             '1_26_slice1_cell3.mat'
-             '1_27_slice1_cell1.mat'
-             '1_27_slice1_cell2.mat'
-             '1_27_slice1_cell3.mat'};        
-         
-stacknames = {'/media/shababo/data/01232018images/s2c1-pre - 1_C0'
-              '/media/shababo/data/01232018images/s2c1-pre - 2_C0'
-              '/media/shababo/data/01232018images/s2c1-pre - 5_C0'
-              '/media/shababo/data/01252018images/s2c1-pre_C0'
-              '/media/shababo/data/01252018images/s2c1-pre - 1_C0'
-              '/media/shababo/data/01252018images/s2c1-pre - 3_C0'
-              '/media/shababo/data/01252018images/s2c1-pre - 4_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre - 1_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre - 2_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre - 10_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre - 11_C0'
-              '/media/shababo/data/0126272018images/s2c1-pre - 12_C0'};
+filenames = {'1_23_slice1_cell1.mat', '/media/shababo/data/01232018images/s2c1-pre - 1_C0'
+             '1_23_slice1_cell2.mat', '/media/shababo/data/01232018images/s2c1-pre - 2_C0'
+             '1_23_slice2_cell1.mat', '/media/shababo/data/01232018images/s2c1-pre - 4_C0' % spkes 1 and currents 4
+             '1_23_slice2_cell2.mat', '/media/shababo/data/01232018images/s2c1-pre - 5_C0'
+             '1_25_slice1_cell1.mat', ''
+             '1_25_slice1_cell2.mat', '/media/shababo/data/01252018images/s2c1-pre_C0' % spikes 1 only
+             '1_25_slice1_cell3.mat', '/media/shababo/data/01252018images/s2c1-pre - 1_C0'
+             '1_25_slice2_cell1.mat', '/media/shababo/data/01252018images/s2c1-pre - 3_C0'
+             '1_25_slice2_cell2.mat', '/media/shababo/data/01252018images/s2c1-pre - 4_C0' % MAYBE THIS CELL'S IMAGE??
+             '1_25_slice2_cell3x.mat', '/media/shababo/data/01252018images/s2c1-pre - 6_C0' % spikes 1 only
+             '1_25_slice2_cell4.mat', '/media/shababo/data/01252018images/s2c1-pre - 7_C0'  % spikes 1 only
+             '1_25_slice3_cell1.mat', '/media/shababo/data/01252018images/s2c1-pre - 8_C0'  % spikes 1, kinda shitty currents 3
+             '1_25_slice3_cell1next.mat', '/media/shababo/data/01252018images/s2c1-pre - 9_C0'  % spikes 1
+             '1_26_slice1_cell1.mat', '/media/shababo/data/0126272018images/s2c1-pre_C0'
+             '1_26_slice1_cell2.mat', '/media/shababo/data/0126272018images/s2c1-pre - 1_C0'
+             '1_26_slice1_cell3.mat', '/media/shababo/data/0126272018images/s2c1-pre - 2_C0'
+             '1_26_slice2_cell2.mat', '/media/shababo/data/0126272018images/s2c1-pre - 4_C0'  % spikes [1 2] only
+             '1_26_slice2_cell3.mat', '/media/shababo/data/0126272018images/s2c1-pre - 6_C0'  % spikes [1 2] only
+             '1_26_slice3_cell1next.mat', '/media/shababo/data/0126272018images/s2c1-pre - 7_C0'  % spikes [1 2] only
+             '1_26_slice3_cell2next.mat', '/media/shababo/data/0126272018images/s2c1-pre - 8_C0'  % spikes [1 2] only
+             '1_26_slice3_cell3.mat', '/media/shababo/data/0126272018images/s2c1-pre - 9_C0'  % spikes [1 2] only
+             '1_27_slice1_cell1.mat', '/media/shababo/data/0126272018images/s2c1-pre - 10_C0'
+             '1_27_slice1_cell2.mat', '/media/shababo/data/0126272018images/s2c1-pre - 11_C0'
+             '1_27_slice1_cell3.mat', '/media/shababo/data/0126272018images/s2c1-pre - 12_C0' % bad vm/ih
+             '1_27_slice2_cell1.mat', '/media/shababo/data/0126272018images/s2c1-pre - 13_C0'  % spikes [1 2] only 
+             '1_27_slice2_cell2.mat', '/media/shababo/data/0126272018images/s2c1-pre - 14_C0'  % spikes [1 2], current 4 - bad holding
+             '1_27_slice3_cell1.mat', '/media/shababo/data/0126272018images/s2c1-pre - 16_C0'  % spikes [1 2] only
+             '1_27_slice3_cell2.mat', '/media/shababo/data/0126272018images/s2c1-pre - 17_C0'  % spikes [1 2] and current 5 - no evoked spikes
+             };
 
-cell_pos = [118 135];
+
+cell_pos = [118 135 10];
         
-spike_trial_inds = {1,1,1,1,1,1,1,[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
-current_trial_inds = {4,4,4,4,4,4,4,5,5,5,5,5,4};
+spike_trial_inds = {1,1,1,1,1,1,1,1,1,1,1,1,1,...
+    [1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
+current_trial_inds = {4,4,4,4,4,[],4,4,4,[],[],3,[],...
+    5,5,5,[],[],[],[],[],5,5,4,[],4,[],5};
 
 % pos_order = [1 2 4 3 5 6
 %              3 2 5 1 4 6
@@ -42,20 +47,23 @@ current_trial_inds = {4,4,4,4,4,4,4,5,5,5,5,5,4};
 
 % colors = {'r','b','g','k','c','y','m'};
 
-colors = jet(length(filenames));
+colors = jet(size(filenames,1));
 
 spike_figure = figure;
 current_figure = figure;
 
 
-do_detect = 0;
+do_detect = 1;
+
+%%
+clear result_current result_spikes
 %% 
 
-for j = 1:size(filenames,1)
+for j = 6:size(filenames,1)
     
     
     
-    load(filenames{j}); 
+    load(filenames{j,1}); 
     
     result_tmp_spike = analyze_current_diffraction_map(data,1,spike_trial_inds(j),'spikes');
     result_tmp_current = analyze_current_diffraction_map(data,1,current_trial_inds(j),'current');
@@ -124,32 +132,36 @@ for j = 1:size(filenames,1)
 
     end
 %         
-%     if j > 0
-        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(stacknames{j},[],[],[],do_detect);
-        offsets = nuclear_locs_image_coord([1 2],:) - cell_pos';
+    if ~isempty(filenames{j,2})
+        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,2},[],[],[],do_detect);
+        offsets = nuclear_locs_image_coord - cell_pos';
 
         [targ_error, index] = min(sqrt(sum(offsets.^2,1)));
         result_tmp_current.fluor_val = fluor_vals(index);
         result_tmp_spike.fluor_val = fluor_vals(index);
         result_tmp_current.cell_pos = nuclear_locs_image_coord(:,index);
         result_tmp_spike.cell_pos = nuclear_locs_image_coord(:,index);
-%     end
+    else
+        result_tmp_current.fluor_val = NaN;
+        result_tmp_spike.fluor_val = NaN;
+        result_tmp_current.cell_pos = NaN;
+        result_tmp_spike.cell_pos = NaN;
+    end
 %     subplot(211)
 
-            figure(current_figure)
-            gca
-            hold on
-            scatter(result_tmp_current.power{1}.^1,result_tmp_current.max_curr{1},15,colors(j,:),'jitter','on','jitteramount',.3);
-            result_current(j) = result_tmp_current;
-   
-            figure(spike_figure)
-            gca
-            hold on
-            scatter(result_tmp_spike.power{1}.^1,result_tmp_spike.spike_times{1}/20,15,colors(j,:),'jitter','on','jitteramount',.3);
-            result_spikes(j) = result_tmp_spike;
-    
-    
+    figure(current_figure)
+    gca
     hold on
+    scatter(result_tmp_current.power{1}.^1,result_tmp_current.max_curr{1},15,colors(j,:),'jitter','on','jitteramount',.3);
+    result_current(j) = result_tmp_current;
+
+    figure(spike_figure)
+    gca
+    hold on
+    scatter(result_tmp_spike.power{1}.^1,result_tmp_spike.spike_times{1}/20,15,colors(j,:),'jitter','on','jitteramount',.3);
+    result_spikes(j) = result_tmp_spike;
+
+    
     
     
     
@@ -215,28 +227,68 @@ end
 %%
 
 % range = 8:13;
-
-[fluor_order,sort_order] = sort([result_spikes.fluor_val])
-colors = copper(300);
+fluor_vals = [result_spikes.fluor_val];
+transformed_flour_base = round(log([result_spikes.fluor_val]/max([result_spikes.fluor_val]))*100);
+transformed_flour = transformed_flour_base - min(transformed_flour_base) + 1;
+[fluor_order,sort_order] = sort(transformed_flour);
+max_fluor = max(fluor_order);
+colors = jet(28);
+% transformed_flour = max_fluor - transformed_flour + 1;
 % close all
-current_figure = figure;
-spike_figure = figure;
-for i = 1:7
-    
-%     if result_current(i).inj_ratio == 10
-        figure(current_figure)
-        gca
-        hold on
-        scatter(result_current(i).power{1}.^1,result_current(i).max_curr{1},15,colors(min(round(result_current(i).fluor_val),300),:),'jitter','on','jitteramount',.3);
 
 
-        figure(spike_figure)
-        gca
+% current_figure = figure;
+% spike_figure = figure;
+% transformed_fluor = [result_spikes.fluor_val];
+% for i = [1:16 19:21 23:28]%setdiff(1:28,[1:16 19:21 23:28])
+%     
+% %     if result_current(i).inj_ratio == 10
+%         figure(current_figure)
+%         gca
+%         hold on
+%         scatter(result_current(i).power{1}.^1 * transformed_flour(i),result_current(i).max_curr{1},15,colors(min(round(transformed_flour(i)),max_fluor),:),'jitter','on','jitteramount',.3);
+%         
+% 
+%         figure(spike_figure)
+%         gca
+%         hold on
+%         scatter(result_spikes(i).power{1}.^1 * transformed_flour(i),result_spikes(i).spike_times{1}/20,15,colors(min(round(transformed_flour(i)),max_fluor),:),'jitter','on','jitteramount',.3);
+%         ylabel('spike time (msec)')
+%         xlabel('input power (mW)'); 
+%         title('power vs. spike times, color is a function of log(fluor) - more gold is higher fluor')
+% %     end
+% end
+
+figure
+for ii = 1:length(orig_cells)%[1:16 19:21 23:27]%setdiff(1:28,[1:16 19:21 23:28])
+    i = orig_cells(ii)
+        subplot(121)
         hold on
-        scatter(result_spikes(i).power{1}.^1,result_spikes(i).spike_times{1}/20,15,colors(min(round(result_spikes(i).fluor_val),300),:),'jitter','on','jitteramount',.3);
-%     end
+        scatter(result_spikes(i).power{1}.^1,result_spikes(i).spike_times{1}/20,15,colors(i,:));%,colors(min(round(transformed_flour(i)),max_fluor),:));
+        hold on
+        all_powers = unique(round(result_spikes(i).power{1},1));
+        plot(all_powers,result_spikes(i).spike_time_means/20,'color',colors(i,:))
+        ylabel('spike time (msec)')
+        xlabel('input est (a.u.)'); 
+        title('power vs. spike times')
+        
+        subplot(122)
+        hold on
+        scatter(result_spikes(i).power{1}.^1 * gain_mle(ii),result_spikes(i).spike_times{1}/20,15,colors(i,:));%colors(min(round(transformed_flour(i)),max_fluor),:));
+        hold on
+        all_powers = unique(round(result_spikes(i).power{1},1));
+        plot(all_powers * gain_mle(ii),result_spikes(i).spike_time_means/20,'color',colors(i,:))
+        ylabel('spike time (msec)')
+        xlabel('input intensity (power x gain, a.u.)'); 
+        title('power x gain vs. spike times')
+        
+%         subplot(133)
+%         hold on
+%         scatter(result_spikes(i).power{1}.^1 * transformed_flour(i),result_spikes(i).spike_times{1}/20,15,colors(min(round(transformed_flour(i)),max_fluor),:),'jitter','on','jitteramount',.3);
+%         ylabel('spike time (msec)')
+%         xlabel('input est (a.u.)'); 
+%         title('power*log(fluor)*100 vs. spike times')
 end
-
 %%
 
 % range = 8:13;
