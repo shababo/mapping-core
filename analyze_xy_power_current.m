@@ -69,26 +69,26 @@ for j = 1:size(filenames,1)
         continue
     end
     
-    these_x_power = x_measurements(:,result_xy(j).quadrant);
-    these_y_power = y_measurements(:,result_xy(j).quadrant);
+    result_xy(j).these_x_power = x_measurements(:,result_xy(j).quadrant);
+    result_xy(j).these_y_power = y_measurements(:,result_xy(j).quadrant);
     result_xy(j).spike_targ_power = zeros(size(result_xy(j).spike_times));
     result_xy(j).curr_targ_power = zeros(size(result_xy(j).max_curr));
     for i = 1:length(tested_pos)
         these_trials = result_xy(j).spike_targ_pos(:,1) == 0 & result_xy(j).spike_targ_pos(:,2) == tested_pos(i);
         result_xy(j).x_spike_time_means(i) = nanmean(result_xy(j).spike_times(these_trials));
         result_xy(j).x_spike_time_jitter(i) = nanstd(result_xy(j).spike_times(these_trials));
-        result_xy(j).spike_targ_power(these_trials) = these_x_power(i);
+        result_xy(j).spike_targ_power(these_trials) = result_xy(j).these_x_power(i);
         these_trials = result_xy(j).current_targ_pos(:,1) == 0 & result_xy(j).current_targ_pos(:,2) == tested_pos(i);
         result_xy(j).x_max_curr_means(i) = nanmean(result_xy(j).max_curr(these_trials));
-        result_xy(j).curr_targ_power(these_trials) = these_x_power(i);
+        result_xy(j).curr_targ_power(these_trials) = result_xy(j).these_x_power(i);
         
         these_trials = result_xy(j).spike_targ_pos(:,2) == 0 & result_xy(j).spike_targ_pos(:,1) == tested_pos(i);
         result_xy(j).y_spike_time_means(i) = nanmean(result_xy(j).spike_times(these_trials));
         result_xy(j).y_spike_time_jitter(i) = nanstd(result_xy(j).spike_times(these_trials));
-        result_xy(j).spike_targ_power(these_trials) = these_y_power(i);
+        result_xy(j).spike_targ_power(these_trials) = result_xy(j).these_y_power(i);
         these_trials = result_xy(j).current_targ_pos(:,2) == 0 & result_xy(j).current_targ_pos(:,1) == tested_pos(i);
         result_xy(j).y_max_curr_means(i) = nanmean(result_xy(j).max_curr(these_trials));
-        result_xy(j).curr_targ_power(these_trials) = these_y_power(i);
+        result_xy(j).curr_targ_power(these_trials) = result_xy(j).these_y_power(i);
     end
     
     figure(pow_vs_cur_and_spike_time)

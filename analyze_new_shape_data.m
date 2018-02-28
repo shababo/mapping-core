@@ -202,3 +202,71 @@ for i = 1:length(z_pos)
 
     end
 end
+
+%%
+
+z_pos = [160 200 240];
+
+count = 1;
+[xq, yq] = meshgrid(-35:35,-35:35);
+spatial_maps = zeros(length(xq),length(yq),length(z_pos),length(result_shape));
+
+for i = 1:length(z_pos)
+    
+
+    for j = 1:length(result_shape)
+        these_xy = unique(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,1:2),'rows');
+        curr_means = zeros(size(these_xy,1),1);
+        x = [];
+        y = [];
+        curr = [];
+        for k = 1:size(these_xy,1)
+            curr_mean = nanmean(result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000 & ...
+                result_shape(j).current_targ_pos(:,1) == these_xy(k,1) & result_shape(j).current_targ_pos(:,2) == these_xy(k,2)));
+            if ~isnan(curr_mean)
+                x = [x these_xy(k,1)];
+                y = [y these_xy(k,2)];
+                curr = [curr curr_mean];
+            end
+        end
+        
+       spatial_maps(:,:,i,j) = griddata(x,y,curr,xq,yq) 
+    end
+end
+
+%%
+
+figure
+count = 1;
+for i = 1:size(spatial_maps,3)
+    for j = 1:length(result_shape)
+        
+        subplot(size(spatial_maps,3),length(result_shape),count)
+        imagesc(spatial_maps(:,:,i,j)')
+        caxis([0 max(max(max(spatial_maps(:,:,:,j))))])
+        count = count + 1;
+    end
+end
+
+%%
+
+for i = 1:size(spatial_maps,4)
+    
+    spatial_maps_norm(:,:,:,i) = spatial_maps(:,:,:,i)/max(max(max(spatial_maps(:,:,:,i))));
+end
+
+mean_cell = mean(spatial_maps_norm,4);
+std_cell = var(spatial_maps_norm,[],4);
+figure;
+for i = 1:size(mean_cell,3)
+    subplot(3,2,(i-1)*2+1)
+    imagesc(mean_cell(:,:,i)')
+    caxis([0 max(mean_cell(:))])
+    title(['Mean Cell Shape (Z = ' num2str(z_pos(i) - 200) ' um)'])
+    
+    subplot(3,2,(i-1)*2+2)
+    imagesc(std_cell(:,:,i)')
+    caxis([0 max(std_cell(:))])
+    title(['Variance Cell Shape (Z = ' num2str(z_pos(i) - 200) ' um)'])
+end
+    

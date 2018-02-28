@@ -40,6 +40,7 @@ spike_trial_inds = {1,1,1,1,1,1,1,1,1,1,1,1,1,...
 current_trial_inds = {4,4,4,4,4,[],4,4,4,[],[],3,[],...
     5,5,5,[],[],[],[],[],5,5,4,[],4,[],5};
 
+
 % pos_order = [1 2 4 3 5 6
 %              3 2 5 1 4 6
 %              6 1 3 4 5 2
@@ -59,7 +60,7 @@ do_detect = 1;
 clear result_current result_spikes
 %% 
 
-for j = 6:size(filenames,1)
+for j = 1:size(filenames,1)
     
     
     
@@ -186,6 +187,11 @@ end
 
 % legend({'cell 1','cell 2','cell 3'})
 
+%%
+
+for i = 1:size(filenames,1)
+    load(filenames{j,1});
+    [traces, ~,~, stim_traces] = get_traces(data,trials{i});
 %%
 
 % plot(26*ones(size(0:3000)),0:3000,'g--')
