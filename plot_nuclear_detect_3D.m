@@ -76,8 +76,8 @@ hold on
 % scatter(5, 200,sizes(1)+10,[0 0 0],'filled')
 tmp2=getframe;
 detect_img = tmp2.cdata;
-xlim([100 200]);
-ylim([100 200])
+% xlim([100 200]);
+% ylim([100 200])
 % close(h)
 
     
