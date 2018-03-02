@@ -4,7 +4,7 @@ function [traces_ch1,traces_ch2, traces_ch3] = get_stim_stack(data,trials,num_st
 if ~isempty(varargin) && ~isempty(varargin{1})
     expected_stim_start = varargin{1};
 else
-    expected_stim_start = [];
+    expected_stim_start = cell(length(trials),1);
 end
 
 if length(varargin) > 1 && ~isempty(varargin{2})
