@@ -50,9 +50,9 @@ current_trial_inds = {4,4,4,4,4,[],4,4,4,[],[],3,[],...
 
 colors = jet(size(filenames,1));
 
-spike_figure = figure;
-current_figure = figure;
-
+% spike_figure = figure;
+% current_figure = figure;
+sumary_fig = figure;
 
 do_detect = 1;
 
@@ -94,7 +94,7 @@ for j = 1:size(filenames,1)
     for i = 1:length(unique_powers_spike)
         these_trials = find(abs(result_tmp_spike.stim_size{1} - unique_powers_spike(i)) < .005);
         result_tmp_spike.power{1}(these_trials) = pockels_map_fine(abs(pockels_map_fine(:,1) - unique_powers_spike(i)) < .004,2);
-
+        unique_powers_spike(i) = pockels_map_fine(abs(pockels_map_fine(:,1) - unique_powers_spike(i)) < .004,2);
 %         upper_ind = find(pockels_map_fine(:,1) > unique_powers(i),1,'first');
 %         if isempty(upper_ind)
 %             upper_ind = size(pockels_map_fine,1);
@@ -115,9 +115,10 @@ for j = 1:size(filenames,1)
     end
     
     for i = 1:length(unique_powers_current)
-        these_trials = find(abs(result_tmp_current.stim_size{1} - unique_powers_current(i)) < .005);
-        result_tmp_current.power{1}(these_trials) = pockels_map_fine(abs(pockels_map_fine(:,1) - unique_powers_current(i)) < .004,2);
-
+        these_trials = abs(result_tmp_current.stim_size{1} - unique_powers_current(i)) < .005;
+        unique_powers_current(i) = pockels_map_fine(abs(pockels_map_fine(:,1) - unique_powers_current(i)) < .004,2);
+        result_tmp_current.power{1}(these_trials) = unique_powers_current(i);
+        
 %         upper_ind = find(pockels_map_fine(:,1) > unique_powers(i),1,'first');
 %         if isempty(upper_ind)
 %             upper_ind = size(pockels_map_fine,1);
@@ -127,39 +128,46 @@ for j = 1:size(filenames,1)
 %         interp_dist = (unique_powers(i) - pockels_map_fine(lower_ind,1))/step_size_volt;
 %         step_size_power = pockels_map_fine(upper_ind,2) - pockels_map_fine(lower_ind,2);
 %         result_tmp.power{1}(these_trials) = pockels_map_fine(lower_ind,2) + interp_dist*step_size_power;
-        
-
-        result_tmp_current.peak_current_means(i) = mean(result_tmp_current.max_curr{1}(these_trials));
+        these_trials_powerthresh = these_trials & result_tmp_current.max_curr{1} < 2500;
+        result_tmp_current.peak_current_means(i) = mean(result_tmp_current.max_curr{1}(these_trials_powerthresh));
 
     end
 %         
-    if ~isempty(filenames{j,2})
-        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,2},[],[],[],do_detect);
-        offsets = nuclear_locs_image_coord - cell_pos';
-
-        [targ_error, index] = min(sqrt(sum(offsets.^2,1)));
-        result_tmp_current.fluor_val = fluor_vals(index);
-        result_tmp_spike.fluor_val = fluor_vals(index);
-        result_tmp_current.cell_pos = nuclear_locs_image_coord(:,index);
-        result_tmp_spike.cell_pos = nuclear_locs_image_coord(:,index);
-    else
-        result_tmp_current.fluor_val = NaN;
-        result_tmp_spike.fluor_val = NaN;
-        result_tmp_current.cell_pos = NaN;
-        result_tmp_spike.cell_pos = NaN;
-    end
+%     if ~isempty(filenames{j,2})
+%         [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,2},[],[],[],do_detect);
+%         offsets = nuclear_locs_image_coord - cell_pos';
+% 
+%         [targ_error, index] = min(sqrt(sum(offsets.^2,1)));
+%         result_tmp_current.fluor_val = fluor_vals(index);
+%         result_tmp_spike.fluor_val = fluor_vals(index);
+%         result_tmp_current.cell_pos = nuclear_locs_image_coord(:,index);
+%         result_tmp_spike.cell_pos = nuclear_locs_image_coord(:,index);
+%     else
+%         result_tmp_current.fluor_val = NaN;
+%         result_tmp_spike.fluor_val = NaN;
+%         result_tmp_current.cell_pos = NaN;
+%         result_tmp_spike.cell_pos = NaN;
+%     end
 %     subplot(211)
 
-    figure(current_figure)
-    gca
+%     figure(current_figure)
+%     gca
+    subplot(222)
     hold on
-    scatter(result_tmp_current.power{1}.^1,result_tmp_current.max_curr{1},15,colors(j,:),'jitter','on','jitteramount',.3);
+    these_trials = result_tmp_current.max_curr{1} < 2500 & result_tmp_current.power{1} < 80;
+    scatter(result_tmp_current.power{1}(these_trials),result_tmp_current.max_curr{1}(these_trials),15,colors(j,:),'jitter','on','jitteramount',.3);
+    these_trials = unique_powers_current < 80;
+    plot(unique_powers_current(these_trials),result_tmp_current.peak_current_means(these_trials),'-','color',colors(j,:),'Linewidth',1)
     result_current(j) = result_tmp_current;
 
-    figure(spike_figure)
-    gca
+%     figure(spike_figure)
+%     gca
+    subplot(221)
     hold on
+    these_trials = result_tmp_spike.power{1} < 80;
     scatter(result_tmp_spike.power{1}.^1,result_tmp_spike.spike_times{1}/20,15,colors(j,:),'jitter','on','jitteramount',.3);
+    these_trials = unique_powers_spike < 80;
+    plot(unique_powers_spike,result_tmp_spike.spike_time_means/20,'-','color',colors(j,:),'Linewidth',1)
     result_spikes(j) = result_tmp_spike;
 
     
@@ -168,19 +176,21 @@ for j = 1:size(filenames,1)
     
 end
 
-        figure(current_figure)
-            gca
+%         figure(current_figure)
+%             gca
+        subplot(222)
         title('Power vs. Peak Current')
         xlabel('Power (mW)')
-        xlim([10 90])
+        xlim([0 90])
         ylabel('Peak Current (pA)')
         ylim([0 2500])
 
-        figure(spike_figure)
-            gca
+%         figure(spike_figure)
+%             gca
+        subplot(221)
         title('Power vs. Spike Times')
         xlabel('Power (mW)')
-        xlim([10 90])
+        xlim([0 90])
         ylabel('Spike Times (msec)')
         ylim([0 15])
 
@@ -192,6 +202,7 @@ end
 for i = 1:size(filenames,1)
     load(filenames{j,1});
     [traces, ~,~, stim_traces] = get_traces(data,trials{i});
+end
 %%
 
 % plot(26*ones(size(0:3000)),0:3000,'g--')
@@ -202,25 +213,25 @@ plot(0:85,678.5*ones(size(0:85)),'r--')
 % plot(14.9*ones(size(0:3000)),0:3000,'r--')
 
 %%
-new_fig = 0;
-if ~exist('curr_vs_time','var')
-    new_fig = 1;
-    curr_vs_time = figure;
-else
-    figure(curr_vs_time)
-end
+% new_fig = 0;
+% if ~exist('curr_vs_time','var')
+%     new_fig = 1;
+%     curr_vs_time = figure;
+% else
+%     figure(curr_vs_time)
+% end
 for i = 1:length(result_current)
-    subplot(121)
+    subplot(223)
     [shared_powers, current_i, spikes_i] = intersect(result_current(i).these_powers,result_spikes(i).these_powers);
-    plot(result_current(i).peak_current_means(current_i),result_spikes(i).spike_time_means(spikes_i)/20,'-b','Linewidth',2)
+    plot(result_current(i).peak_current_means(current_i),result_spikes(i).spike_time_means(spikes_i)/20,'o-','color',colors(i,:),'Linewidth',1)
     hold on
     title('peak current vs. spike time')
     xlabel('mean peak current (pA)')
     ylabel('spike time (msec)')
     xlim([0 2500])
     ylim([0 15])
-    subplot(122)
-    semilogy(result_current(i).peak_current_means(current_i),result_spikes(i).spike_time_jitter(spikes_i)/20,'-b','Linewidth',2)
+    subplot(224)
+    semilogy(result_current(i).peak_current_means(current_i),result_spikes(i).spike_time_jitter(spikes_i)/20,'o-','color',colors(i,:),'Linewidth',1)
     hold on
     title('peak current vs. spike time')
     xlabel('mean peak current (pA)')

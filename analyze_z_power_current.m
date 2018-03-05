@@ -30,7 +30,7 @@ if ~exist('curr_vs_time','var')
     new_fig = 1;
     curr_vs_time = figure;
 end
-for j = 1:size(filenames,1)
+for j = setdiff(1:size(filenames,1),6)
     
 %     clear result_z(j)
     load(filenames{j,2});
@@ -73,31 +73,31 @@ for j = 1:size(filenames,1)
             result_z(j).max_curr_means(i) = nanmean(result_z(j).max_curr(these_trials));
         end
 
-        figure(curr_vs_time)
-        subplot(121)
-        [ordered_curr, curr_order] = sort(result_z(j).max_curr_means);
-        plot(result_z(j).max_curr_means(curr_order),result_z(j).spike_time_means(curr_order)/20,'-k','LineWidth',2);
-        hold on
-        if new_fig
-            xlabel('Peak Current Mean (pA)')
-            ylabel('Spike Time Mean (msec)')
-            title('Peak Current vs. Spike Time')
-        end
-        subplot(122)
-        semilogy(result_z(j).max_curr_means(curr_order),result_z(j).spike_time_jitter(curr_order)/20,'-k','LineWidth',2);
-        hold on
-        if new_fig
-            xlabel('Peak Current Mean (pA)')
-            ylabel('Spike Time Std. Dev. (msec)')
-            title('Peak Current vs. Spike Time Jitter')
-        end
+%         figure(curr_vs_time)
+%         subplot(121)
+%         [ordered_curr, curr_order] = sort(result_z(j).max_curr_means);
+%         plot(result_z(j).max_curr_means(curr_order),result_z(j).spike_time_means(curr_order)/20,'-k','LineWidth',2);
+%         hold on
+%         if new_fig
+%             xlabel('Peak Current Mean (pA)')
+%             ylabel('Spike Time Mean (msec)')
+%             title('Peak Current vs. Spike Time')
+%         end
+%         subplot(122)
+%         semilogy(result_z(j).max_curr_means(curr_order),result_z(j).spike_time_jitter(curr_order)/20,'-k','LineWidth',2);
+%         hold on
+%         if new_fig
+%             xlabel('Peak Current Mean (pA)')
+%             ylabel('Spike Time Std. Dev. (msec)')
+%             title('Peak Current vs. Spike Time Jitter')
+%         end
     end
     
     
     
-    figure(z_pos_vs_cur_and_spike_time)
+    figure(figure_for_cosyne)
     if ~isnan(spike_trials{j})
-        subplot(121)
+        subplot(133)
         scatter(result_z(j).spike_z_pos,result_z(j).spike_times/20,[],colors(j,:));
         hold on
         plot(tested_pos,result_z(j).spike_time_means/20,'color',colors(j,:))
@@ -105,16 +105,16 @@ for j = 1:size(filenames,1)
         ylabel('spike time (msec)')
         title('Z Distance vs. Spike Times')
     end
-    if ~isnan(current_trials{j})
-        subplot(122)
-        scatter(result_z(j).current_z_pos,result_z(j).max_curr,[],colors(j,:));
-        hold on
-        plot(tested_pos,result_z(j).max_curr_means,'color',colors(j,:))
-        ylim([0 2500])
-        xlabel('z distance (um)')
-        ylabel('peak current (pA)')
-        title('Z Distance vs. Peak Current')
-    end
+%     if ~isnan(current_trials{j})
+%         subplot(122)
+%         scatter(result_z(j).current_z_pos,result_z(j).max_curr,[],colors(j,:));
+%         hold on
+%         plot(tested_pos,result_z(j).max_curr_means,'color',colors(j,:))
+%         ylim([0 2500])
+%         xlabel('z distance (um)')
+%         ylabel('peak current (pA)')
+%         title('Z Distance vs. Peak Current')
+%     end
     
 end
 
