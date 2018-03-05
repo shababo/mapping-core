@@ -12,10 +12,12 @@ filenames = {'2_24_slice1_cell1.mat', '2_24_13_57_data.mat', '/media/shababo/dat
              '2_26_slice3_cell3.mat', '2_26_15_53_data.mat', '/media/shababo/data/02262018images/s2c1-pre - 9_C0'
              '2_26_slice3_cell4.mat', '2_26_16_15_data.mat', '/media/shababo/data/02262018images/s2c1-pre - 10_C0'};     
          
+
+z_pos = [160 200 240];         
 spike_trials = {[],[],[],[],1,1,1,1,1,1,1};
 current_trials = {3:8,3:8,3,3:8,4:9,4:6,4:9,4:9,4:9,4:9,4:9};
 intrinsic_trials = {2,2,2,2,3,3,3,3,3,3,3};
-z_center = z_pos(i)*ones(size(filenames,1),1);
+z_center = z_pos(2)*ones(size(filenames,1),1);
 
 colors = jet(4);
 % colors(:) = 0;
@@ -218,14 +220,14 @@ all_pos = [];
     
 
 for j = 1:length(result_shape)
+        
+    for i = 1:length(z_pos)
+        these_xy = unique(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,1:2),'rows');
+        curr_means = zeros(size(these_xy,1),1);
         x = [];
         y = [];
         z = [];
         curr = [];
-    for i = 1:length(z_pos)
-        these_xy = unique(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,1:2),'rows');
-        curr_means = zeros(size(these_xy,1),1);
-        
         
         for k = 1:size(these_xy,1)
             curr_mean = nanmean(result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000 & ...
@@ -241,9 +243,9 @@ for j = 1:length(result_shape)
             [max_curr, max_pos] = max(curr);
             max_pos = [x(max_pos) y(max_pos) z(max_pos)];
         end
-%        spatial_maps(:,:,i,j) = griddata(x,y,curr,xq,yq) 
+       spatial_maps(:,:,i,j) = griddata(x,y,curr,xq,yq);
     end
-    spatial_maps_per_cell(j).curr = curr/max(curr);
+    spatial_maps_per_cell(j).curr = curr;
     spatial_maps_per_cell(j).pos = [x; y; z]';% - max_pos;
     all_curr = [all_curr spatial_maps_per_cell(j).curr];
     all_pos = [all_pos; spatial_maps_per_cell(j).pos];
@@ -293,11 +295,12 @@ figure
 count = 1;
 for i = 1:size(spatial_maps,3)
     for j = 1:length(result_shape)
-        
+         
         subplot(size(spatial_maps,3),length(result_shape),count)
         imagesc(spatial_maps(:,:,i,j)')
         caxis([0 max(max(max(spatial_maps(:,:,:,j))))])
         count = count + 1;
+        axis off      
     end
 end
 
