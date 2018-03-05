@@ -17,7 +17,7 @@ colors = jet(4);
 % colors(size(filenames,1)+1:size(filenames,1)*2) = 1; %green
 % z_pos = [-8 0 8];
 colors = jet(7);
-
+figure_for_cosyne = figure;
 %%
 
 
@@ -31,7 +31,7 @@ if ~exist('curr_vs_time','var')
 end
 do_detect = 0;
 
-for j = [1 2 3 4 5 6 7]%1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
+for j = [1 2 3 5 6 7]%1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
     
     load(filenames{j,2});
     load(filenames{j,1}); 
@@ -136,8 +136,8 @@ for j = [1 2 3 4 5 6 7]%1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
 % %     ylabel('Peak Current (pA)')
 % %     title('Horizontal Distance vs. Peak Current')
     
-    figure(pos_vs_cur_and_spike_time)
-    subplot(221)
+    figure(figure_for_cosyne)
+    subplot(131)
     these_trials = result_xy(j).spike_targ_pos(:,1) == tested_pos_y(6);
     scatter(result_xy(j).spike_targ_pos(these_trials,2),result_xy(j).spike_times(these_trials)/20,[],colors(j,:));
     hold on
@@ -147,23 +147,23 @@ for j = [1 2 3 4 5 6 7]%1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
     xlabel('Horizontal Distance (um)')
     ylabel('Spike Time (msec)')
     title('Horizontal Distance vs. Spike Time')
-    subplot(222)
-    these_trials = result_xy(j).current_targ_pos(:,1) == tested_pos_y(6);
-    scatter(result_xy(j).current_targ_pos(these_trials,2),result_xy(j).max_curr(these_trials),[],colors(j,:));
-    hold on
-    [~,this_zero_pos] = min(abs(tested_pos_x));
-    scaling = result_xy(j).x_max_curr_means(this_zero_pos);
-    [~,this_zero_pos] = min(abs(result_xy(j).current_targ_pos(these_trials,2)));
-    these_powers = result_xy(j).spatial_adj_power(these_trials);
-    scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
-    plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),36*ones(size(-20:20)),(-20:20)+36)),'color',colors(j,:),'linewidth',1);
-%     plot(tested_pos_x,result_xy(j).x_max_curr_means,'color',colors(j,:),'linewidth',2)
-    
-    xlim([-20 20])
-    xlabel('Horizontal Distance (um)')
-    ylabel('Peak Current (pA)')
-    title('Horizontal Distance vs. Peak Current')
-    subplot(223)
+%     subplot(222)
+%     these_trials = result_xy(j).current_targ_pos(:,1) == tested_pos_y(6);
+%     scatter(result_xy(j).current_targ_pos(these_trials,2),result_xy(j).max_curr(these_trials),[],colors(j,:));
+%     hold on
+%     [~,this_zero_pos] = min(abs(tested_pos_x));
+%     scaling = result_xy(j).x_max_curr_means(this_zero_pos);
+%     [~,this_zero_pos] = min(abs(result_xy(j).current_targ_pos(these_trials,2)));
+%     these_powers = result_xy(j).spatial_adj_power(these_trials);
+%     scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
+%     plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),36*ones(size(-20:20)),(-20:20)+36)),'color',colors(j,:),'linewidth',1);
+% %     plot(tested_pos_x,result_xy(j).x_max_curr_means,'color',colors(j,:),'linewidth',2)
+%     
+%     xlim([-20 20])
+%     xlabel('Horizontal Distance (um)')
+%     ylabel('Peak Current (pA)')
+%     title('Horizontal Distance vs. Peak Current')
+    subplot(132)
     these_trials = result_xy(j).spike_targ_pos(:,2) == tested_pos_x(6);
     scatter(result_xy(j).spike_targ_pos(these_trials,1),result_xy(j).spike_times(these_trials)/20,[],colors(j,:));
     hold on
@@ -172,21 +172,21 @@ for j = [1 2 3 4 5 6 7]%1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
     xlabel('Vertical Distance (um)')
     ylabel('Spike Time (msec)')
     title('Vertical Distance vs. Spike Time')
-    subplot(224)
-    these_trials = result_xy(j).current_targ_pos(:,2) == tested_pos_x(6);
-    scatter(result_xy(j).current_targ_pos(these_trials,1),result_xy(j).max_curr(these_trials),[],colors(j,:));
-    hold on
-    [~,this_zero_pos] = min(abs(tested_pos_y))
-    scaling = result_xy(j).y_max_curr_means(this_zero_pos);
-    [~,this_zero_pos] = min(abs(result_xy(j).current_targ_pos(these_trials,1)));
-    these_powers = result_xy(j).spatial_adj_power(these_trials);
-    scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
-    plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),(-20:20)+36,36*ones(size(-20:20)))),'color',colors(j,:),'linewidth',1)
-%     plot(tested_pos_y,result_xy(j).y_max_curr_means,'color',colors(j,:),'linewidth',2)
-    xlim([-20 20])
-    xlabel('Vertical Distance (um)')
-    ylabel('Peak Current (pA)')
-    title('Vertical Distance vs. Peak Current')
+%     subplot(224)
+%     these_trials = result_xy(j).current_targ_pos(:,2) == tested_pos_x(6);
+%     scatter(result_xy(j).current_targ_pos(these_trials,1),result_xy(j).max_curr(these_trials),[],colors(j,:));
+%     hold on
+%     [~,this_zero_pos] = min(abs(tested_pos_y))
+%     scaling = result_xy(j).y_max_curr_means(this_zero_pos);
+%     [~,this_zero_pos] = min(abs(result_xy(j).current_targ_pos(these_trials,1)));
+%     these_powers = result_xy(j).spatial_adj_power(these_trials);
+%     scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
+%     plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),(-20:20)+36,36*ones(size(-20:20)))),'color',colors(j,:),'linewidth',1)
+% %     plot(tested_pos_y,result_xy(j).y_max_curr_means,'color',colors(j,:),'linewidth',2)
+%     xlim([-20 20])
+%     xlabel('Vertical Distance (um)')
+%     ylabel('Peak Current (pA)')
+%     title('Vertical Distance vs. Peak Current')
 %     
 %     figure(curr_vs_time)
 %     subplot(121)
