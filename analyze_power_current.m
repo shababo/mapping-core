@@ -338,3 +338,148 @@ figure;
 cell_select = [1:12]; 
 plot([result_current_bu(cell_select).vm_rest],[result_current(cell_select).fluor_val],'or')
 % xlim([-80 -50])
+
+%% plot one cell trials
+
+cell_id = 2;
+
+[shared_powers, current_i, spikes_i] = intersect(result_current(cell_id).power{1},result_spikes(cell_id).power{1});
+
+low_power = min(shared_powers); high_power = max(shared_powers);
+med_power = shared_powers(floor(length(shared_powers)/2));
+medlow_power = shared_powers(floor(length(shared_powers)/4));
+
+colors = lines(4);
+
+
+figure
+
+time = (0:length(result_current(cell_id).traces{1}(1,:))-1)/20;
+
+high_trial = find(result_current(cell_id).power{1} == high_power);
+med_trial = find(result_current(cell_id).power{1} == med_power);
+medlow_trial = find(result_current(cell_id).power{1} == medlow_power);
+low_trial = find(result_current(cell_id).power{1} == low_power);
+
+subplot(121)
+hold on
+plot(time,result_current(cell_id).traces{1}(low_trial,:)','linewidth',2,'color',colors(1,:))
+plot(time,result_current(cell_id).traces{1}(med_trial,:)','linewidth',2,'color',colors(2,:))
+plot(time,result_current(cell_id).traces{1}(medlow_trial,:)','linewidth',2,'color',colors(3,:))
+plot(time,result_current(cell_id).traces{1}(high_trial,:)','linewidth',2,'color',colors(4,:))
+
+title('Optically Evoked Currents')
+xlabel('time (msec)')
+ylabel('peak current (pA)')
+
+
+high_trial = find(result_spikes(cell_id).power{1} == high_power);
+med_trial = find(result_spikes(cell_id).power{1} == med_power);
+medlow_trial = find(result_spikes(cell_id).power{1} == medlow_power);
+low_trial = find(result_spikes(cell_id).power{1} == low_power);
+
+subplot(122)
+hold on
+plot(time,result_spikes(cell_id).traces{1}(low_trial,:)','linewidth',2,'color',colors(1,:))
+plot(time,result_spikes(cell_id).traces{1}(med_trial,:)','linewidth',2,'color',colors(2,:))
+plot(time,result_spikes(cell_id).traces{1}(medlow_trial,:)','linewidth',2,'color',colors(3,:))
+plot(time,result_spikes(cell_id).traces{1}(high_trial,:)','linewidth',2,'color',colors(4,:))
+
+title('Optically Evoked Spikes')
+xlabel('time (msec)')
+ylabel('cell-attached recording (pA)')
+
+legend({num2str(round(low_power)),num2str(round(medlow_power)),num2str(round(med_power)),num2str(round(high_power))})
+
+
+%% plot one cell trials
+
+cell_id = 4;
+round_level = 3;
+trial_count = 1;
+cells_to_run = [1 2 3 4 5 6];
+shared_powers = round(result_xy_bu(cell_id).these_x_power,round_level);
+
+low_power = min(shared_powers); high_power = max(shared_powers);
+med_power = shared_powers(floor(length(shared_powers)/2));
+medlow_power = shared_powers(floor(length(shared_powers)/4));
+
+colors = parula(length(cells_to_run)+2);
+% colors = parula(ceil(length(shared_powers)/2)+1);
+% colors = colors(randperm(length(shared_powers)),:);
+% colors = [colors; colors(floor(length(shared_powers)/2):-1:1,:)];
+
+
+
+
+figure
+
+time = (0:length(result_xy_bu(cell_id).current_traces(1,:))-1)/20;
+
+for ii = 1:length(cells_to_run)
+    
+    i = cells_to_run(ii);
+    % high_trial = find(result_xy_bu(cell_id).curr_targ_power == high_power);
+    % med_trial = find(result_xy_bu(cell_id).curr_targ_power == med_power);
+    % medlow_trial = find(result_xy_bu(cell_id).curr_targ_power == medlow_power);
+    % low_trial = find(result_xy_bu(cell_id).curr_targ_power == low_power);
+
+    these_trials = find(round(result_xy_bu(cell_id).curr_targ_power,round_level) == shared_powers(i),trial_count);
+
+
+    subplot(121)
+    hold on
+    % plot(time,result_xy_bu(cell_id).current_traces(low_trial,:)','linewidth',2,'color',colors(1,:))
+    % plot(time,result_xy_bu(cell_id).current_traces(med_trial,:)','linewidth',2,'color',colors(2,:))
+    % plot(time,result_xy_bu(cell_id).current_traces(medlow_trial,:)','linewidth',2,'color',colors(3,:))
+    % plot(time,result_xy_bu(cell_id).current_traces(high_trial,:)','linewidth',2,'color',colors(4,:))
+
+    plot(time,result_xy_bu(cell_id).current_traces(these_trials,:)','linewidth',2,'color',colors(ii,:))
+
+    title('Optically Evoked Currents')
+    xlabel('time (msec)')
+    ylabel('peak current (pA)')
+
+
+%     high_trial = find(result_xy_bu(cell_id).spike_targ_power == high_power);
+%     med_trial = find(result_xy_bu(cell_id).spike_targ_power == med_power);
+%     medlow_trial = find(result_xy_bu(cell_id).spike_targ_power == medlow_power);
+%     low_trial = find(result_xy_bu(cell_id).spike_targ_power == low_power);
+
+    these_trials = find(round(result_xy_bu(cell_id).spike_targ_power,round_level) == shared_powers(i),trial_count);
+
+    subplot(122)
+    hold on
+%     plot(time,result_xy_bu(cell_id).spike_traces(low_trial,:)','linewidth',2,'color',colors(1,:))
+%     plot(time,result_xy_bu(cell_id).spike_traces(med_trial,:)','linewidth',2,'color',colors(2,:))
+%     plot(time,result_xy_bu(cell_id).spike_traces(medlow_trial,:)','linewidth',2,'color',colors(3,:))
+%     plot(time,result_xy_bu(cell_id).spike_traces(high_trial,:)','linewidth',2,'color',colors(4,:))
+
+    plot(time,result_xy_bu(cell_id).spike_traces(these_trials,:)','linewidth',2,'color',colors(ii,:))
+
+    title('Optically Evoked Spikes')
+    xlabel('time (msec)')
+    ylabel('cell-attached recording (pA)')
+end
+
+% legend({num2str(round(low_power)),num2str(round(medlow_power)),num2str(round(med_power)),num2str(round(high_power))})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
