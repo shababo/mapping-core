@@ -1,10 +1,10 @@
 %%
     
 
-filenames = {'2_13_slice3_cell1.mat', '2_13_15_26_data.mat', '/media/shababo/data/02132018images/s2c1-pre - 3_C0'
+filenames = {'2_13_slice3_cell1.mat', '2_13_15_26_data.mat', '/media/shababo/data/02132018images/s2c1-pre - 3_C0' %P19
              '2_13_slice3_cell2.mat', '2_13_15_37_data.mat', '/media/shababo/data/02132018images/s2c1-pre - 4_C0'
              '2_13_slice4_cell3.mat', '2_13_16_29_data.mat', '/media/shababo/data/02132018images/s2c1-pre - 8_C0'
-             '2_14_slice2_cell1.mat', '2_14_16_42_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 3_C0'
+             '2_14_slice2_cell1.mat', '2_14_16_42_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 3_C0' %P20
              '2_14_slice2_cell3.mat', '2_14_16_58_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 5_C0'
              '2_14_slice2_cell4.mat', '2_14_17_13_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 6_C0'
              '2_14_slice3_cell1.mat', '2_14_17_38_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 7_C0'};     
@@ -88,8 +88,8 @@ for j = 1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
     
     
 %     tested_pos = [-15 -10 -7 -4 -2 0 2 4 7 10 15];
-    result_xy(j).these_x_power = x_measurements(:,result_xy(j).quadrant).*shape_template(sub2ind(size(shape_template),round(36 + tested_pos_y(6))*ones(size(tested_pos_x)),round(tested_pos_x)+36));
-    result_xy(j).these_y_power = y_measurements(:,result_xy(j).quadrant).*shape_template(sub2ind(size(shape_template),round(tested_pos_y)+36,round(36 + tested_pos_x(6))*ones(size(tested_pos_y))));
+    result_xy(j).these_x_power = x_measurements(:,result_xy(j).quadrant);%.*shape_template(sub2ind(size(shape_template),round(36 + tested_pos_y(6))*ones(size(tested_pos_x)),round(tested_pos_x)+36));
+    result_xy(j).these_y_power = y_measurements(:,result_xy(j).quadrant);%.*shape_template(sub2ind(size(shape_template),round(tested_pos_y)+36,round(36 + tested_pos_x(6))*ones(size(tested_pos_y))));
     result_xy(j).spike_targ_power = zeros(size(result_xy(j).spike_times));
     result_xy(j).curr_targ_power = zeros(size(result_xy(j).max_curr));
     for i = 1:length(tested_pos_x)
@@ -99,6 +99,7 @@ for j = 1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
         result_xy(j).spike_targ_power(these_trials) = result_xy(j).these_x_power(i);
         these_trials = result_xy(j).current_targ_pos(:,1) == tested_pos_y(6) & result_xy(j).current_targ_pos(:,2) == tested_pos_x(i);
         result_xy(j).x_max_curr_means(i) = nanmean(result_xy(j).max_curr(these_trials));
+        result_xy(j).x_max_curr_means_pownorm(i) = nanmean(result_xy(j).max_curr(these_trials))./result_xy(j).curr_targ_power(these_trials);
         result_xy(j).curr_targ_power(these_trials) = result_xy(j).these_x_power(i);
     end
     for i = 1:length(tested_pos_y)
@@ -108,6 +109,7 @@ for j = 1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
         result_xy(j).spike_targ_power(these_trials) = result_xy(j).these_y_power(i);
         these_trials = result_xy(j).current_targ_pos(:,2) == tested_pos_x(6) & result_xy(j).current_targ_pos(:,1) == tested_pos_y(i);
         result_xy(j).y_max_curr_means(i) = nanmean(result_xy(j).max_curr(these_trials));
+        result_xy(j).y_max_curr_means_pownorm(i) = nanmean(result_xy(j).max_curr(these_trials))./result_xy(j).curr_targ_power(these_trials);
         result_xy(j).curr_targ_power(these_trials) = result_xy(j).these_y_power(i);
     end
     
@@ -276,7 +278,7 @@ for j = 1:size(filenames,1)
     these_powers = result_xy(j).spatial_adj_power(these_trials);
     %     scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
     %     plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),36*ones(size(-20:20)),(-20:20)+36)),'color',colors(j,:),'linewidth',1);
-    plot(tested_pos_x,result_xy(j).x_max_curr_means/max(result_xy(j).x_max_curr_means),'color',colors(j,:),'linewidth',2)
+    plot(tested_pos_x,result_xy(j).x_max_curr_means/max(result_xy(j).x_max_curr_means),'color',colors(result_xy(j).quadrant*2-1,:),'linewidth',2)
     ylim([0 1.2])
     xlim([-20 20])
     xlabel('Horizontal Distance (um)')
@@ -292,7 +294,7 @@ for j = 1:size(filenames,1)
     these_powers = result_xy(j).spatial_adj_power(these_trials);
     %     scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
     %     plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),(-20:20)+36,36*ones(size(-20:20)))),'color',colors(j,:),'linewidth',1)
-    plot(tested_pos_y,result_xy(j).y_max_curr_means/max(result_xy(j).y_max_curr_means),'color',colors(j,:),'linewidth',2)
+    plot(tested_pos_y,result_xy(j).y_max_curr_means/max(result_xy(j).y_max_curr_means),'color',colors(result_xy(j).quadrant*2-1,:),'linewidth',2)
     ylim([0 1.2])
     xlim([-20 20])
     xlabel('Vertical Distance (um)')
