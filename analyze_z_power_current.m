@@ -20,7 +20,7 @@ z_center = [30 30 200 200 200 200 200 200 200 200 200];
 colors = jet(length(filenames));
 % colors(:) = 0;
 % colors(1:size(filenames,1)) = 1; %red
-
+figure_for_cosyne = figure
 %%
 
 clear result_z
@@ -30,8 +30,10 @@ if ~exist('curr_vs_time','var')
     new_fig = 1;
     curr_vs_time = figure;
 end
-for j = setdiff(1:size(filenames,1),6)
+cell_choice = setdiff(1:size(filenames,1),6);
+for jj = 1:length(cell_choice)%setsetdiff(1:size(filenames,1),6)
     
+    j = cell_choice(jj);
 %     clear result_z(j)
     load(filenames{j,2});
     load(filenames{j,1}); 
@@ -97,24 +99,70 @@ for j = setdiff(1:size(filenames,1),6)
     
     figure(figure_for_cosyne)
     if ~isnan(spike_trials{j})
-        subplot(133)
-        scatter(result_z(j).spike_z_pos,result_z(j).spike_times/20,[],colors(j,:));
+        subplot(1,length(cell_choice),j)
+        yyaxis left
+%         scatter(result_z(j).spike_z_pos,result_z(j).spike_times/20,[],colors(j,:));
         hold on
-        plot(tested_pos,result_z(j).spike_time_means/20,'color',colors(j,:))
+        plot(tested_pos,result_z(j).spike_time_means/20,'color',colors(2,:))
         xlabel('z distance (um)')
         ylabel('spike time (msec)')
         title('Z Distance vs. Spike Times')
     end
-%     if ~isnan(current_trials{j})
-%         subplot(122)
+    if ~isnan(current_trials{j})
+        subplot(1,length(cell_choice),j)
+        yyaxis right
 %         scatter(result_z(j).current_z_pos,result_z(j).max_curr,[],colors(j,:));
-%         hold on
-%         plot(tested_pos,result_z(j).max_curr_means,'color',colors(j,:))
-%         ylim([0 2500])
-%         xlabel('z distance (um)')
-%         ylabel('peak current (pA)')
-%         title('Z Distance vs. Peak Current')
-%     end
+        hold on
+        plot(tested_pos,result_z(j).max_curr_means,'color',colors(6,:))
+        ylim([0 2500])
+        xlabel('z distance (um)')
+        ylabel('peak current (pA)')
+        title('Z Distance vs. Peak Current')
+    end
     
 end
+
+%%
+% figure
+[ha, pos] = tight_subplot(1,size(filenames,1),.001,.001,.001) 
+for j = 1:size(filenames,1)
+    axes(ha(j))
+    yyaxis left
+    tested_pos = unique([result_z(j).spike_z_pos]);
+%     these_trials = result_z(j).current_targ_pos(:,1) == tested_pos_y(6);
+    %     scatter(result_z(j).current_targ_pos(these_trials,2),result_z(j).max_curr(these_trials),[],colors(j,:));
+    hold on
+%     [~,this_zero_pos] = min(abs(tested_pos_x));
+%     scaling = result_z(j).x_max_curr_means(this_zero_pos);
+%     [~,this_zero_pos] = min(abs(result_z(j).current_targ_pos(these_trials,2)));
+%     these_powers = result_z(j).spatial_adj_power(these_trials);
+    %     scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
+    %     plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),36*ones(size(-20:20)),(-20:20)+36)),'color',colors(j,:),'linewidth',1);
+    plot(tested_pos,result_z(j).max_curr_means,'color',colors(1,:),'linewidth',2)
+    ylim([0 1600])
+    xlim([-60 60])
+    xlabel('Horizontal Distance (um)')
+    ylabel('Peak Current (pA)')
+    title('Horizontal Distance vs. Peak Current')
+    
+    
+%     subplot(2,size(filenames,1),j+size(filenames,1))
+    yyaxis right
+    tested_pos = unique([result_z(j).current_z_pos]);
+    %     scatter(result_z(j).current_targ_pos(these_trials,1),result_z(j).max_curr(these_trials),[],colors(j,:));
+    hold on
+%     [~,this_zero_pos] = min(abs(tested_pos_y))
+%     scaling = result_z(j).y_max_curr_means(this_zero_pos);
+%     [~,this_zero_pos] = min(abs(result_z(j).current_targ_pos(these_trials,1)));
+%     these_powers = result_z(j).spatial_adj_power(these_trials);
+    %     scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
+    %     plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),(-20:20)+36,36*ones(size(-20:20)))),'color',colors(j,:),'linewidth',1)
+    plot(tested_pos,result_z(j).spike_time_means/20,'color',colors(6,:),'linewidth',2)
+    ylim([0 10])
+    xlim([-60 60])
+    xlabel('Vertical Distance (um)')
+    ylabel('Peak Current (pA)')
+    title('Vertical Distance vs. Peak Current')
+end
+
 
