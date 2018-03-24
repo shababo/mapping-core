@@ -248,22 +248,27 @@ end
 %% nuc detect
 
 do_detect = 0;
-for j = 1:1
+for j = 1:7
     if ~isempty(filenames{j,3})
         
         load(filenames{j,2})
-        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,3},[],[],[],do_detect,[],1);
+        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,3},[],[],[],do_detect,[],0);
         offsets = nuclear_locs - [experiment_setup.center_pos_um(1:2) 20];
 
         [targ_error, index] = min(sqrt(sum(offsets.^2,2)));
         result_xy(j).fluor_val = fluor_vals(index);
         result_xy(j).cell_pos = nuclear_locs(index,:);
+        result_xy(j).exp_cell_pos = [experiment_setup.center_pos_um(1:2) 20];
+        result_xy(j).err_cell_pos = result_xy(j).exp_cell_pos - result_xy(j).cell_pos;
+        result_xy(j).err_cell_pos_norm = norm(result_xy(j).exp_cell_pos - result_xy(j).cell_pos);
+        
     else
+        
         result_xy(j).fluor_val = NaN;
         result_xy(j).cell_pos = NaN;
 
     end
-    title(['Cell: ' num2str(j)])
+%     title(['Cell: ' num2str(j)])
 end
 
 %%

@@ -187,14 +187,14 @@ if get(handles.ch2_on,'Value')
 end
 if get(handles.draw_thresh,'Value')
     thresh = str2double(get(handles.thresh,'String'));
-    plot(timebase,flip*thresh*ones(size(timebase)))
+    plot(timebase,-1*thresh*ones(size(timebase)))
     hold on;
-%     if get(handles.ch1_on,'Value')
-%         crossings1 = detect_peaks(flip*this_trace_ch1',thresh,5,0,length(this_trace_ch1),-Inf,0,0,0);
-%         crossings1 = crossings1{1};
-%         scatter(timebase(crossings1),flip*thresh*ones(size(crossings1)))
-%         hold on
-%     end
+    if get(handles.ch1_on,'Value')
+        crossings1 = detect_peaks(-1*this_trace_ch1' + this_trace_ch1(1),thresh,30,0,Inf,-Inf,0,0,0);
+        crossings1 = crossings1{1};
+        scatter(timebase(crossings1),-1*thresh*ones(size(crossings1)))
+        hold on
+    end
     if get(handles.ch2_on,'Value')
         crossings2 = detect_peaks(flip*this_trace_ch2',thresh,5,0,length(this_trace_ch2),-Inf,0,0,0);
         crossings2 = crossings2{1};

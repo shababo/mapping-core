@@ -23,15 +23,15 @@ colors = jet(length(filenames));
 figure_for_cosyne = figure
 %%
 
-clear result_z
-z_pos_vs_cur_and_spike_time = figure;
-new_fig = 0;
-if ~exist('curr_vs_time','var')
-    new_fig = 1;
-    curr_vs_time = figure;
-end
-cell_choice = setdiff(1:size(filenames,1),6);
-for jj = 1:length(cell_choice)%setsetdiff(1:size(filenames,1),6)
+% clear result_z
+% z_pos_vs_cur_and_spike_time = figure;
+% new_fig = 0;
+% if ~exist('curr_vs_time','var')
+%     new_fig = 1;
+%     curr_vs_time = figure;
+% end
+cell_choice = setdiff(1:size(filenames,1),[]);
+for jj = 6%1:length(cell_choice)%setsetdiff(1:size(filenames,1),6)
     
     j = cell_choice(jj);
 %     clear result_z(j)
@@ -124,9 +124,12 @@ end
 
 %%
 % figure
-[ha, pos] = tight_subplot(1,size(filenames,1),.001,.001,.001) 
-for j = 1:size(filenames,1)
-    axes(ha(j))
+cells_to_plot = [1:1:11];
+[ha, pos] = tight_subplot(1,length(cells_to_plot),.01,.25,.1); 
+
+for jj = 1:length(cells_to_plot)
+    j = cells_to_plot(jj);
+    axes(ha(jj))
     yyaxis left
     tested_pos = unique([result_z(j).spike_z_pos]);
 %     these_trials = result_z(j).current_targ_pos(:,1) == tested_pos_y(6);
@@ -138,12 +141,16 @@ for j = 1:size(filenames,1)
 %     these_powers = result_z(j).spatial_adj_power(these_trials);
     %     scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
     %     plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),36*ones(size(-20:20)),(-20:20)+36)),'color',colors(j,:),'linewidth',1);
-    plot(tested_pos,result_z(j).max_curr_means,'color',colors(1,:),'linewidth',2)
+    plot(tested_pos,result_z(j).max_curr_means,'-x','color',colors(1,:),'linewidth',2)
     ylim([0 1600])
     xlim([-60 60])
-    xlabel('Horizontal Distance (um)')
-    ylabel('Peak Current (pA)')
-    title('Horizontal Distance vs. Peak Current')
+    xlabel('Z Distance (um)')
+    if jj == 1
+        ylabel('Peak Current (pA)')
+    else
+%         set(ha(jj),'YTickLabel','')
+    end
+    title(['Cell ' num2str(j)])
     
     
 %     subplot(2,size(filenames,1),j+size(filenames,1))
@@ -157,12 +164,39 @@ for j = 1:size(filenames,1)
 %     these_powers = result_z(j).spatial_adj_power(these_trials);
     %     scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
     %     plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),(-20:20)+36,36*ones(size(-20:20)))),'color',colors(j,:),'linewidth',1)
-    plot(tested_pos,result_z(j).spike_time_means/20,'color',colors(6,:),'linewidth',2)
-    ylim([0 10])
+    plot(tested_pos,result_z(j).spike_time_means/20,'-x','color',colors(6,:),'linewidth',2)
+    ylim([0 15])
     xlim([-60 60])
-    xlabel('Vertical Distance (um)')
-    ylabel('Peak Current (pA)')
-    title('Vertical Distance vs. Peak Current')
+%     xlabel('Vertical Distance (um)')
+    if jj == length(cells_to_plot)
+        ylabel('Spike Time (msec)')
+    else
+%         set(ha(jj),'YTickLabel','')
+    end
+%     title('Vertical Distance vs. Peak Current')
 end
 
+%% detect nucs
+do_detect = 0;
+for jj = 3:length(cell_choice)
+    
+    j = cell_choice(jj)
+    if ~isempty(filenames{j,3})
+        disp('...')
+        load(filenames{j,2});
+        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,3},[],[],[],do_detect,[],0);
+        offsets = nuclear_locs - [experiment_setup.center_pos_um(1:2) 30];
 
+        [targ_error, index] = min(sqrt(sum(offsets.^2,2)));
+        result_z(j).fluor_val = fluor_vals(index);
+        result_z(j).cell_pos = nuclear_locs(index,:);
+        result_z(j).exp_cell_pos = [experiment_setup.center_pos_um(1:2) 30];
+        result_z(j).err_cell_pos = result_z(j).exp_cell_pos - result_z(j).cell_pos;
+        result_z(j).err_cell_pos = result_z(j).exp_cell_pos - result_z(j).cell_pos;
+    else
+        result_z(j).fluor_val = NaN;
+        result_z(j).cell_pos = [experiment_setup.center_pos_um(1:2) experiment_setup.piezo_center];
+
+    end
+
+end

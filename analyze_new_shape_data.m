@@ -7,7 +7,7 @@ filenames = {'2_24_slice1_cell1.mat', '2_24_13_57_data.mat', '/media/shababo/dat
              '2_26_slice1_cell2.mat', '2_26_13_48_data.mat', '/media/shababo/data/02262018images/s2c1-pre - 4_C0'
              '2_26_slice2_cell1.mat', '2_26_14_11_data.mat', '/media/shababo/data/02262018images/s2c1-pre - 5_C0'
              '2_26_slice2_cell2.mat', '2_26_14_27_data.mat', '/media/shababo/data/02262018images/s2c1-pre - 6_C0'
-             '2_26_slice3_cell1.mat', '2_26_15_10_data.mat', '/media/shababo/data/02262 18images/s2c1-pre - 7_C0'
+             '2_26_slice3_cell1.mat', '2_26_15_10_data.mat', '/media/shababo/data/02262018images/s2c1-pre - 7_C0'
              '2_26_slice3_cell2.mat', '2_26_15_32_data.mat', '/media/shababo/data/02262018images/s2c1-pre - 8_C0'
              '2_26_slice3_cell3.mat', '2_26_15_53_data.mat', '/media/shababo/data/02262018images/s2c1-pre - 9_C0'
              '2_26_slice3_cell4.mat', '2_26_16_15_data.mat', '/media/shababo/data/02262018images/s2c1-pre - 10_C0'};     
@@ -184,22 +184,65 @@ for j = 1:size(filenames,1)
 end
 
 %%
+do_detect = 0;
 
-z_pos = [160 200 240];
+for j = 1:size(filenames,1)
+    if ~isempty(filenames{j,3})
+        
+        disp('...')
+        load(filenames{j,2});
+        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,3},[],[],[],do_detect,[],0);
+        offsets = nuclear_locs - [experiment_setup.center_pos_um(1:2) 30];
+
+        [targ_error, index] = min(sqrt(sum(offsets.^2,2)));
+        result_shape(j).fluor_val = fluor_vals(index);
+        result_shape(j).cell_pos = nuclear_locs(index,:);
+        result_shape(j).exp_cell_pos = [experiment_setup.center_pos_um(1:2) 30];
+        result_shape(j).err_cell_pos = result_shape(j).exp_cell_pos - result_shape(j).cell_pos;
+
+        
+        figure
+        plot_nuclear_detect_3D([filenames{j,3} '.tif'],nuclear_locs_image_coord);
+        hold on
+        scatter(result_shape(j).cell_pos(2)/1.89 + 118.2,result_shape(j).cell_pos(1)/1.89 + 124.5,'go')
+        scatter(result_shape(j).exp_cell_pos(2)/1.89 + 118.2,result_shape(j).exp_cell_pos(1)/1.89 + 124.5,'bx')
+        max_curr_tmp = result_shape(j).max_curr;
+        max_curr_tmp(max_curr_tmp > 2000) = 0;
+        [max_curr_spatial, max_curr_ind] = max(max_curr_tmp);
+        max_curr_loc = result_shape(j).current_targ_pos(max_curr_ind,1:2) + experiment_setup.center_pos_um(1:2);
+        scatter(max_curr_loc(2)/1.89 + 118.2,max_curr_loc(1)/1.89 + 124.5,'mo')
+        title(['Cell, ' num2str(j) ', Error (um): ' mat2str(result_shape(j).err_cell_pos)])
+        caxis([0 400])
+             
+    else
+        
+        result_shape(j).fluor_val = NaN;
+        result_shape(j).cell_pos = [experiment_setup.center_pos_um(1:2) experiment_setup.piezo_center];
+
+    end
+end
+%%
+
+z_pos = 200;%[160 200 240];
 figure
 count = 1;
+[ha,~] = tight_subplot(length(z_pos),size(filenames,1),.01,.2,.2);
 for i = 1:length(z_pos)
     
 
     for j = 1:size(filenames,1)
         count
-        subplot(length(z_pos),size(filenames,1),count)
+%         subplot(length(z_pos),size(filenames,1),count)
+        axes(ha(count))
         scatter3(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,1), ...
                  result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,2), ...
                  result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000),[], ...
-                 result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000)/...
-                 max(result_shape(j).max_curr(result_shape(j).max_curr < 2000)))
+                 result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000)...%/...
+                 )%max(result_shape(j).max_curr(result_shape(j).max_curr < 2000)))
              zlim([0 2000])
+             caxis([0 2000])
+             view([0 0])
+             
          count = count + 1;
 
     end

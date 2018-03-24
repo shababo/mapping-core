@@ -59,7 +59,7 @@ for i = 1:length(info)
 end
 % return
 % close(h)
-h = figure;
+% h = figure;
 % max_proj(:) = 0;
 imagesc(max_proj);
 caxis([0 4000])
