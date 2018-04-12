@@ -123,7 +123,7 @@ for jj = 6%1:length(cell_choice)%setsetdiff(1:size(filenames,1),6)
 end
 
 %%
-% figure
+figure
 cells_to_plot = [1:1:11];
 [ha, pos] = tight_subplot(1,length(cells_to_plot),.01,.25,.1); 
 
@@ -164,7 +164,7 @@ for jj = 1:length(cells_to_plot)
 %     these_powers = result_z(j).spatial_adj_power(these_trials);
     %     scaling = these_powers(this_zero_pos)*gain_mle(28+j)*1000;
     %     plot(-20:20,scaling*shape_template(sub2ind(size(shape_template),(-20:20)+36,36*ones(size(-20:20)))),'color',colors(j,:),'linewidth',1)
-    plot(tested_pos,result_z(j).spike_time_means/20,'-x','color',colors(6,:),'linewidth',2)
+    plot(tested_pos,result_z(j).spike_time_means/20,'-x','color',colors(4,:),'linewidth',2)
     ylim([0 15])
     xlim([-60 60])
 %     xlabel('Vertical Distance (um)')

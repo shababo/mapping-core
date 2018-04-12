@@ -30,46 +30,48 @@ for j = 1:num_trials
 
     targeted_cell_IDs = union(targeted_cell_IDs,trials(j).cell_IDs);
     
-    for k = 1:size(trials(j).locations,1)
-        
-        
-        
-        this_loc = round(trials(j).locations(k,:)/spacing)*spacing;
-        map_index = (this_loc - min_bin + spacing)/spacing;
-        map_index(3) = 1;
-        if any(isnan(map_index))
-            continue
+    if size(trials(j).locations,1) == 1
+        for k = 1:size(trials(j).locations,1)
+
+
+
+            this_loc = round(trials(j).locations(k,:)/spacing)*spacing;
+            map_index = (this_loc - min_bin + spacing)/spacing;
+            map_index(3) = 1;
+            if any(isnan(map_index))
+                continue
+            end
+
+            vclamp_map{map_index(1),map_index(2),map_index(3)} = ...
+                [vclamp_map{map_index(1),map_index(2),map_index(3)}; ...
+                trials(j).voltage_clamp];
+
+
+    %         for i = 1:length(trials(j).cell_IDs)
+    %             if ~isnan(trials(j).cell_IDs(i))
+    %                 cell_colors(trials(j).cell_IDs(i),:) = cell_color;
+    %             end
+    %         end
+            switch trials(j).location_IDs(k)
+                case 1
+                    this_color = [0 0 0];
+                otherwise
+                    this_color = [.4 .4 .4];
+            end
+            color_map{map_index(1),map_index(2),map_index(3)} = ...
+                [color_map{map_index(1),map_index(2),map_index(3)}; ...
+                this_color];
+
+            linewidth_map{map_index(1),map_index(2),map_index(3)} = ...
+                [linewidth_map{map_index(1),map_index(2),map_index(3)}; ...
+                trials(j).power_levels(k)/30];
+
+            if isempty(psc_time_map{map_index(1),map_index(2),map_index(3)})
+                psc_time_map{map_index(1),map_index(2),map_index(3)} = cell(0);
+            end
+            psc_time_map{map_index(1),map_index(2),map_index(3)}{end+1} = trials(j).event_times;
+
         end
-
-        vclamp_map{map_index(1),map_index(2),map_index(3)} = ...
-            [vclamp_map{map_index(1),map_index(2),map_index(3)}; ...
-            trials(j).voltage_clamp];
-
-
-%         for i = 1:length(trials(j).cell_IDs)
-%             if ~isnan(trials(j).cell_IDs(i))
-%                 cell_colors(trials(j).cell_IDs(i),:) = cell_color;
-%             end
-%         end
-        switch trials(j).location_IDs(k)
-            case 1
-                this_color = [0 0 0];
-            otherwise
-                this_color = [.4 .4 .4];
-        end
-        color_map{map_index(1),map_index(2),map_index(3)} = ...
-            [color_map{map_index(1),map_index(2),map_index(3)}; ...
-            this_color];
-        
-        linewidth_map{map_index(1),map_index(2),map_index(3)} = ...
-            [linewidth_map{map_index(1),map_index(2),map_index(3)}; ...
-            trials(j).power_levels(k)/30];
-        
-        if isempty(psc_time_map{map_index(1),map_index(2),map_index(3)})
-            psc_time_map{map_index(1),map_index(2),map_index(3)} = cell(0);
-        end
-        psc_time_map{map_index(1),map_index(2),map_index(3)}{end+1} = trials(j).event_times;
-
     end
 end
 
