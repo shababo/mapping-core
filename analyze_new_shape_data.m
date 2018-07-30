@@ -27,7 +27,6 @@ colors = jet(4);
 
 %%
 
-
 clear result_shape
 
 for j = 1:size(filenames,1)
