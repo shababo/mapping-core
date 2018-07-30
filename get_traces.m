@@ -1,10 +1,11 @@
-function [traces_ch1, traces_ch2, full_seq, traces_ch3] = ...
+function [traces_ch1, traces_ch2, full_seq, traces_ch3, full_stim_key] = ...
     get_traces(data,trials,varargin)
 
 this_seq = cell(length(trials),1);
 stim_starts = cell(length(trials),1);
 % full_seq = [];
 stims_per_trial = zeros(length(trials),1);
+full_stim_key = [];
 for i = 1:length(trials)
     
     cur_trial = trials(i);
@@ -17,10 +18,10 @@ for i = 1:length(trials)
         else
             full_seq(end+1) = this_seq{i}(j);
         end
-%         full_seq(end).precomputed_target_index = ...
-%             full_seq(end).precomputed_target_index + size(full_stim_key,1);
+        full_seq(end).precomputed_target_index = ...
+            full_seq(end).precomputed_target_index + size(full_stim_key,1);
     end
-
+    full_stim_key = [full_stim_key; data.trial_metadata(cur_trial).stim_key];
 end
 
 % max_trial = 1200;

@@ -39,7 +39,7 @@ for j = 1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
     
     result_xy(j).quadrant = experiment_setup.quadrant;
     
-    if 0%~isempty(filenames{j,3})
+    if ~isempty(filenames{j,3})
         
         [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,3},[],[],[],do_detect,[],0);
         offsets = nuclear_locs - [experiment_setup.center_pos_um(1:2) 20];
@@ -100,7 +100,7 @@ for j = 1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
         result_xy(j).spike_targ_power(these_trials) = result_xy(j).these_x_power(i);
         these_trials = result_xy(j).current_targ_pos(:,1) == tested_pos_y(6) & result_xy(j).current_targ_pos(:,2) == tested_pos_x(i);
         result_xy(j).x_max_curr_means(i) = nanmean(result_xy(j).max_curr(these_trials));
-        result_xy(j).x_max_curr_means_pownorm(i) = nanmean(result_xy(j).max_curr(these_trials))./result_xy(j).curr_targ_power(these_trials);
+%         result_xy(j).x_max_curr_means_pownorm(i) = nanmean(result_xy(j).max_curr(these_trials))./result_xy(j).curr_targ_power(these_trials);
         result_xy(j).curr_targ_power(these_trials) = result_xy(j).these_x_power(i);
     end
     for i = 1:length(tested_pos_y)
@@ -110,7 +110,7 @@ for j = 1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
         result_xy(j).spike_targ_power(these_trials) = result_xy(j).these_y_power(i);
         these_trials = result_xy(j).current_targ_pos(:,2) == tested_pos_x(6) & result_xy(j).current_targ_pos(:,1) == tested_pos_y(i);
         result_xy(j).y_max_curr_means(i) = nanmean(result_xy(j).max_curr(these_trials));
-        result_xy(j).y_max_curr_means_pownorm(i) = nanmean(result_xy(j).max_curr(these_trials))./result_xy(j).curr_targ_power(these_trials);
+%         result_xy(j).y_max_curr_means_pownorm(i) = nanmean(result_xy(j).max_curr(these_trials))./result_xy(j).curr_targ_power(these_trials);
         result_xy(j).curr_targ_power(these_trials) = result_xy(j).these_y_power(i);
     end
     
@@ -234,42 +234,42 @@ end
 %% adjust powers
 
 
-shape_template = mean_cell(:,:,2)';
-
-for i_cell = 1:length(result_xy)
-    
-    trial_hologram_power = result_xy(i_cell).spike_targ_power;
-    trial_hologram_position = result_xy(i_cell).spike_targ_pos;
-    trial_shape_gain = shape_template(sub2ind(size(shape_template),round(trial_hologram_position(:,1)+36),round(trial_hologram_position(:,1)+36)));
-    result_xy(i_cell).spatial_adj_power = trial_hologram_power .* trial_shape_gain;
-    
-end
+% shape_template = mean_cell(:,:,2)';
+% 
+% for i_cell = 1:length(result_xy)
+%     
+%     trial_hologram_power = result_xy(i_cell).spike_targ_power;
+%     trial_hologram_position = result_xy(i_cell).spike_targ_pos;
+%     trial_shape_gain = shape_template(sub2ind(size(shape_template),round(trial_hologram_position(:,1)+36),round(trial_hologram_position(:,1)+36)));
+%     result_xy(i_cell).spatial_adj_power = trial_hologram_power .* trial_shape_gain;
+%     
+% end
 
 %% nuc detect
 
-do_detect = 0;
-for j = 1:7
-    if ~isempty(filenames{j,3})
-        
-        load(filenames{j,2})
-        [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,3},[],[],[],do_detect,[],0);
-        offsets = nuclear_locs - [experiment_setup.center_pos_um(1:2) 20];
-
-        [targ_error, index] = min(sqrt(sum(offsets.^2,2)));
-        result_xy(j).fluor_val = fluor_vals(index);
-        result_xy(j).cell_pos = nuclear_locs(index,:);
-        result_xy(j).exp_cell_pos = [experiment_setup.center_pos_um(1:2) 20];
-        result_xy(j).err_cell_pos = result_xy(j).exp_cell_pos - result_xy(j).cell_pos;
-        result_xy(j).err_cell_pos_norm = norm(result_xy(j).exp_cell_pos - result_xy(j).cell_pos);
-        
-    else
-        
-        result_xy(j).fluor_val = NaN;
-        result_xy(j).cell_pos = NaN;
-
-    end
-%     title(['Cell: ' num2str(j)])
-end
+% do_detect = 0;
+% for j = 1:7
+%     if ~isempty(filenames{j,3})
+%         
+%         load(filenames{j,2})
+%         [nuclear_locs,fluor_vals,nuclear_locs_image_coord] = detect_nuclei(filenames{j,3},[],[],[],do_detect,[],0);
+%         offsets = nuclear_locs - [experiment_setup.center_pos_um(1:2) 20];
+% 
+%         [targ_error, index] = min(sqrt(sum(offsets.^2,2)));
+%         result_xy(j).fluor_val = fluor_vals(index);
+%         result_xy(j).cell_pos = nuclear_locs(index,:);
+%         result_xy(j).exp_cell_pos = [experiment_setup.center_pos_um(1:2) 20];
+%         result_xy(j).err_cell_pos = result_xy(j).exp_cell_pos - result_xy(j).cell_pos;
+%         result_xy(j).err_cell_pos_norm = norm(result_xy(j).exp_cell_pos - result_xy(j).cell_pos);
+%         
+%     else
+%         
+%         result_xy(j).fluor_val = NaN;
+%         result_xy(j).cell_pos = NaN;
+% 
+%     end
+% %     title(['Cell: ' num2str(j)])
+% end
 
 %%
 
