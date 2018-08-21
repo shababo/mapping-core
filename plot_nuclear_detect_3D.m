@@ -1,5 +1,9 @@
 function detect_img = plot_nuclear_detect_3D(stack_filename,centers,varargin)
 
+if size(centers,2) == 3
+    centers = centers';
+end
+
 info = imfinfo(stack_filename);
 if ~isempty(varargin) && ~isempty(varargin{1})
     colors = varargin{1};

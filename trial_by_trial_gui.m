@@ -153,7 +153,7 @@ end
 
 switch handles.data.trial_metadata(trace_ind).cell1_clamp_type
     case 'current-clamp'
-        this_trace_ch1 = handles.data.sweeps{trace_ind}(:,1)*1;
+        this_trace_ch1 = handles.data.sweeps{trace_ind}(:,1)*20;
     case 'voltage-clamp'
         this_trace_ch1 = handles.data.sweeps{trace_ind}(:,1);
     case 'cell-attached'
@@ -161,7 +161,7 @@ switch handles.data.trial_metadata(trace_ind).cell1_clamp_type
 end
 switch handles.data.trial_metadata(trace_ind).cell2_clamp_type
     case 'current-clamp'
-        this_trace_ch2 = handles.data.sweeps{trace_ind}(:,2)*1;
+        this_trace_ch2 = handles.data.sweeps{trace_ind}(:,2)*20;
         flip = 1;
     case 'voltage-clamp'
         this_trace_ch2 = handles.data.sweeps{trace_ind}(:,2);
@@ -179,7 +179,7 @@ end
 if get(handles.ch1_on,'Value')
     plot(timebase,this_trace_ch1); hold on;
 end
-plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*10 + 10)
+%plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*10 + 10)
 hold on;
 if get(handles.ch2_on,'Value')
     plot(timebase,this_trace_ch2);
