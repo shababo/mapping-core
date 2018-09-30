@@ -1,13 +1,13 @@
 %%
-    
+datapath = '/media/shababo/data/'
 
-filenames = {'2_13_slice3_cell1.mat', '2_13_15_26_data.mat', '/media/shababo/data/02132018images/s2c1-pre - 3_C0' %P19
-             '2_13_slice3_cell2.mat', '2_13_15_37_data.mat', '/media/shababo/data/02132018images/s2c1-pre - 4_C0'
-             '2_13_slice4_cell3.mat', '2_13_16_29_data.mat', '/media/shababo/data/02132018images/s2c1-pre - 8_C0'
-             '2_14_slice2_cell1.mat', '2_14_16_42_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 3_C0' %P20
-             '2_14_slice2_cell3.mat', '2_14_16_58_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 5_C0'
-             '2_14_slice2_cell4.mat', '2_14_17_13_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 6_C0'
-             '2_14_slice3_cell1.mat', '2_14_17_38_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 7_C0'};     
+filenames = {'2_13_slice3_cell1.mat', '2_13_15_26_data.mat', '/media/shababo/data/02132018images/s2c1-pre - 3_C0' % good %P19
+             '2_13_slice3_cell2.mat', '2_13_15_37_data.mat', '/media/shababo/data/02132018images/s2c1-pre - 4_C0' % good
+             '2_13_slice4_cell3.mat', '2_13_16_29_data.mat', '/media/shababo/data/02132018images/s2c1-pre - 8_C0' % good
+             '2_14_slice2_cell1.mat', '2_14_16_42_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 3_C0' % good %P20
+             '2_14_slice2_cell3.mat', '2_14_16_58_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 5_C0' % good
+             '2_14_slice2_cell4.mat', '2_14_17_13_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 6_C0' % good
+             '2_14_slice3_cell1.mat', '2_14_17_38_data.mat', '/media/shababo/data/02142018images/s2c1-pre - 7_C0'};  % meh   
          
 spike_trials = {1,1,1,1,1,1,1};
 current_trials = {4,4,4,4,4,4,4};
@@ -34,8 +34,8 @@ do_detect = 0;
 for j = 1:size(filenames,1)%find([result_xy_bu.quadrant] == 1)%
 
     
-    load(filenames{j,2});
-    load(filenames{j,1}); 
+    load([datapath filenames{j,2})];
+    load([datapath filenames{j,1})]; 
     
     result_xy(j).quadrant = experiment_setup.quadrant;
     

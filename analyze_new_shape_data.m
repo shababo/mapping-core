@@ -231,7 +231,7 @@ for i = 1:length(z_pos)
 
     for j = 1:size(filenames,1)
         count
-%         subplot(length(z_pos),size(filenames,1),count)
+        subplot(length(z_pos),size(filenames,1),count)
         axes(ha(count))
         scatter3(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,1), ...
                  result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,2), ...
@@ -240,7 +240,7 @@ for i = 1:length(z_pos)
                  )%max(result_shape(j).max_curr(result_shape(j).max_curr < 2000)))
              zlim([0 2000])
              caxis([0 2000])
-             view([0 0])
+%              view([0 0])
              
          count = count + 1;
 

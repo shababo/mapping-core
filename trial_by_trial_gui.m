@@ -171,9 +171,10 @@ switch handles.data.trial_metadata(trace_ind).cell2_clamp_type
         this_trace_ch2 = (handles.data.sweeps{trace_ind}(:,2) - ...
             median(handles.data.sweeps{trace_ind}(1:10,2)));
 end
+this_trace_ch2 = this_trace_ch2*1000;
 if get(handles.hpf,'Value')
     this_trace_ch1 = highpass_filter(this_trace_ch1,20000);
-    this_trace_ch2 = highpass_filter(this_trace_ch1,20000);
+    this_trace_ch2 = highpass_filter(this_trace_ch2,20000);
 end
 
 if get(handles.ch1_on,'Value')
@@ -182,7 +183,7 @@ end
 plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*10 + 10)
 hold on;
 if get(handles.ch2_on,'Value')
-    plot(timebase,this_trace_ch2);
+    plot(timebase,this_trace_ch2 - 100);
     hold on
 end
 if get(handles.draw_thresh,'Value')
