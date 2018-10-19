@@ -58,39 +58,140 @@ for j = 6:size(filenames,1)
     end
     
 end
-%%
-j = 5
+%% plot spiking locs
+
 offset = .05;
-unique_powers = unique(result_full_nrp(j).spike_targ_power);
+spike_time_max = 200;
 
-figure; 
-for i = 1:length(unique_powers)
-    these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
-    these_locs = result_full_nrp(j).spike_targ_pos(these_trials' & ~isnan(result_full_nrp(j).spike_times_c1),:);
-    subplot(1,length(unique_powers)+1,i)
-    scatter3(these_locs(:,1),these_locs(:,2),these_locs(:,3),[],[1 0 0],'filled','MarkerFaceAlpha',.33)
-    hold on
-    scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),result_full_nrp(j).c1_pos(3),[],[1 0 0])
-    
-    these_locs = result_full_nrp(j).spike_targ_pos(these_trials' & ~isnan(result_full_nrp(j).spike_times_c2),:);
-    scatter3(these_locs(:,1)+.25,these_locs(:,2)+offset,these_locs(:,3)+offset,[],[0 0 1],'filled','MarkerFaceAlpha',.33)
-    hold on
-    scatter3(result_full_nrp(j).c2_pos(1)+offset,result_full_nrp(j).c2_pos(2)+offset,result_full_nrp(j).c2_pos(3),[],[0 0 1])
-    xlim([min(result_full_nrp(j).spike_targ_pos(:,1)) max(result_full_nrp(j).spike_targ_pos(:,1))])
-    ylim([min(result_full_nrp(j).spike_targ_pos(:,2)) max(result_full_nrp(j).spike_targ_pos(:,2))])
-    zlim([min(result_full_nrp(j).spike_targ_pos(:,3)) max(result_full_nrp(j).spike_targ_pos(:,3))])
+views = [0 90; 0 0; 90 0];
+
+for j = 1:6
+    unique_powers = unique(result_full_nrp(j).spike_targ_power);
+    figure; 
+    for k = 1:3
+        for i = 1:length(unique_powers)
+            
+            subplot(3,length(unique_powers)+1,i + (length(unique_powers)+1)*(k-1))
+            
+            these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
+            these_locs = result_full_nrp(j).spike_targ_pos(these_trials' & ~isnan(result_full_nrp(j).spike_times_c1) & result_full_nrp(j).spike_times_c1 < spike_time_max,:);
+            
+            scatter3(these_locs(:,1),these_locs(:,2),these_locs(:,3),[],[1 0 0],'filled','MarkerFaceAlpha',.33)
+            hold on
+            scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),result_full_nrp(j).c1_pos(3),[],[1 0 0])
+
+            these_locs = result_full_nrp(j).spike_targ_pos(these_trials' & ~isnan(result_full_nrp(j).spike_times_c2) & result_full_nrp(j).spike_times_c2 < spike_time_max,:);
+            scatter3(these_locs(:,1)+.25,these_locs(:,2)+offset,these_locs(:,3)+offset,[],[0 0 1],'filled','MarkerFaceAlpha',.33)
+            hold on
+            scatter3(result_full_nrp(j).c2_pos(1)+offset,result_full_nrp(j).c2_pos(2)+offset,result_full_nrp(j).c2_pos(3),[],[0 0 1])
+            xlim([min(result_full_nrp(j).spike_targ_pos(:,1)) max(result_full_nrp(j).spike_targ_pos(:,1))])
+            ylim([min(result_full_nrp(j).spike_targ_pos(:,2)) max(result_full_nrp(j).spike_targ_pos(:,2))])
+            zlim([min(result_full_nrp(j).spike_targ_pos(:,3)) max(result_full_nrp(j).spike_targ_pos(:,3))])
+            xlabel('vertical')
+            ylabel('horizontal')
+            zlabel('axial/horizontal')
+            title(sprintf('Pair %d, Power: %d',j,unique_powers(i)))
+            view(views(k,1),views(k,2))
+        end
+        subplot(3,length(unique_powers)+1,length(unique_powers)+1+(length(unique_powers)+1)*(k-1))
+        scatter3(result_full_nrp(j).spike_targ_pos(:,1),result_full_nrp(j).spike_targ_pos(:,2),result_full_nrp(j).spike_targ_pos(:,3),'filled')
+        xlim([min(result_full_nrp(j).spike_targ_pos(:,1)) max(result_full_nrp(j).spike_targ_pos(:,1))])
+        ylim([min(result_full_nrp(j).spike_targ_pos(:,2)) max(result_full_nrp(j).spike_targ_pos(:,2))])
+        zlim([min(result_full_nrp(j).spike_targ_pos(:,3)) max(result_full_nrp(j).spike_targ_pos(:,3))])
+        xlabel('vertical')
+        ylabel('horizontal')
+        zlabel('axial/horizontal')
+        title(sprintf('Pair %d, All Targets',j))
+        view(views(k,1),views(k,2))
+    end
 end
-subplot(1,length(unique_powers)+1,length(unique_powers)+1)
-scatter3(result_full_nrp(j).spike_targ_pos(:,1),result_full_nrp(j).spike_targ_pos(:,2),result_full_nrp(j).spike_targ_pos(:,3),'filled')
 
-% figure; 
-% for i = 1:length(unique_powers)
-%     these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
-%     these_locs = result_full_nrp.spike_targ_pos(these_trials,:);
-%     subplot(1,length(unique_powers)+1,i)
-%     scatter3(these_locs(:,1),these_locs(:,2),these_locs(:,3),[],(500-result_full_nrp.spike_times_c2(these_trials))/500,'filled','MarkerFaceAlpha',.33)
-%     hold on
-%     scatter3(result_full_nrp(j).c2_pos(1),result_full_nrp(j).c2_pos(2),result_full_nrp(j).c2_pos(3))
-% end
-% subplot(1,length(unique_powers)+1,length(unique_powers)+1)
-% scatter3(these_locs(:,1),these_locs(:,2),these_locs(:,3),'filled')
+
+%% plot first spiker
+
+offset = .05;
+spike_time_max = 200;
+
+views = [0 90; 0 0; 90 0];
+
+for j = 1:6
+    unique_powers = unique(result_full_nrp(j).spike_targ_power);
+    figure; 
+    for k = 1:3
+        for i = 1:length(unique_powers)
+            
+            subplot(3,length(unique_powers)+1,i + (length(unique_powers)+1)*(k-1))
+            
+            these_trials = result_full_nrp(j).spike_targ_power' == unique_powers(i) & ~isnan(result_full_nrp(j).spike_times_c1) & ...
+                result_full_nrp(j).spike_times_c1 < spike_time_max & (result_full_nrp(j).spike_times_c1 < result_full_nrp(j).spike_times_c2 | isnan(result_full_nrp(j).spike_times_c2));
+            these_locs = result_full_nrp(j).spike_targ_pos(these_trials',:);
+            
+            scatter3(these_locs(:,1),these_locs(:,2),these_locs(:,3),[],[1 0 0],'filled','MarkerFaceAlpha',.33)
+            hold on
+            scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),result_full_nrp(j).c1_pos(3),[],[1 0 0])
+            these_trials = result_full_nrp(j).spike_targ_power' == unique_powers(i) & ~isnan(result_full_nrp(j).spike_times_c2) & ...
+                result_full_nrp(j).spike_times_c2 < spike_time_max & (result_full_nrp(j).spike_times_c2 < result_full_nrp(j).spike_times_c1 | isnan(result_full_nrp(j).spike_times_c1));
+            these_locs = result_full_nrp(j).spike_targ_pos(these_trials',:);
+            scatter3(these_locs(:,1)+.25,these_locs(:,2)+offset,these_locs(:,3)+offset,[],[0 0 1],'filled','MarkerFaceAlpha',.33)
+            hold on
+            scatter3(result_full_nrp(j).c2_pos(1)+offset,result_full_nrp(j).c2_pos(2)+offset,result_full_nrp(j).c2_pos(3),[],[0 0 1])
+            xlim([min(result_full_nrp(j).spike_targ_pos(:,1)) max(result_full_nrp(j).spike_targ_pos(:,1))])
+            ylim([min(result_full_nrp(j).spike_targ_pos(:,2)) max(result_full_nrp(j).spike_targ_pos(:,2))])
+            zlim([min(result_full_nrp(j).spike_targ_pos(:,3)) max(result_full_nrp(j).spike_targ_pos(:,3))])
+            xlabel('vertical')
+            ylabel('horizontal')
+            zlabel('axial/horizontal')
+            title(sprintf('Pair %d, Power: %d',j,unique_powers(i)))
+            view(views(k,1),views(k,2))
+        end
+        subplot(3,length(unique_powers)+1,length(unique_powers)+1+(length(unique_powers)+1)*(k-1))
+        scatter3(result_full_nrp(j).spike_targ_pos(:,1),result_full_nrp(j).spike_targ_pos(:,2),result_full_nrp(j).spike_targ_pos(:,3),'filled')
+        xlim([min(result_full_nrp(j).spike_targ_pos(:,1)) max(result_full_nrp(j).spike_targ_pos(:,1))])
+        ylim([min(result_full_nrp(j).spike_targ_pos(:,2)) max(result_full_nrp(j).spike_targ_pos(:,2))])
+        zlim([min(result_full_nrp(j).spike_targ_pos(:,3)) max(result_full_nrp(j).spike_targ_pos(:,3))])
+        xlabel('vertical')
+        ylabel('horizontal')
+        zlabel('axial/horizontal')
+        title(sprintf('Pair %d, All Targets',j))
+        view(views(k,1),views(k,2))
+    end
+end
+
+%% plot spike time diffs
+
+spike_time_max = 200;
+
+
+
+for j = 1:6
+    figure
+    unique_powers = unique(result_full_nrp(j).spike_targ_power);
+        for i = 1:length(unique_powers)
+            
+            subplot(3,length(unique_powers),i + (length(unique_powers))*(1-1))
+            
+            these_trials = result_full_nrp(j).spike_targ_power' == unique_powers(i) & ~isnan(result_full_nrp(j).spike_times_c1) & ...
+                result_full_nrp(j).spike_times_c1 < spike_time_max;
+            histogram(result_full_nrp(j).spike_times_c1(these_trials),0:4:200)
+            title(sprintf('Spike Times: Pair %d, Cell 1, power: %d',j,unique_powers(i)))
+            xlim([0 200])
+            ylim([0 10])
+            
+            subplot(3,length(unique_powers),i + (length(unique_powers))*(2-1))
+            these_trials = result_full_nrp(j).spike_targ_power' == unique_powers(i) & ~isnan(result_full_nrp(j).spike_times_c2) & ...
+                result_full_nrp(j).spike_times_c2 < spike_time_max;
+            histogram(result_full_nrp(j).spike_times_c2(these_trials),0:4:200)
+            title(sprintf('Spike Times: Pair %d, Cell 2, power: %d',j,unique_powers(i)))
+            xlim([0 200])
+            ylim([0 10])
+            
+            subplot(3,length(unique_powers),i + (length(unique_powers))*(3-1))
+            these_trials = result_full_nrp(j).spike_targ_power' == unique_powers(i) & ~isnan(result_full_nrp(j).spike_times_c2) & ...
+                ~isnan(result_full_nrp(j).spike_times_c1) & result_full_nrp(j).spike_times_c1 < spike_time_max & result_full_nrp(j).spike_times_c2 < spike_time_max;
+            histogram(result_full_nrp(j).spike_times_c1(these_trials) - result_full_nrp(j).spike_times_c2(these_trials),-200:8:200)
+            xlim([-200 200])
+            title(sprintf('Spike Time Diffs (c1 - c2): Pair %d power: %d',j,unique_powers(i)))
+            ylim([0 10])
+        end
+
+end

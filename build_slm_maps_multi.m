@@ -15,8 +15,8 @@ maps = cell(num_cells,1);
 mpp_maps = cell(num_cells,1);
 color_maps = cell(num_cells,1);
 
-
-stim_key_bin = round(stim_key/spacing)*spacing;
+spacing = [spacing spacing 25];
+stim_key_bin = bsxfun(@times,round(bsxfun(@rdivide,stim_key,spacing)),spacing);
 
 % x_bins = unique(stim_key_bin(:,1,:));
 % y_bins = unique(stim_key_bin(:,2,:));
@@ -44,19 +44,20 @@ end
 % stim_y_min = min(min(stim_key_bin(:,2,:)));
 % stim_y_max = max(max(stim_key_bin(:,2,:)));
 
-stim_z_min = 0;%min(min(stim_key_bin(:,3,:)));
-stim_z_max = 0;%max(max(stim_key_bin(:,3,:)));
+stim_z_min = floor(min(min(stim_key_bin(:,3,:))));
+stim_z_max = ceil(max(max(stim_key_bin(:,3,:))));
+spacing(3) = ceil((stim_z_max - stim_z_min)/9);
 
-x_bins = stim_x_min:spacing:stim_x_max;
-y_bins = stim_y_min:spacing:stim_y_max;
-z_bins = 0;%stim_z_min:spacing:stim_z_max;
+x_bins = stim_x_min:spacing(1):stim_x_max;
+y_bins = stim_y_min:spacing(2):stim_y_max;
+z_bins = stim_z_min:spacing(3):stim_z_max;
 
 grid_dims = [length(x_bins) length(y_bins) length(z_bins)];
 
 min_bin = [stim_x_min stim_y_min stim_z_min];
-map_index = (bsxfun(@minus,stim_key_bin,min_bin) + spacing)/spacing;
+map_index = bsxfun(@rdivide,bsxfun(@plus,bsxfun(@minus,stim_key_bin,min_bin),spacing),spacing);
 
-map_index(:,3,:) = 1;
+% map_index(:,3,:) = 1;
 
 
 num_traces = length(sequence);
@@ -83,7 +84,10 @@ for i = 1:num_cells
             if isnan(map_index(j_stim,1,k))
                 break
             end
-
+            
+            j_stim
+            k
+            map_index(j_stim,:)
             maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
                 [maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
                 these_traces(j,:)];
