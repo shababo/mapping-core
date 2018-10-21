@@ -26,7 +26,7 @@ assignin('base','these_colors',these_colors)
 [maps, mpp_maps, map_index, color_maps] = build_slm_maps_multi(...
     traces,mpp,sequence,stim_key,spacing,[-150 150],[-150 150],these_colors);
 
-assignin('base','color_maps',color_maps)
+assignin('base','maps_raw',maps)
 
 loc_names = cell(size(maps{1}));
 center = ceil((size(maps{1})-1)*spacing/2) + 1;
@@ -45,13 +45,13 @@ center = ceil((size(maps{1})-1)*spacing/2) + 1;
 trials_per_stack = 15;
 if show_raw_data
     figure
-    subplot(121)
+%     subplot(121)
 
     plot_trace_stack_grid(maps{1},trials_per_stack,1,0,[],[],[],mpp_maps{1});%,loc_names);
 %     title(['Power = ' num2str(sequence(1).target_power) ' mW'])
-    subplot(122)
+%     subplot(122)
 %     figure
-	plot_trace_stack_grid(maps{2},trials_per_stack,1,0,[],[],[],mpp_maps{2},loc_names);
+% 	plot_trace_stack_grid(maps{2},trials_per_stack,1,0,[],[],[],mpp_maps{2},loc_names);
 
 
 end

@@ -180,7 +180,7 @@ end
 if get(handles.ch1_on,'Value')
     plot(timebase,this_trace_ch1); hold on;
 end
-%plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*10 + 10)
+plot(timebase,handles.data.sweeps{trace_ind}(:,3)/max(handles.data.sweeps{trace_ind}(:,3))*10 + 10)
 hold on;
 if get(handles.ch2_on,'Value')
     plot(timebase,this_trace_ch2 - 100);

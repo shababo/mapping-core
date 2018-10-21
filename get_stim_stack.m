@@ -16,7 +16,7 @@ end
 if length(varargin) > 2 && ~isempty(varargin{3})
     duration = varargin{3};
 else
-    duration = .025;
+    duration = .013;
 
 end
 
@@ -32,7 +32,7 @@ for i = 1:length(trials)
 %     assignin('base','stim_starts_tmp',stim_starts_tmp)
 
     if ~isempty(expected_stim_start{i})
-%         disp('doing exp')
+        disp('using expected trial times')
         stim_starts = expected_stim_start{i};
 %         stim_starts = zeros(size(expected_stim_start{i}));
 %         for j = 1:num_stims(i)
