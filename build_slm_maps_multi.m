@@ -15,7 +15,12 @@ maps = cell(num_cells,1);
 mpp_maps = cell(num_cells,1);
 color_maps = cell(num_cells,1);
 
-spacing = [spacing spacing 25];
+spacing = [spacing spacing -1];
+
+stim_z_min = floor(min(min(stim_key(:,3,:))));
+stim_z_max = ceil(max(max(stim_key(:,3,:))));
+spacing(3) = ceil((stim_z_max - stim_z_min)/3);
+
 stim_key_bin = bsxfun(@times,round(bsxfun(@rdivide,stim_key,spacing)),spacing);
 
 % x_bins = unique(stim_key_bin(:,1,:));
@@ -46,7 +51,7 @@ end
 
 stim_z_min = floor(min(min(stim_key_bin(:,3,:))));
 stim_z_max = ceil(max(max(stim_key_bin(:,3,:))));
-spacing(3) = ceil((stim_z_max - stim_z_min)/9);
+% spacing(3) = ceil((stim_z_max - stim_z_min)/9);
 
 x_bins = stim_x_min:spacing(1):stim_x_max;
 y_bins = stim_y_min:spacing(2):stim_y_max;
