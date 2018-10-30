@@ -9,29 +9,39 @@ filenames = {'9_27_slice3_cell1_2.mat', '9_27_16_0_data.mat'
              '10_13_slice1_cell5_6.mat', '10_13_15_0_data.mat'
              '10_13_slice1_cell1_2.mat', '10_13_14_21_data.mat'
              '10_16_slice1_cell3_4.mat', '10_16_15_14_data.mat'
+             '10_23_slice1_cell1_2.mat', '10_23_17_29_data.mat'
+             '10_23_slice1_cell3_4.mat', '10_23_17_47_data.mat'
+%              '10_24_slice1_cell1_2.mat', '10_24_16_5_data.mat'
+             '10_24_slice1_cell3_4.mat', '10_24_16_21_data.mat'
+             '10_24_slice2_cell1_2.mat', '10_24_16_37_data.mat'
              };      
                                                     
-ch1_cell = [1,1,1,1,1,1,1,1,1];
-ch2_cell = [1,1,1,1,1,1,0,0,0];
+ch1_cell = [1,1,1,1,1,1,1,1,1,1,1,1,0];
+ch2_cell = [1,1,1,1,1,1,0,0,0,0,1,0,1];
                                                     
-spike_trials = {2:4,2:7,2:4,2:4,2:4,3:5,[1 3:5],[1 3:5],[1 3:5]};
+spike_trials = {2:4,2:7,2:4,2:4,2:4,3:5,[1 3:5],[1 3:5],[1 3:5],5:7,2:5,2:5,3:5};
 current_trials = {[]};
+
+set_color = {'r','r','r','r','r','r','b','b','b','b','b','b','b'};
 
 
 %%
 
 % clear result_full_nrp
 
-for j = 9:size(filenames,1)
+for j = 13:size(filenames,1)
+    
+    j
     
     load(filenames{j,2});
     load(filenames{j,1}); 
     experiment_setup = exp_data.experiment_setup;
     
     if ~isempty(spike_trials{j})
-        
+        [result_full_nrp(j).spike_traces_c1, result_full_nrp(j).spike_traces_c2, this_seq, result_full_nrp(j).spike_stim_traces, full_stim_key] = get_traces(data,spike_trials{j});
         if ch1_cell(j)
-            [result_full_nrp(j).spike_traces_c1, result_full_nrp(j).spike_traces_c2, this_seq, result_full_nrp(j).spike_stim_traces, full_stim_key] = get_traces(data,spike_trials{j});
+            disp('cell 1')
+            
         
             result_full_nrp(j).spike_targ_pos_c1 = bsxfun(@minus,full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc);
             result_full_nrp(j).c1_pos = experiment_setup.patched_cell_loc;
@@ -49,7 +59,8 @@ for j = 9:size(filenames,1)
             end
         end
         if ch2_cell(j)
-            result_full_nrp(j).spike_traces_c2 = result_full_nrp(j).spike_traces_c2*1000;
+            disp('cell 2')
+%             result_full_nrp(j).spike_traces_c2 = result_full_nrp(j).spike_traces_c2;
             result_full_nrp(j).c2_pos = experiment_setup.patched_cell_loc_2;
             result_full_nrp(j).spike_targ_pos_c2 = bsxfun(@minus,full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc_2);
             result_full_nrp(j).spike_targ_pos = full_stim_key([this_seq.precomputed_target_index],:);
@@ -71,37 +82,38 @@ end
 
 %% plot spiking locs
 
-offset = .05;
+offset = .00;
 
 spike_time_max = 200;
 
 views = [0 90; 0 0; 90 0];
 
-for j = 9
-    unique_powers = [15 35 55]; %unique(result_full_nrp(j).spike_targ_power);
-    figure; 
+for j = 7:13
+    figure
+    unique_powers = unique(result_full_nrp(j).spike_targ_power);%[15 35 55]; %
+    
+    
     for k = 1:3
         for i = 1:length(unique_powers)
             
             subplot(3,length(unique_powers),i + length(unique_powers)*(k-1))
-            
+            these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
+            scatter3(result_full_nrp(j).spike_targ_pos(these_trials,1),result_full_nrp(j).spike_targ_pos(these_trials,2),-result_full_nrp(j).spike_targ_pos(these_trials,3),5,'k','filled')
+            hold on
             if ch1_cell(j)
-                these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
+                
                 these_locs = result_full_nrp(j).spike_targ_pos(these_trials' & ~isnan(result_full_nrp(j).spike_times_c1) &...
-                    result_full_nrp(j).spike_times_c1 < spike_time_max,:);
-
-                scatter3(result_full_nrp(j).spike_targ_pos(these_trials,1),result_full_nrp(j).spike_targ_pos(these_trials,2),result_full_nrp(j).spike_targ_pos(these_trials,3),5,'k','filled')
+                    result_full_nrp(j).spike_times_c1 < spike_time_max,:);                
+                scatter3(these_locs(:,1),these_locs(:,2),-these_locs(:,3),[],[1 0 0],'filled','MarkerFaceAlpha',.33)
                 hold on
-                scatter3(these_locs(:,1),these_locs(:,2),these_locs(:,3),[],[1 0 0],'filled','MarkerFaceAlpha',.33)
-                hold on
-                scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),result_full_nrp(j).c1_pos(3),60,[1 0 0])
+                scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),-result_full_nrp(j).c1_pos(3),60,[1 0 0])
             end
             if ch2_cell(j)
                 these_locs = result_full_nrp(j).spike_targ_pos(these_trials' & ~isnan(result_full_nrp(j).spike_times_c2) &...
                     result_full_nrp(j).spike_times_c2 < spike_time_max,:);
-                scatter3(these_locs(:,1)+offset,these_locs(:,2)+offset,these_locs(:,3)+offset,[],[0 0 1],'filled','MarkerFaceAlpha',.33)
+                scatter3(these_locs(:,1)+offset,these_locs(:,2)+offset,-these_locs(:,3)+offset,[],[0 0 1],'filled','MarkerFaceAlpha',.33)
                 hold on
-                scatter3(result_full_nrp(j).c2_pos(1)+offset,result_full_nrp(j).c2_pos(2)+offset,result_full_nrp(j).c2_pos(3),60,[0 0 1])
+                scatter3(result_full_nrp(j).c2_pos(1)+offset,result_full_nrp(j).c2_pos(2)+offset,-result_full_nrp(j).c2_pos(3),60,[0 0 1])
 
 
             end
@@ -136,7 +148,7 @@ spike_time_max = 200;
 
 views = [0 90; 0 0; 90 0];
 
-for j = 3
+for j = 10
     unique_powers = unique(result_full_nrp(j).spike_targ_power);
     figure; 
     for k = 1:3
@@ -289,12 +301,14 @@ spike_time_max = 200;
 views = [0 90; 0 0; 90 0];
     figure; 
 
-    unique_powers = unique(result_full_nrp(j).spike_targ_power);
+    
 
 for k = 1:3
-    for i = 1:length(unique_powers)
+    for j = 7:13
+        unique_powers = unique(result_full_nrp(j).spike_targ_power);
+        for i = 1:length(unique_powers)
 
-        for j = 7:9
+        
             
             subplot(3,length(unique_powers),i + length(unique_powers)*(k-1))
             
@@ -329,7 +343,7 @@ for k = 1:3
             view(views(k,1),views(k,2))
         end
         
-        for j = 7:9   
+        for j = 10  
             subplot(3,length(unique_powers),i + length(unique_powers)*(k-1))
             
             these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
@@ -378,61 +392,61 @@ end
 
 %% plot min spike time loc
 
-spike_time_max = 80;
-
+spike_time_max = 100;
+spike_time_min = 60;
 colors = lines(13);
 
 views = [0 90; 0 0; 90 0];
     figure; 
 
-    unique_powers = [15 35 55];%unique(result_full_nrp(j).spike_targ_power);
+    unique_powers = [15 25 50 75 100];%unique(result_full_nrp(j).spike_targ_power);
 
 for k = 1:3
     for i = 1:length(unique_powers)
 
         
-        for j = 7:9   
+        for j = 1:13  
             subplot(3,length(unique_powers),i + length(unique_powers)*(k-1))
             
-            if ch1_cell(j)
-            these_trials = find(result_full_nrp(j).spike_targ_power' == unique_powers(i) & ~isnan(result_full_nrp(j).spike_times_c1) &...
-                result_full_nrp(j).spike_times_c1 < spike_time_max);
-            these_locs = result_full_nrp(j).spike_targ_pos(these_trials,:);
-            these_times = result_full_nrp(j).spike_times_c1(these_trials);
-            if ~isempty(these_times)
-%             c1_targs = bsxfun(@minus,result_full_nrp(j).spike_targ_pos,result_full_nrp(j).c1_pos);
-%             scatter3(c1_targs(:,1),c1_targs(:,2),c1_targs(:,3),5,'k','filled')
-                [this_time, this_ind] = min(these_times);
-                this_loc = result_full_nrp(j).spike_targ_pos(these_trials(this_ind),:) - result_full_nrp(j).c1_pos + rand(1,3)-.5;
-                scatter3(these_locs(:,1),these_locs(:,2),these_locs(:,3),5,[0 0 0],'filled','jitter','on','jitteramount',0.)
-                hold on
-                scatter3(this_loc(:,1),this_loc(:,2),this_loc(:,3),[],[1 0 0],'filled','jitter','on','jitteramount',0.)
-                hold on
-%             scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),result_full_nrp(j).c1_pos(3),60,[1 0 0])
-            
-%             c2_targs = bsxfun(@minus,result_full_nrp(j).spike_targ_pos,result_full_nrp(j).c2_pos);
-%             scatter3(c2_targs(:,1),c2_targs(:,2),c2_targs(:,3),5,'k','filled')
+            if ch1_cell(j) && ~any(result_full_nrp(j).spike_times_c1 < spike_time_min)
+                these_trials = find(result_full_nrp(j).spike_targ_power' == unique_powers(i) & ~isnan(result_full_nrp(j).spike_times_c1) &...
+                    result_full_nrp(j).spike_times_c1 < spike_time_max);
+%                 these_locs = result_full_nrp(j).spike_targ_pos(these_trials,:);
+                these_times = result_full_nrp(j).spike_times_c1(these_trials);
+                if ~isempty(these_times)
+    %             c1_targs = bsxfun(@minus,result_full_nrp(j).spike_targ_pos,result_full_nrp(j).c1_pos);
+    %             scatter3(c1_targs(:,1),c1_targs(:,2),c1_targs(:,3),5,'k','filled')
+                    [this_time, this_ind] = min(these_times);
+                    this_loc = result_full_nrp(j).spike_targ_pos(these_trials(this_ind),:) - result_full_nrp(j).c1_pos + rand(1,3)-.5;
+%                     scatter3(these_locs(:,1),these_locs(:,2),these_locs(:,3),5,[0 0 0],'filled','jitter','on','jitteramount',0.)
+%                     hold on
+                    scatter3(this_loc(:,1),this_loc(:,2),this_loc(:,3),[],set_color{j},'filled','jitter','on','jitteramount',0.)
+                    hold on
+    %             scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),result_full_nrp(j).c1_pos(3),60,[1 0 0])
+
+    %             c2_targs = bsxfun(@minus,result_full_nrp(j).spike_targ_pos,result_full_nrp(j).c2_pos);
+    %             scatter3(c2_targs(:,1),c2_targs(:,2),c2_targs(:,3),5,'k','filled')
+                end
             end
-            end
-            if ch2_cell(j)
-            these_trials = find(result_full_nrp(j).spike_targ_power' == unique_powers(i) & ~isnan(result_full_nrp(j).spike_times_c2) &...
-                result_full_nrp(j).spike_times_c2 < spike_time_max);
-            these_locs = result_full_nrp(j).spike_targ_pos(these_trials,:);
-            these_times = result_full_nrp(j).spike_times_c2(these_trials);
-            if ~isempty(these_times)
-%             c1_targs = bsxfun(@minus,result_full_nrp(j).spike_targ_pos,result_full_nrp(j).c1_pos);
-%             scatter3(c1_targs(:,1),c1_targs(:,2),c1_targs(:,3),5,'k','filled')
-                [this_time, this_ind] = min(these_times);
-                this_loc = result_full_nrp(j).spike_targ_pos(these_trials(this_ind),:) - result_full_nrp(j).c2_pos + rand(1,3)-.5;
-                scatter3(these_locs(:,1),these_locs(:,2),these_locs(:,3),5,[0 0 0],'filled','jitter','on','jitteramount',0.)
-                hold on
-                scatter3(this_loc(:,1),this_loc(:,2),this_loc(:,3),[],[0 0 1],'filled')
-                hold on
-%             scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),result_full_nrp(j).c1_pos(3),60,[1 0 0])
-            
-%             c2_targs = bsxfun(@minus,result_full_nrp(j).spike_targ_pos,result_full_nrp(j).c2_pos);
-%             scatter3(c2_targs(:,1),c2_targs(:,2),c2_targs(:,3),5,'k','filled')
-            end
+            if ch2_cell(j) && ~any(result_full_nrp(j).spike_times_c2 < spike_time_min)
+                these_trials = find(result_full_nrp(j).spike_targ_power' == unique_powers(i) & ~isnan(result_full_nrp(j).spike_times_c2) &...
+                    result_full_nrp(j).spike_times_c2 < spike_time_max);
+                these_locs = result_full_nrp(j).spike_targ_pos(these_trials,:);
+                these_times = result_full_nrp(j).spike_times_c2(these_trials);
+                if ~isempty(these_times)
+    %             c1_targs = bsxfun(@minus,result_full_nrp(j).spike_targ_pos,result_full_nrp(j).c1_pos);
+    %             scatter3(c1_targs(:,1),c1_targs(:,2),c1_targs(:,3),5,'k','filled')
+                    [this_time, this_ind] = min(these_times);
+                    this_loc = result_full_nrp(j).spike_targ_pos(these_trials(this_ind),:) - result_full_nrp(j).c2_pos + rand(1,3)-.5;
+%                     scatter3(these_locs(:,1),these_locs(:,2),these_locs(:,3),5,[0 0 0],'filled','jitter','on','jitteramount',0.)
+%                     hold on
+                    scatter3(this_loc(:,1),this_loc(:,2),this_loc(:,3),[],set_color{j},'filled')
+                    hold on
+    %             scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),result_full_nrp(j).c1_pos(3),60,[1 0 0])
+
+    %             c2_targs = bsxfun(@minus,result_full_nrp(j).spike_targ_pos,result_full_nrp(j).c2_pos);
+    %             scatter3(c2_targs(:,1),c2_targs(:,2),c2_targs(:,3),5,'k','filled')
+                end
             end
             xlabel('vertical')
             ylabel('horizontal')

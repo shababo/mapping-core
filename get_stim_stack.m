@@ -16,7 +16,7 @@ end
 if length(varargin) > 2 && ~isempty(varargin{3})
     duration = varargin{3};
 else
-    duration = .013;
+    duration = .010;
 
 end
 
