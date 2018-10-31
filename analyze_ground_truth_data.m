@@ -1,19 +1,19 @@
 %%
 
-filenames = {'10_25'
+filenames = {'10_25_slice1_cell1_2.mat','10_25_15_33_data.mat'
              };      
                                                     
-ch1_cell_type = [1,1,1,1,1,1,1,1,1,1,1,1,0]; %0-no cell, 1-spike cell, 2-psc cell
-ch2_cell_type = [1,1,1,1,1,1,0,0,0,0,1,0,1];
+ch1_cell_type = [2]; %0-no cell, 1-spike cell, 2-psc cell
+ch2_cell_type = [1];
                
-map_trials = {};
-connection_check_trials = {};
-post_aspiration_trials = {};
+map_trials = {3:5,};
+connection_check_trials = {1};
+post_aspiration_trials = {6};
 
 
 %%
 
-for j = 13:size(filenames,1)
+for j = 1:size(filenames,1)
     
     j
     
@@ -23,7 +23,7 @@ for j = 13:size(filenames,1)
     experiment_setup = exp_data.experiment_setup;
     experiment_setup.trials.min_time = 30;
     experiment_setup.trials.max_time = 200;
-    data_trials = union(map_trials{j},connection_check_trials{j},post_aspiration_trials{j});
+    data_trials = map_trials{j};
     [result_full_nrp(j).traces_c1, result_full_nrp(j).traces_c2, this_seq, result_full_nrp(j).stim_traces, result_full_nrp(j).full_stim_key] = get_traces(data,data_trials);
     result_full_nrp(j).targ_pos = result_full_nrp(j).full_stim_key([this_seq.precomputed_target_index],:);
     result_full_nrp(j).targ_power = [this_seq.target_power];
@@ -48,7 +48,7 @@ for j = 13:size(filenames,1)
         end
     elseif ch1_cell_type == 2
         
-        result_full_nrp(j).c1_targ_pos = bsxfun(@minus,result_full_nrp(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc);
+        %result_full_nrp(j).c1_targ_pos = bsxfun(@minus,result_full_nrp(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc);
         result_full_nrp(j).c1_pos = experiment_setup.patched_cell_loc;
         
         fullsavepath = [filename_base '_traces.mat'];
@@ -83,10 +83,15 @@ for j = 13:size(filenames,1)
         end
           
         for jj = 1:size(traces,1)
-            result_full_nrp(j).event_times_c1(jj) = ...
-                find(oasis_data(jj,...
+            if ~isempty(find(oasis_data(jj,...
+                        experiment_setup.trials.min_time:experiment_setup.trials.max_time),1))
+                result_full_nrp(j).event_times_c1(jj) = ...
+                    find(oasis_data(jj,...
                         experiment_setup.trials.min_time:experiment_setup.trials.max_time),1) + ...
                         experiment_setup.trials.min_time - 1;
+            else
+                result_full_nrp(j).event_times_c1(jj) = NaN;
+            end
         end
     end 
         disp('cell 21')
@@ -157,7 +162,7 @@ for j = 13:size(filenames,1)
 end   
     
     
-    
+ %%   
     
     
 
@@ -178,3 +183,37 @@ hold on
 scatter3(local_nucs(:,1), local_nucs(:,2), -local_nucs(:,3)); 
 scatter3(presyn_cell_pos(:,1), presyn_cell_pos(:,2), -presyn_cell_pos(:,3)); axis image
 % scatter3(presyn_cell_pos(:,1), presyn_cell_pos(:,2), -presyn_cell_pos(:,3)); axis image
+
+%%
+paired_trials = ~isnan(result_full_nrp(1).spike_times_c2') & ~isnan(result_full_nrp(1).event_times_c1) & result_full_nrp(1).spike_times_c2' < result_full_nrp(1).event_times_c1;
+
+
+figure;
+subplot(121)
+scatter(result_full_nrp(1).spike_times_c2(paired_trials),...
+    result_full_nrp(1).event_times_c1(paired_trials));
+hold on
+% plot(0:1:200,0:1:200)
+% subplot(132); histogram(result_full_nrp(1).event_times_c1(paired_trials))
+% hold on
+% histogram(result_full_nrp(1).spike_times_c2(paired_trials))
+
+subplot(122);
+histogram(result_full_nrp(1).event_times_c1(paired_trials)'...
+    - result_full_nrp(1).spike_times_c2(paired_trials))
+%%
+
+figure;
+unique_powers = unique(result_full_nrp(1).targ_power);
+for i = 1:length(unique_powers)
+    subplot(1,length(unique_powers),i)
+trials = result_full_nrp(1).targ_power == unique_powers(i) & ~isnan(result_full_nrp(1).event_times_c1) & ...
+    result_full_nrp(1).event_times_c1 > 50  & result_full_nrp(1).event_times_c1 < 160;
+scatter3(result_full_nrp(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*2-1,...
+    result_full_nrp(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*2-1,...
+    -result_full_nrp(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*2-1,...
+    100,200 - result_full_nrp(1).event_times_c1(trials),'filled','markerfacealpha',.75)
+end
+hold on
+scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2),experiment_setup.local_nuc_locs(:,1),
+
