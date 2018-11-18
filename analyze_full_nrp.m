@@ -549,6 +549,7 @@ for k = 1:3
                 end
             end
             if ch2_cell(j) && ~any(result_full_nrp(j).spike_times_c2 < spike_time_min)
+                
                 these_trials = find(result_full_nrp(j).spike_targ_power' == unique_powers(i) & ~isnan(result_full_nrp(j).spike_times_c2) &...
                     result_full_nrp(j).spike_times_c2 < spike_time_max);
                 these_locs = result_full_nrp(j).spike_targ_pos(these_trials,:);
@@ -566,6 +567,7 @@ for k = 1:3
 
     %             c2_targs = bsxfun(@minus,result_full_nrp(j).spike_targ_pos,result_full_nrp(j).c2_pos);
     %             scatter3(c2_targs(:,1),c2_targs(:,2),c2_targs(:,3),5,'k','filled')
+    
                 end
             end
             xlabel('vertical')

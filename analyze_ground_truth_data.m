@@ -1,19 +1,21 @@
 %%
 
 filenames = {'10_25_slice1_cell1_2.mat','10_25_15_33_data.mat'
+             '10_25_slice1_cell2_4.mat','10_25_15_54_data.mat'
+             '10_25_slice1_cell2_5.mat','10_25_15_54_data.mat'
              };      
                                                     
-ch1_cell_type = [2]; %0-no cell, 1-spike cell, 2-psc cell
-ch2_cell_type = [1];
+ch1_cell_type = [2,2,2]; %0-no cell, 1-spike cell, 2-psc cell
+ch2_cell_type = [1,1,1];
                
-map_trials = {3:5,};
-connection_check_trials = {1};
-post_aspiration_trials = {6};
+map_trials = {3:5,3:5,3:5};
+connection_check_trials = {1,1,1};
+post_aspiration_trials = {6,6,6};
 
 
 %%
 
-for j = 1:size(filenames,1)
+for j = 2:size(filenames,1)
     
     j
     
@@ -205,15 +207,94 @@ histogram(result_full_nrp(1).event_times_c1(paired_trials)'...
 
 figure;
 unique_powers = unique(result_full_nrp(1).targ_power);
+jitter_amt = .5;
 for i = 1:length(unique_powers)
     subplot(1,length(unique_powers),i)
-trials = result_full_nrp(1).targ_power == unique_powers(i) & ~isnan(result_full_nrp(1).event_times_c1) & ...
-    result_full_nrp(1).event_times_c1 > 50  & result_full_nrp(1).event_times_c1 < 160;
-scatter3(result_full_nrp(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*2-1,...
-    result_full_nrp(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*2-1,...
-    -result_full_nrp(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*2-1,...
-    100,200 - result_full_nrp(1).event_times_c1(trials),'filled','markerfacealpha',.75)
+    trials = result_full_nrp(1).targ_power == unique_powers(i) & ~isnan(result_full_nrp(1).event_times_c1) & ...
+        result_full_nrp(1).event_times_c1 > 50  & result_full_nrp(1).event_times_c1 < 160;
+    scatter3(result_full_nrp(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        result_full_nrp(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        -result_full_nrp(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+    80,200 - result_full_nrp(1).event_times_c1(trials),'filled','markerfacealpha',.75)
+
 end
 hold on
-scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2),experiment_setup.local_nuc_locs(:,1),
+scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2),-experiment_setup.local_nuc_locs(:,3))
+%%
+
+figure;
+
+unique_powers = unique(result_full_nrp(1).targ_power);
+jitter_amt = .5;
+for i = 1:length(unique_powers)
+    subplot(1,length(unique_powers),i)
+%     subplot(1,length(unique_powers),i)
+    trials = result_full_nrp(1).targ_power' == unique_powers(i) & ~isnan(result_full_nrp(1).spike_times_c2);
+%     scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2)-6,-(experiment_setup.local_nuc_locs(:,3)-6),100,[1 0 0],'filled','markerfacealpha',0.15)
+    hold on
+    scatter3(result_full_nrp(1).targ_pos(:,1),...
+        result_full_nrp(1).targ_pos(:,2),...
+        -result_full_nrp(1).targ_pos(:,3),...
+        5,[0 0 1],'filled','markerfacealpha',.25)
+    hold on
+    scatter3(result_full_nrp(1).targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        result_full_nrp(1).targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        -result_full_nrp(1).targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        50,200 - result_full_nrp(1).spike_times_c2(trials),'filled','markerfacealpha',.75)
+    xlabel('vertical')
+    ylabel('horiz')
+    zlabel('axial')
+    caxis([0 200])
+    axis image
+end
+
+%%
+
+% figure;
+
+unique_powers = unique(result_full_nrp(1).targ_power);
+jitter_amt = .5;
+for i = 1:length(unique_powers)
+    subplot(1,length(unique_powers),i)%+length(unique_powers))
+%     subplot(1,length(unique_powers),i)
+    trials = result_full_nrp(1).targ_power' == unique_powers(i) & ~isnan(result_full_nrp(1).spike_times_c2);
+%     scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2),-experiment_setup.local_nuc_locs(:,3),100,[1 0 0],'filled','markerfacealpha',0.15)
+    hold on
+    scatter3(result_full_nrp(1).c2_targ_pos(:,1),...
+        result_full_nrp(1).c2_targ_pos(:,2),...
+        -result_full_nrp(1).c2_targ_pos(:,3),...
+        5,[0 0 1],'filled','markerfacealpha',.25)
+    hold on
+    scatter3(result_full_nrp(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        result_full_nrp(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        -result_full_nrp(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        50,250 - result_full_nrp(1).event_times_c1(trials),'filled','markerfacealpha',.75)
+    caxis([0 200])
+    axis image
+end
+
+
+%%
+figure
+unique_powers = unique(result_full_nrp(1).targ_power);
+jitter_amt = .5;
+for i = 1:length(unique_powers)
+    subplot(1,length(unique_powers),i)%+2*length(unique_powers)
+%     subplot(1,length(unique_powers),i)
+    trials = result_full_nrp(1).targ_power == unique_powers(i) & result_full_nrp(1).event_times_c1 < 200  & result_full_nrp(1).event_times_c1 > 50;
+    scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2),-experiment_setup.local_nuc_locs(:,3),125,[1 0 0])
+    hold on
+%     scatter3(result_full_nrp(1).c2_targ_pos(:,1),...
+%         result_full_nrp(1).c2_targ_pos(:,2),...
+%         -result_full_nrp(1).c2_targ_pos(:,3),...
+%         5,[0 0 1],'filled','markerfacealpha',.25)
+%     hold on
+    scatter3(result_full_nrp(1).targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        result_full_nrp(1).targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        -result_full_nrp(1).targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        50,200 - result_full_nrp(1).event_times_c1(trials),'filled','markerfacealpha',.75)
+    caxis([0 150])
+    axis image
+end
+
 
