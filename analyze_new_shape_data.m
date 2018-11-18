@@ -225,21 +225,21 @@ end
 z_pos = 200;%[160 200 240];
 figure
 count = 1;
-[ha,~] = tight_subplot(length(z_pos),size(filenames,1),.01,.2,.2);
+% [ha,~] = tight_subplot(length(z_pos),size(filenames,1),.01,.2,.2);
 for i = 1:length(z_pos)
     
 
     for j = 1:size(filenames,1)
         count
         subplot(length(z_pos),size(filenames,1),count)
-        axes(ha(count))
+%         axes(ha(count))
         scatter3(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,1), ...
                  result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,2), ...
                  result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000),[], ...
                  result_shape(j).max_curr(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000)...%/...
                  )%max(result_shape(j).max_curr(result_shape(j).max_curr < 2000)))
              zlim([0 2000])
-             caxis([0 2000])
+             caxis([0 400])
 %              view([0 0])
              
          count = count + 1;
@@ -252,7 +252,7 @@ end
 z_pos = [160 200 240];
 
 count = 1;
-[xq, yq] = meshgrid(-35:35,-35:35);
+[xq, yq] = meshgrid(-35:5:35,-35:5:35);
 spatial_maps = zeros(length(xq),length(yq),length(z_pos),length(result_shape));
 spatial_maps_per_cell = struct();
 
@@ -338,10 +338,19 @@ count = 1;
 for i = 1:size(spatial_maps,3)
     for j = 1:length(result_shape)
          
-        subplot(size(spatial_maps,3),length(result_shape),count)
-        imagesc(spatial_maps(:,:,i,j)')
-        caxis([0 max(max(max(spatial_maps(:,:,:,j))))])
+        subplot(3,length(result_shape),count)
+        b = bar3(spatial_maps(:,:,i,j)')
+        
+        for k = 1:length(b)
+            zdata = b(k).ZData;
+            b(k).CData = zdata;
+            b(k).FaceColor = 'interp';
+        end
+        
+%         caxis([0 400])
+        zlim([0 1800])
         count = count + 1;
+        view(0,90)
         axis off      
     end
 end
