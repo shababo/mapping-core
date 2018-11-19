@@ -225,11 +225,11 @@ end
 z_pos = 200;%[160 200 240];
 figure
 count = 1;
-[ha,~] = tight_subplot(length(z_pos),size(filenames,1),.01,.2,.2);
+[ha,~] = tight_subplot(length(z_pos),length(result_shape),.01,.2,.2);
 for i = 1:length(z_pos)
     
 
-    for j = 1:size(filenames,1)
+    for j = 1:length(result_shape)
         count
         subplot(length(z_pos),size(filenames,1),count)
         axes(ha(count))
