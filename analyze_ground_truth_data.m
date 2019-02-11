@@ -17,6 +17,8 @@ hpf = [0 0 0;
 map_trials = {3:5,3:5,2:5};
 connection_check_trials = {1,1,1};
 post_aspiration_trials = {6,6,6};
+
+
 %%
 thisdir = '~/projects/mapping/data/';
 %%
@@ -32,9 +34,9 @@ for j = 1:size(filenames,1)
     experiment_setup.trials.min_time = 30;
     experiment_setup.trials.max_time = 200;
     data_trials = map_trials{j};
-    [result_full_nrp(j).traces_c1, result_full_nrp(j).traces_c2, this_seq, result_full_nrp(j).stim_traces, result_full_nrp(j).full_stim_key] = get_traces(data,data_trials);
-    result_full_nrp(j).targ_pos = result_full_nrp(j).full_stim_key([this_seq.precomputed_target_index],:);
-    result_full_nrp(j).targ_power = [this_seq.target_power];
+    [result_ground_truth_set(j).traces_c1, result_ground_truth_set(j).traces_c2, this_seq, result_ground_truth_set(j).stim_traces, result_ground_truth_set(j).full_stim_key] = get_traces(data,data_trials);
+    result_ground_truth_set(j).targ_pos = result_ground_truth_set(j).full_stim_key([this_seq.precomputed_target_index],:);
+    result_ground_truth_set(j).targ_power = [this_seq.target_power];
     
     filename_base = ['/media/shababo/data/' experiment_setup.exp_id];
     % detect spikes
@@ -42,26 +44,26 @@ for j = 1:size(filenames,1)
     if ch1_cell_type(j) == 1
         
 
-        result_full_nrp(j).c1_targ_pos = bsxfun(@minus,result_full_nrp(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc);
-        result_full_nrp(j).c1_pos = experiment_setup.patched_cell_loc;
+        result_ground_truth_set(j).c1_targ_pos = bsxfun(@minus,result_ground_truth_set(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc);
+        result_ground_truth_set(j).c1_pos = experiment_setup.patched_cell_loc;
         
-        cell_spike_times_c1 = detect_peaks(-bsxfun(@minus,result_full_nrp(j).traces_c1(:,30:end),median(result_full_nrp(j).traces_c1(:,30:end),2)),thresh(1,j),30,0,Inf,-Inf,0,hpf(1,j),1);
-        result_full_nrp(j).spike_times_c1 = zeros(size(cell_spike_times_c1));
+        cell_spike_times_c1 = detect_peaks(-bsxfun(@minus,result_ground_truth_set(j).traces_c1(:,30:end),median(result_ground_truth_set(j).traces_c1(:,30:end),2)),thresh(1,j),30,0,Inf,-Inf,0,hpf(1,j),1);
+        result_ground_truth_set(j).spike_times_c1 = zeros(size(cell_spike_times_c1));
         for i = 1:length(cell_spike_times_c1)
             if ~isempty(cell_spike_times_c1{i})
-                result_full_nrp(j).spike_times_c1(i) = cell_spike_times_c1{i} + 29;
+                result_ground_truth_set(j).spike_times_c1(i) = cell_spike_times_c1{i} + 29;
             else
-                result_full_nrp(j).spike_times_c1(i) = NaN;
+                result_ground_truth_set(j).spike_times_c1(i) = NaN;
             end
         end
 %     elseif ch1_cell_type(j) == 2
 %         
-%         %result_full_nrp(j).c1_targ_pos = bsxfun(@minus,result_full_nrp(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc);
-%         result_full_nrp(j).c1_pos = experiment_setup.patched_cell_loc;
+%         %result_ground_truth_set(j).c1_targ_pos = bsxfun(@minus,result_ground_truth_set(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc);
+%         result_ground_truth_set(j).c1_pos = experiment_setup.patched_cell_loc;
 %         
 %         fullsavepath = [filename_base '_traces.mat'];
 %         oasis_out_path = [filename_base '_traces_detect.mat'];
-%         traces = result_full_nrp(j).traces_c1;
+%         traces = result_ground_truth_set(j).traces_c1;
 %         save(fullsavepath,'traces')
 %         cmd = 'python /home/shababo/projects/mapping/code/OASIS/run_oasis_online.py ';
 %         cmd = [cmd ' ' fullsavepath];
@@ -93,39 +95,39 @@ for j = 1:size(filenames,1)
 %         for jj = 1:size(traces,1)
 %             if ~isempty(find(oasis_data(jj,...
 %                         experiment_setup.trials.min_time:experiment_setup.trials.max_time),1))
-%                 result_full_nrp(j).event_times_c1(jj) = ...
+%                 result_ground_truth_set(j).event_times_c1(jj) = ...
 %                     find(oasis_data(jj,...
 %                         experiment_setup.trials.min_time:experiment_setup.trials.max_time),1) + ...
 %                         experiment_setup.trials.min_time - 1;
 %             else
-%                 result_full_nrp(j).event_times_c1(jj) = NaN;
+%                 result_ground_truth_set(j).event_times_c1(jj) = NaN;
 %             end
 %         end
     end 
-        disp('cell 21')
+        disp('cell 2')
     if ch2_cell_type(j) == 1
         
 
-        result_full_nrp(j).c2_targ_pos = bsxfun(@minus,result_full_nrp(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc_2);
-        result_full_nrp(j).c2_pos = experiment_setup.patched_cell_loc_2;
+        result_ground_truth_set(j).c2_targ_pos = bsxfun(@minus,result_ground_truth_set(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc_2);
+        result_ground_truth_set(j).c2_pos = experiment_setup.patched_cell_loc_2;
         
-        cell_spike_times_c2 = detect_peaks(-bsxfun(@minus,result_full_nrp(j).traces_c2(:,30:end),median(result_full_nrp(j).traces_c2(:,30:end),2)),thresh(2,j),30,0,Inf,-Inf,0,hpf(2,j),1);
-        result_full_nrp(j).spike_times_c2 = zeros(size(cell_spike_times_c2));
+        cell_spike_times_c2 = detect_peaks(-bsxfun(@minus,result_ground_truth_set(j).traces_c2(:,30:end),median(result_ground_truth_set(j).traces_c2(:,30:end),2)),thresh(2,j),30,0,Inf,-Inf,0,hpf(2,j),1);
+        result_ground_truth_set(j).spike_times_c2 = zeros(size(cell_spike_times_c2));
         for i = 1:length(cell_spike_times_c2)
             if ~isempty(cell_spike_times_c2{i})
-                result_full_nrp(j).spike_times_c2(i) = cell_spike_times_c2{i} + 29;
+                result_ground_truth_set(j).spike_times_c2(i) = cell_spike_times_c2{i} + 29;
             else
-                result_full_nrp(j).spike_times_c2(i) = NaN;
+                result_ground_truth_set(j).spike_times_c2(i) = NaN;
             end
         end
 %     elseif ch2_cell_type(j) == 2
 %         
-%         result_full_nrp(j).c2_targ_pos = bsxfun(@minus,result_full_nrp(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc_2);
-%         result_full_nrp(j).c2_pos = experiment_setup.patched_cell_loc_2;
+%         result_ground_truth_set(j).c2_targ_pos = bsxfun(@minus,result_ground_truth_set(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc_2);
+%         result_ground_truth_set(j).c2_pos = experiment_setup.patched_cell_loc_2;
 %         
 %         fullsavepath = [filename_base '_traces.mat'];
 %         oasis_out_path = [filename_base '_traces_detect.mat'];
-%         traces = result_full_nrp(j).traces_c2;
+%         traces = result_ground_truth_set(j).traces_c2;
 %         save(fullsavepath,'traces')
 %         cmd = 'python /home/shababo/projects/mapping/code/OASIS/run_oasis_online.py ';
 %         cmd = [cmd ' ' fullsavepath];
@@ -155,7 +157,7 @@ for j = 1:size(filenames,1)
 %         end
 %           
 %         for jj = 1:size(traces,1)
-%             result_full_nrp(j).event_times_c2(jj) = ...
+%             result_ground_truth_set(j).event_times_c2(jj) = ...
 %                 find(oasis_data(jj,...
 %                         experiment_setup.trials.min_time:experiment_setup.trials.max_time),1) + ...
 %                         experiment_setup.trials.min_time - 1;
@@ -229,36 +231,36 @@ plot(z_bounds(2:end),num_within_range_all)
 num_within_range25 = num_within_range_all;
 
 %%
-paired_trials = ~isnan(result_full_nrp(1).spike_times_c2') & ~isnan(result_full_nrp(1).event_times_c1) & result_full_nrp(1).spike_times_c2' < result_full_nrp(1).event_times_c1;
+paired_trials = ~isnan(result_ground_truth_set(1).spike_times_c2') & ~isnan(result_ground_truth_set(1).event_times_c1) & result_ground_truth_set(1).spike_times_c2' < result_ground_truth_set(1).event_times_c1;
 
 
 figure;
 subplot(121)
-scatter(result_full_nrp(1).spike_times_c2(paired_trials),...
-    result_full_nrp(1).event_times_c1(paired_trials));
+scatter(result_ground_truth_set(1).spike_times_c2(paired_trials),...
+    result_ground_truth_set(1).event_times_c1(paired_trials));
 hold on
 % plot(0:1:200,0:1:200)
-% subplot(132); histogram(result_full_nrp(1).event_times_c1(paired_trials))
+% subplot(132); histogram(result_ground_truth_set(1).event_times_c1(paired_trials))
 % hold on
-% histogram(result_full_nrp(1).spike_times_c2(paired_trials))
+% histogram(result_ground_truth_set(1).spike_times_c2(paired_trials))
 
 subplot(122);
-histogram(result_full_nrp(1).event_times_c1(paired_trials)'...
-    - result_full_nrp(1).spike_times_c2(paired_trials))
+histogram(result_ground_truth_set(1).event_times_c1(paired_trials)'...
+    - result_ground_truth_set(1).spike_times_c2(paired_trials))
 %%
 
 figure;
-unique_powers = unique(result_full_nrp(1).targ_power);
+unique_powers = unique(result_ground_truth_set(1).targ_power);
 jitter_amt = .5;
 for i = 1:length(unique_powers)
 
     subplot(1,length(unique_powers),i)
-    trials = result_full_nrp(1).targ_power == unique_powers(i) & ~isnan(result_full_nrp(1).event_times_c1) & ...
-        result_full_nrp(1).event_times_c1 > 50  & result_full_nrp(1).event_times_c1 < 160;
-    scatter3(result_full_nrp(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        result_full_nrp(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        -result_full_nrp(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-    80,200 - result_full_nrp(1).event_times_c1(trials),'filled','markerfacealpha',.75)
+    trials = result_ground_truth_set(1).targ_power == unique_powers(i) & ~isnan(result_ground_truth_set(1).event_times_c1) & ...
+        result_ground_truth_set(1).event_times_c1 > 50  & result_ground_truth_set(1).event_times_c1 < 160;
+    scatter3(result_ground_truth_set(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        result_ground_truth_set(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        -result_ground_truth_set(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+    80,200 - result_ground_truth_set(1).event_times_c1(trials),'filled','markerfacealpha',.75)
 
 end
 hold on
@@ -267,24 +269,24 @@ scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,
 
 figure;
 
-unique_powers = unique(result_full_nrp(1).targ_power);
+unique_powers = unique(result_ground_truth_set(1).targ_power);
 jitter_amt = .5;
 for i = 1:length(unique_powers)
     subplot(1,length(unique_powers),i)
 %     subplot(1,length(unique_powers),i)
-    trials = result_full_nrp(1).targ_power' == unique_powers(i);
+    trials = result_ground_truth_set(1).targ_power' == unique_powers(i);
 %     scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2)-6,-(experiment_setup.local_nuc_locs(:,3)-6),100,[1 0 0],'filled','markerfacealpha',0.15)
     hold on
-    scatter3(result_full_nrp(1).c2_targ_pos(trials,1),...
-        result_full_nrp(1).c2_targ_pos(trials,2),...
-        -result_full_nrp(1).c2_targ_pos(trials,3),...
+    scatter3(result_ground_truth_set(1).c2_targ_pos(trials,1),...
+        result_ground_truth_set(1).c2_targ_pos(trials,2),...
+        -result_ground_truth_set(1).c2_targ_pos(trials,3),...
         5,[0 0 1],'filled','markerfacealpha',.25)
     hold on
-    trials = result_full_nrp(1).targ_power' == unique_powers(i) & ~isnan(result_full_nrp(1).spike_times_c2);
-    scatter3(result_full_nrp(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        result_full_nrp(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        -result_full_nrp(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt+jitter_amt/2,...
-        50,200 - result_full_nrp(1).spike_times_c2(trials),'filled','markerfacealpha',.75)
+    trials = result_ground_truth_set(1).targ_power' == unique_powers(i) & ~isnan(result_ground_truth_set(1).spike_times_c2);
+    scatter3(result_ground_truth_set(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        result_ground_truth_set(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        -result_ground_truth_set(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt+jitter_amt/2,...
+        50,200 - result_ground_truth_set(1).spike_times_c2(trials),'filled','markerfacealpha',.75)
     xlabel('vertical')
     ylabel('horiz')
     zlabel('axial')
@@ -296,23 +298,23 @@ end
 
 % figure;
 
-unique_powers = unique(result_full_nrp(1).targ_power);
+unique_powers = unique(result_ground_truth_set(1).targ_power);
 jitter_amt = .5;
 for i = 1:length(unique_powers)
     subplot(1,length(unique_powers),i)%+length(unique_powers))
 %     subplot(1,length(unique_powers),i)
-    trials = result_full_nrp(1).targ_power' == unique_powers(i) & ~isnan(result_full_nrp(1).spike_times_c2);
+    trials = result_ground_truth_set(1).targ_power' == unique_powers(i) & ~isnan(result_ground_truth_set(1).spike_times_c2);
 %     scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2),-experiment_setup.local_nuc_locs(:,3),100,[1 0 0],'filled','markerfacealpha',0.15)
     hold on
-    scatter3(result_full_nrp(1).c2_targ_pos(:,1),...
-        result_full_nrp(1).c2_targ_pos(:,2),...
-        -result_full_nrp(1).c2_targ_pos(:,3),...
+    scatter3(result_ground_truth_set(1).c2_targ_pos(:,1),...
+        result_ground_truth_set(1).c2_targ_pos(:,2),...
+        -result_ground_truth_set(1).c2_targ_pos(:,3),...
         5,[0 0 1],'filled','markerfacealpha',.25)
     hold on
-    scatter3(result_full_nrp(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        result_full_nrp(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        -result_full_nrp(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        50,250 - result_full_nrp(1).event_times_c1(trials),'filled','markerfacealpha',.75)
+    scatter3(result_ground_truth_set(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        result_ground_truth_set(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        -result_ground_truth_set(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        50,250 - result_ground_truth_set(1).event_times_c1(trials),'filled','markerfacealpha',.75)
     caxis([0 200])
     axis image
 end
@@ -320,23 +322,23 @@ end
 
 %%
 figure
-unique_powers = unique(result_full_nrp(1).targ_power);
+unique_powers = unique(result_ground_truth_set(1).targ_power);
 jitter_amt = .5;
 for i = 1:length(unique_powers)
     subplot(1,length(unique_powers),i)%+2*length(unique_powers)
 %     subplot(1,length(unique_powers),i)
-    trials = result_full_nrp(1).targ_power == unique_powers(i) & result_full_nrp(1).event_times_c1 < 200  & result_full_nrp(1).event_times_c1 > 50;
+    trials = result_ground_truth_set(1).targ_power == unique_powers(i) & result_ground_truth_set(1).event_times_c1 < 200  & result_ground_truth_set(1).event_times_c1 > 50;
     scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2),-experiment_setup.local_nuc_locs(:,3),125,[1 0 0])
     hold on
-%     scatter3(result_full_nrp(1).c2_targ_pos(:,1),...
-%         result_full_nrp(1).c2_targ_pos(:,2),...
-%         -result_full_nrp(1).c2_targ_pos(:,3),...
+%     scatter3(result_ground_truth_set(1).c2_targ_pos(:,1),...
+%         result_ground_truth_set(1).c2_targ_pos(:,2),...
+%         -result_ground_truth_set(1).c2_targ_pos(:,3),...
 %         5,[0 0 1],'filled','markerfacealpha',.25)
 %     hold on
-    scatter3(result_full_nrp(1).targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        result_full_nrp(1).targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        -result_full_nrp(1).targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        50,200 - result_full_nrp(1).event_times_c1(trials),'filled','markerfacealpha',.75)
+    scatter3(result_ground_truth_set(1).targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        result_ground_truth_set(1).targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        -result_ground_truth_set(1).targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        50,200 - result_ground_truth_set(1).event_times_c1(trials),'filled','markerfacealpha',.75)
     caxis([0 150])
     axis image
 end
@@ -351,21 +353,21 @@ spike_time_max = 140;
 views = [90 90; 90 -0];
 subplot_order = [1 2 3];
 colors = [.35 0 0; .68 0 0; 1 0 0];
-colors = [.2 .2 1; .2 1 .2; 1 .2 .2]*.75;
+colors = [.2 .2 1; .2 .2 1; .2 .2 1]*.75;
 
 xlimits = [-40 40];
 ylimits = [-30 30];
 zlimits = [-50 50];
 
 figure
-n_choice = [1];
+n_choice = [2];
 for jj = 1:length(n_choice)
     j = n_choice(jj);
 %     figure
     j
-    unique_powers = unique(result_full_nrp(j).targ_power);%[15 35 55]; %
+    unique_powers = unique(result_ground_truth_set(j).targ_power);%[15 35 55]; %
     unique_powers(unique_powers > 55) = [];
-    [unique_targs,~,unique_targs_trial_idx] = unique(result_full_nrp(j).c2_targ_pos,'rows');
+    [unique_targs,~,unique_targs_trial_idx] = unique(result_ground_truth_set(j).c2_targ_pos,'rows');
     prob_spike_c1 = zeros(length(unique_powers),size(unique_targs,1));
     prob_spike_c2 = zeros(length(unique_powers),size(unique_targs,1));
     for i = 1:length(unique_powers) 
@@ -388,8 +390,8 @@ for jj = 1:length(n_choice)
             end
 %             subplot(3,6,count+6*(j-1))
 %             subplot(2,2,subplot_order(k))
-            these_trials = result_full_nrp(j).targ_power == unique_powers(i);
-            [unique_targs,~,unique_targs_trial_idx] = unique(result_full_nrp(j).c2_targ_pos(these_trials,:),'rows');
+            these_trials = result_ground_truth_set(j).targ_power == unique_powers(i);
+            [unique_targs,~,unique_targs_trial_idx] = unique(result_ground_truth_set(j).c2_targ_pos(these_trials,:),'rows');
             
 %             hold on
             
@@ -398,17 +400,17 @@ for jj = 1:length(n_choice)
             
             if ch2_cell_type(j) == 1
                 
-%                 scatter3(result_full_nrp(j).c2_pos(1),result_full_nrp(j).c2_pos(2),result_full_nrp(j).c2_pos(3),100,[0 0 1],'filled')
-                these_times = result_full_nrp(j).spike_times_c2(these_trials);
+%                 scatter3(result_ground_truth_set(j).c2_pos(1),result_ground_truth_set(j).c2_pos(2),result_ground_truth_set(j).c2_pos(3),100,[0 0 1],'filled')
+                these_times = result_ground_truth_set(j).spike_times_c2(these_trials);
                 for this_loc_ind = 1:size(unique_targs,1)
                     loc_times = these_times(unique_targs_trial_idx == this_loc_ind);
                     this_prob_spike = sum(~isnan(loc_times) & loc_times < spike_time_max)/length(loc_times);
                     if this_prob_spike
-                        scatter3(unique_targs(this_loc_ind,1)+rand-.5,unique_targs(this_loc_ind,2)+rand-.5,-unique_targs(this_loc_ind,3)+rand-.5,...
+                        scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),-unique_targs(this_loc_ind,3),...
                             40,colors(j,:),'filled','markerfacealpha',this_prob_spike^1.2)
                         hold on
                     else
-                        scatter3(unique_targs(this_loc_ind,1)+rand-.5,unique_targs(this_loc_ind,2)+rand-.5,-unique_targs(this_loc_ind,3)+rand-.5,...
+                        scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),-unique_targs(this_loc_ind,3),...
                             10,colors(j,:),'filled','MarkerFaceAlpha',.2)
                     end
                     prob_spike_c2(i,this_loc_ind) = this_prob_spike;
@@ -416,8 +418,8 @@ for jj = 1:length(n_choice)
             end
             
 %             if ch1_cell_type(j) == 1
-%                 scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),result_full_nrp(j).c1_pos(3),40,[1 0 0])
-%                 these_times = result_full_nrp(j).spike_times_c1(these_trials);
+%                 scatter3(result_ground_truth_set(j).c1_pos(1),result_ground_truth_set(j).c1_pos(2),result_ground_truth_set(j).c1_pos(3),40,[1 0 0])
+%                 these_times = result_ground_truth_set(j).spike_times_c1(these_trials);
 %                 
 %                 for this_loc_ind = 1:size(unique_targs,1)
 %                     loc_times = these_times(unique_targs_trial_idx == this_loc_ind);
@@ -485,10 +487,10 @@ for jj = 1:length(n_choice)
             count = count - 1;
         end
 %         subplot(3,length(unique_powers)+1,length(unique_powers)+1+(length(unique_powers)+1)*(k-1))
-%         scatter3(result_full_nrp(j).spike_targ_pos(:,1),result_full_nrp(j).spike_targ_pos(:,2),result_full_nrp(j).spike_targ_pos(:,3),'filled')
-%         xlim([min(result_full_nrp(j).spike_targ_pos(:,1)) max(result_full_nrp(j).spike_targ_pos(:,1))])
-%         ylim([min(result_full_nrp(j).spike_targ_pos(:,2)) max(result_full_nrp(j).spike_targ_pos(:,2))])
-%         zlim([min(result_full_nrp(j).spike_targ_pos(:,3)) max(result_full_nrp(j).spike_targ_pos(:,3))])
+%         scatter3(result_ground_truth_set(j).spike_targ_pos(:,1),result_ground_truth_set(j).spike_targ_pos(:,2),result_ground_truth_set(j).spike_targ_pos(:,3),'filled')
+%         xlim([min(result_ground_truth_set(j).spike_targ_pos(:,1)) max(result_ground_truth_set(j).spike_targ_pos(:,1))])
+%         ylim([min(result_ground_truth_set(j).spike_targ_pos(:,2)) max(result_ground_truth_set(j).spike_targ_pos(:,2))])
+%         zlim([min(result_ground_truth_set(j).spike_targ_pos(:,3)) max(result_ground_truth_set(j).spike_targ_pos(:,3))])
 %         xlabel('vertical')
 %         ylabel('horizontal')
 %         zlabel('axial/horizontal')

@@ -1,4 +1,4 @@
-77777777%%
+%%
     
 
 filenames = {'7_19_slice1_cell1.mat', '7_19_13_6_data.mat'
