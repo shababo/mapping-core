@@ -336,10 +336,10 @@ end
 
 figure
 count = 1;
-for i = 1:size(spatial_maps,3)
-    for j = 1:length(result_shape)
+for i = [1 2 3]%1:size(spatial_maps,3)
+    for j = [8 10 7 9 6]%1:length(result_shape)
          
-        subplot(3,length(result_shape),count)
+        subplot(3,5,count)
         b = bar3(spatial_maps(:,:,i,j)')
         
         for k = 1:length(b)
@@ -348,11 +348,14 @@ for i = 1:size(spatial_maps,3)
             b(k).FaceColor = 'interp';
         end
         
-%         caxis([0 400])
+        caxis([0 max(max(max(spatial_maps(:,:,:,j))))])
         zlim([0 1800])
+        
+%         if count > 5
+            view(0,90)
+%         end
+        axis off 
         count = count + 1;
-        view(0,90)
-        axis off      
     end
 end
 
