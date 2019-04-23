@@ -20,7 +20,8 @@ post_aspiration_trials = {6,6,6};
 
 
 %%
-thisdir = '~/projects/mapping/data/';
+% thisdir = '~/projects/mapping/data/';
+thisdir = '/media/shababo/data/';
 %%
 
 for j = 1:size(filenames,1)
@@ -56,53 +57,53 @@ for j = 1:size(filenames,1)
                 result_ground_truth_set(j).spike_times_c1(i) = NaN;
             end
         end
-%     elseif ch1_cell_type(j) == 2
-%         
-%         %result_ground_truth_set(j).c1_targ_pos = bsxfun(@minus,result_ground_truth_set(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc);
-%         result_ground_truth_set(j).c1_pos = experiment_setup.patched_cell_loc;
-%         
-%         fullsavepath = [filename_base '_traces.mat'];
-%         oasis_out_path = [filename_base '_traces_detect.mat'];
-%         traces = result_ground_truth_set(j).traces_c1;
-%         save(fullsavepath,'traces')
-%         cmd = 'python /home/shababo/projects/mapping/code/OASIS/run_oasis_online.py ';
-%         cmd = [cmd ' ' fullsavepath];
-%         error = system(cmd);
-%         if ~error
-%             % Wait for file to be created.
-%             maxSecondsToWait = 60*5; % Wait five minutes...?
-%             secondsWaitedSoFar  = 0;
-%             while secondsWaitedSoFar < maxSecondsToWait 
-%               if exist(oasis_out_path, 'file')
-%                 break;
-%               end
-%               pause(1); % Wait 1 second.
-%               secondsWaitedSoFar = secondsWaitedSoFar + 1;
-%             end
-%             if exist(oasis_out_path, 'file')
-%               load(oasis_out_path)
-%               oasis_data = reshape(event_process,size(traces'))';
-% 
-%             else
-%               fprintf('Warning: x.log never got created after waiting %d seconds', secondsWaitedSoFar);
-%             %               uiwait(warndlg(warningMessage));
-%                 oasis_data = zeros(size(traces));
-%             end
-%         else
-%           oasis_data = zeros(size(traces));
-%         end
-%           
-%         for jj = 1:size(traces,1)
-%             if ~isempty(find(oasis_data(jj,...
-%                         experiment_setup.trials.min_time:experiment_setup.trials.max_time),1))
-%                 result_ground_truth_set(j).event_times_c1(jj) = ...
-%                     find(oasis_data(jj,...
-%                         experiment_setup.trials.min_time:experiment_setup.trials.max_time),1) + ...
-%                         experiment_setup.trials.min_time - 1;
-%             else
-%                 result_ground_truth_set(j).event_times_c1(jj) = NaN;
-%             end
-%         end
+    elseif ch1_cell_type(j) == 2
+        
+        %result_ground_truth_set(j).c1_targ_pos = bsxfun(@minus,result_ground_truth_set(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc);
+        result_ground_truth_set(j).c1_pos = experiment_setup.patched_cell_loc;
+        
+        fullsavepath = [filename_base '_traces.mat'];
+        oasis_out_path = [filename_base '_traces_detect.mat'];
+        traces = result_ground_truth_set(j).traces_c1;
+        save(fullsavepath,'traces')
+        cmd = 'python /home/shababo/projects/mapping/code/OASIS/run_oasis_online.py ';
+        cmd = [cmd ' ' fullsavepath];
+        error = system(cmd);
+        if ~error
+            % Wait for file to be created.
+            maxSecondsToWait = 60*5; % Wait five minutes...?
+            secondsWaitedSoFar  = 0;
+            while secondsWaitedSoFar < maxSecondsToWait 
+              if exist(oasis_out_path, 'file')
+                break;
+              end
+              pause(1); % Wait 1 second.
+              secondsWaitedSoFar = secondsWaitedSoFar + 1;
+            end
+            if exist(oasis_out_path, 'file')
+              load(oasis_out_path)
+              oasis_data = reshape(event_process,size(traces'))';
+
+            else
+              fprintf('Warning: x.log never got created after waiting %d seconds', secondsWaitedSoFar);
+            %               uiwait(warndlg(warningMessage));
+                oasis_data = zeros(size(traces));
+            end
+        else
+          oasis_data = zeros(size(traces));
+        end
+          
+        for jj = 1:size(traces,1)
+            if ~isempty(find(oasis_data(jj,...
+                        experiment_setup.trials.min_time:experiment_setup.trials.max_time),1))
+                result_ground_truth_set(j).event_times_c1(jj) = ...
+                    find(oasis_data(jj,...
+                        experiment_setup.trials.min_time:experiment_setup.trials.max_time),1) + ...
+                        experiment_setup.trials.min_time - 1;
+            else
+                result_ground_truth_set(j).event_times_c1(jj) = NaN;
+            end
+        end
     end 
         disp('cell 2')
     if ch2_cell_type(j) == 1
@@ -120,49 +121,49 @@ for j = 1:size(filenames,1)
                 result_ground_truth_set(j).spike_times_c2(i) = NaN;
             end
         end
-%     elseif ch2_cell_type(j) == 2
-%         
-%         result_ground_truth_set(j).c2_targ_pos = bsxfun(@minus,result_ground_truth_set(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc_2);
-%         result_ground_truth_set(j).c2_pos = experiment_setup.patched_cell_loc_2;
-%         
-%         fullsavepath = [filename_base '_traces.mat'];
-%         oasis_out_path = [filename_base '_traces_detect.mat'];
-%         traces = result_ground_truth_set(j).traces_c2;
-%         save(fullsavepath,'traces')
-%         cmd = 'python /home/shababo/projects/mapping/code/OASIS/run_oasis_online.py ';
-%         cmd = [cmd ' ' fullsavepath];
-%         error = system(cmd);
-%         if ~error
-%             % Wait for file to be created.
-%             maxSecondsToWait = 60*5; % Wait five minutes...?
-%             secondsWaitedSoFar  = 0;
-%             while secondsWaitedSoFar < maxSecondsToWait 
-%               if exist(oasis_out_path, 'file')
-%                 break;
-%               end
-%               pause(1); % Wait 1 second.
-%               secondsWaitedSoFar = secondsWaitedSoFar + 1;
-%             end
-%             if exist(oasis_out_path, 'file')
-%               load(oasis_out_path)
-%               oasis_data = reshape(event_process,size(traces'))';
-% 
-%             else
-%               fprintf('Warning: x.log never got created after waiting %d seconds', secondsWaitedSoFar);
-%             %               uiwait(warndlg(warningMessage));
-%                 oasis_data = zeros(size(traces));
-%             end
-%         else
-%           oasis_data = zeros(size(traces));
-%         end
-%           
-%         for jj = 1:size(traces,1)
-%             result_ground_truth_set(j).event_times_c2(jj) = ...
-%                 find(oasis_data(jj,...
-%                         experiment_setup.trials.min_time:experiment_setup.trials.max_time),1) + ...
-%                         experiment_setup.trials.min_time - 1;
-%         end
-%         
+    elseif ch2_cell_type(j) == 2
+        
+        result_ground_truth_set(j).c2_targ_pos = bsxfun(@minus,result_ground_truth_set(j).full_stim_key([this_seq.precomputed_target_index],:),experiment_setup.patched_cell_loc_2);
+        result_ground_truth_set(j).c2_pos = experiment_setup.patched_cell_loc_2;
+        
+        fullsavepath = [filename_base '_traces.mat'];
+        oasis_out_path = [filename_base '_traces_detect.mat'];
+        traces = result_ground_truth_set(j).traces_c2;
+        save(fullsavepath,'traces')
+        cmd = 'python /home/shababo/projects/mapping/code/OASIS/run_oasis_online.py ';
+        cmd = [cmd ' ' fullsavepath];
+        error = system(cmd);
+        if ~error
+            % Wait for file to be created.
+            maxSecondsToWait = 60*5; % Wait five minutes...?
+            secondsWaitedSoFar  = 0;
+            while secondsWaitedSoFar < maxSecondsToWait 
+              if exist(oasis_out_path, 'file')
+                break;
+              end
+              pause(1); % Wait 1 second.
+              secondsWaitedSoFar = secondsWaitedSoFar + 1;
+            end
+            if exist(oasis_out_path, 'file')
+              load(oasis_out_path)
+              oasis_data = reshape(event_process,size(traces'))';
+
+            else
+              fprintf('Warning: x.log never got created after waiting %d seconds', secondsWaitedSoFar);
+            %               uiwait(warndlg(warningMessage));
+                oasis_data = zeros(size(traces));
+            end
+        else
+          oasis_data = zeros(size(traces));
+        end
+          
+        for jj = 1:size(traces,1)
+            result_ground_truth_set(j).event_times_c2(jj) = ...
+                find(oasis_data(jj,...
+                        experiment_setup.trials.min_time:experiment_setup.trials.max_time),1) + ...
+                        experiment_setup.trials.min_time - 1;
+        end
+        
     end
     
     % detect pscs
@@ -175,8 +176,8 @@ end
  %%   
     
     
-load(['~/projects/mapping/data/' filenames{1,2}])
-load(['~/projects/mapping/data/' filenames_nrp{9,2}])
+load([thisdir filenames{1,2}])
+% load([thisdir filenames{9,2}])
 experiment_setup = exp_data.experiment_setup;
 
 local_nucs = experiment_setup.local_nuc_locs;
@@ -189,7 +190,7 @@ presyn_cell_pos = experiment_setup.presyn_cell_pos;
 %     postsyn_cell_pos = experiment_setup.patched_cell_loc_1;
 % end
 
-figure; scatter3(all_nucs(:,1), all_nucs(:,2), all_nucs(:,3));
+figure; scatter3(all_nucs(:,1), all_nucs(:,2), -all_nucs(:,3));
 hold on
 scatter3(local_nucs(:,1), local_nucs(:,2), -local_nucs(:,3)); 
 scatter3(presyn_cell_pos(:,1), presyn_cell_pos(:,2), -presyn_cell_pos(:,3)); axis image
@@ -219,7 +220,7 @@ for i = 1:length(z_bounds)-1
     
 end
 num_within_range(:,1) = num_within_range(:,1)-1;
-% figure
+% figureall_nucs_rel
 % boxplot(num_within_range)
 
 
@@ -231,13 +232,13 @@ plot(z_bounds(2:end),num_within_range_all)
 num_within_range25 = num_within_range_all;
 
 %%
-paired_trials = ~isnan(result_ground_truth_set(1).spike_times_c2') & ~isnan(result_ground_truth_set(1).event_times_c1) & result_ground_truth_set(1).spike_times_c2' < result_ground_truth_set(1).event_times_c1;
+paired_trials = ~isnan(result_ground_truth_set(2).spike_times_c2') & ~isnan(result_ground_truth_set(2).event_times_c1) & result_ground_truth_set(2).spike_times_c2' < result_ground_truth_set(2).event_times_c1;
 
 
 figure;
 subplot(121)
-scatter(result_ground_truth_set(1).spike_times_c2(paired_trials),...
-    result_ground_truth_set(1).event_times_c1(paired_trials));
+scatter(result_ground_truth_set(2).spike_times_c2(paired_trials),...
+    result_ground_truth_set(2).event_times_c1(paired_trials));
 hold on
 % plot(0:1:200,0:1:200)
 % subplot(132); histogram(result_ground_truth_set(1).event_times_c1(paired_trials))
@@ -245,8 +246,8 @@ hold on
 % histogram(result_ground_truth_set(1).spike_times_c2(paired_trials))
 
 subplot(122);
-histogram(result_ground_truth_set(1).event_times_c1(paired_trials)'...
-    - result_ground_truth_set(1).spike_times_c2(paired_trials))
+histogram(result_ground_truth_set(2).event_times_c1(paired_trials)'...
+    - result_ground_truth_set(2).spike_times_c2(paired_trials))
 %%
 
 figure;
@@ -269,24 +270,28 @@ scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,
 
 figure;
 
-unique_powers = unique(result_ground_truth_set(1).targ_power);
+unique_powers = unique(result_ground_truth_set(2).targ_power);
 jitter_amt = .5;
 for i = 1:length(unique_powers)
     subplot(1,length(unique_powers),i)
 %     subplot(1,length(unique_powers),i)
-    trials = result_ground_truth_set(1).targ_power' == unique_powers(i);
+    trials = result_ground_truth_set(2).targ_power' == unique_powers(i);
 %     scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2)-6,-(experiment_setup.local_nuc_locs(:,3)-6),100,[1 0 0],'filled','markerfacealpha',0.15)
     hold on
-    scatter3(result_ground_truth_set(1).c2_targ_pos(trials,1),...
-        result_ground_truth_set(1).c2_targ_pos(trials,2),...
-        -result_ground_truth_set(1).c2_targ_pos(trials,3),...
+    scatter3(result_ground_truth_set(2).c2_targ_pos(trials,1),...
+        result_ground_truth_set(2).c2_targ_pos(trials,2),...
+        -result_ground_truth_set(2).c2_targ_pos(trials,3),...
         5,[0 0 1],'filled','markerfacealpha',.25)
     hold on
-    trials = result_ground_truth_set(1).targ_power' == unique_powers(i) & ~isnan(result_ground_truth_set(1).spike_times_c2);
-    scatter3(result_ground_truth_set(1).c2_targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        result_ground_truth_set(1).c2_targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        -result_ground_truth_set(1).c2_targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt+jitter_amt/2,...
-        50,200 - result_ground_truth_set(1).spike_times_c2(trials),'filled','markerfacealpha',.75)
+    scatter3(0,...
+        0,...
+        0,20,...
+        'x')
+    trials = result_ground_truth_set(2).targ_power' == unique_powers(i) & ~isnan(result_ground_truth_set(2).spike_times_c2);
+    scatter3(result_ground_truth_set(2).c2_targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        result_ground_truth_set(2).c2_targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        -result_ground_truth_set(2).c2_targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt+jitter_amt/2,...
+        50,200 - result_ground_truth_set(2).spike_times_c2(trials),'filled','markerfacealpha',.75)
     xlabel('vertical')
     ylabel('horiz')
     zlabel('axial')
