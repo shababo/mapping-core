@@ -60,7 +60,8 @@ else
     total_cells = sum(ch1_cell) + sum(ch2_cell);
 end
 
-
+[-2 -6 0
+ -3 3 -30];
 %%
 
 % clear result_full_nrp
@@ -129,7 +130,7 @@ spike_time_max = 200;
 views = [0 90; 0 0; 90 0];
 colors = jet(total_cells);
 count = 1;
-for j = 1:size(filenames_nrp,1)
+for j = 2%1:size(filenames_nrp,1)
     
     figure
     unique_powers = unique(result_full_nrp(j).spike_targ_power);%[15 35 55]; %
@@ -143,7 +144,7 @@ for j = 1:size(filenames_nrp,1)
             these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
             scatter3(result_full_nrp(j).spike_targ_pos(these_trials,1),result_full_nrp(j).spike_targ_pos(these_trials,2),-result_full_nrp(j).spike_targ_pos(these_trials,3),5,'k','filled')
             hold on
-            scatter3(result_full_nrp(j).nuclear_locs(:,1),result_full_nrp(j).nuclear_locs(:,2),-result_full_nrp(j).nuclear_locs(:,3),5,'r','filled')
+            scatter3(result_full_nrp(j).nuclear_locs(:,1),result_full_nrp(j).nuclear_locs(:,2),-result_full_nrp(j).nuclear_locs(:,3),10,'r','filled')
             hold on
             if ch1_cell(j)
                 
