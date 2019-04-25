@@ -20,8 +20,8 @@ post_aspiration_trials = {6,6,6};
 
 
 %%
-% thisdir = '~/projects/mapping/data/';
-thisdir = '/media/shababo/data/';
+thisdir = '~/projects/mapping/data/';
+% thisdir = '/media/shababo/data/';
 %%
 
 for j = 1:size(filenames,1)
@@ -39,7 +39,7 @@ for j = 1:size(filenames,1)
     result_ground_truth_set(j).targ_pos = result_ground_truth_set(j).full_stim_key([this_seq.precomputed_target_index],:);
     result_ground_truth_set(j).targ_power = [this_seq.target_power];
     
-    filename_base = ['/media/shababo/data/' experiment_setup.exp_id];
+    filename_base = [thisdir experiment_setup.exp_id];
     % detect spikes
     disp('cell 1')
     if ch1_cell_type(j) == 1
@@ -327,60 +327,124 @@ end
 
 %%
 figure
-unique_powers = unique(result_ground_truth_set(1).targ_power);
-jitter_amt = .5;
+j = 2
+unique_powers = unique(result_ground_truth_set(j).targ_power);
+jitter_amt = 0;
+load(filenames{j,2})
+views = [90 90; 90 -0];
+good_neurons = [4 8 12 13 17];
+[unique_targs,~,unique_targs_trial_idx] = unique(result_ground_truth_set(j).targ_pos,'rows');
+event_time_matrix = zeros(size(unique_targs,1),length(unique_powers),3);
+condition_trial_traces = zeros(size(unique_targs,1),length(unique_powers),3,201);
 for i = 1:length(unique_powers)
     subplot(1,length(unique_powers),i)%+2*length(unique_powers)
 %     subplot(1,length(unique_powers),i)
-    trials = result_ground_truth_set(1).targ_power == unique_powers(i) & result_ground_truth_set(1).event_times_c1 < 200  & result_ground_truth_set(1).event_times_c1 > 50;
-    scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2),-experiment_setup.local_nuc_locs(:,3),125,[1 0 0])
+    trials = result_ground_truth_set(j).targ_power == unique_powers(i);% & result_ground_truth_set(j).event_times_c1 < 160 & result_ground_truth_set(j).event_times_c1 > 70; %  & result_ground_truth_set(j).event_times_c1 > 50
+    scatter3(experiment_setup.local_nuc_locs(:,1),experiment_setup.local_nuc_locs(:,2) - 4 ,-experiment_setup.local_nuc_locs(:,3) + 8,125,[1 0 0])
     hold on
+    scatter3(experiment_setup.local_nuc_locs(good_neurons,1),experiment_setup.local_nuc_locs(good_neurons,2) - 4 ,-experiment_setup.local_nuc_locs(good_neurons,3) + 8,50,[1 0 0])
 %     scatter3(result_ground_truth_set(1).c2_targ_pos(:,1),...
 %         result_ground_truth_set(1).c2_targ_pos(:,2),...
 %         -result_ground_truth_set(1).c2_targ_pos(:,3),...
 %         5,[0 0 1],'filled','markerfacealpha',.25)
 %     hold on
-    scatter3(result_ground_truth_set(1).targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        result_ground_truth_set(1).targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        -result_ground_truth_set(1).targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
-        50,200 - result_ground_truth_set(1).event_times_c1(trials),'filled','markerfacealpha',.75)
-    caxis([0 150])
+    scatter3(result_ground_truth_set(j).targ_pos(trials,1)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        result_ground_truth_set(j).targ_pos(trials,2)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        -result_ground_truth_set(j).targ_pos(trials,3)+rand(sum(trials),1)*jitter_amt-jitter_amt/2,...
+        50,140 - result_ground_truth_set(j).event_times_c1(trials),'filled','markerfacealpha',.3)
+    caxis([0 90])
+    view(views(1,1),views(1,2))
     axis image
+    
+    for jj = 1:size(unique_targs,1)
+        these_trials = trials' & unique_targs_trial_idx == jj;
+        event_time_matrix(jj,i,:) = result_ground_truth_set(j).event_times_c1(these_trials);
+        condition_trial_traces(jj,i,:,:) = result_ground_truth_set(j).traces_c1(these_trials,:);
+    end
 end
+
+%%
+
+jj = 2
+condition_prob_event = zeros(size(unique_targs,1),length(unique_powers));
+condition_mean_time = zeros(size(unique_targs,1),length(unique_powers));
+condition_var_time = zeros(size(unique_targs,1),length(unique_powers));
+condition_mean = zeros(size(unique_targs,1),length(unique_powers),201);
+
+unique_powers = unique(result_ground_truth_set(jj).targ_power);
+
+for i = 1:length(unique_powers)
+    for j = 1:size(condition_trial_traces,1)
+        these_times = event_time_matrix(j,i,:);
+        condition_prob_event(j,i) = sum(~isnan(these_times))/length(these_times);
+        condition_mean(j,i,:) = mean(squeeze(condition_trial_traces(j,i,:,:)));
+        if condition_prob_event(j,i) > 0
+            condition_mean_time(j,i) = nanmean(these_times);
+            condition_var_time(j,i) = nanvar(these_times);
+        else
+            condition_mean_time(j,i) = NaN;
+            condition_var_time(j,i) = NaN;
+        end
+    end
+end
+
+%%
+
+responding_locs = condition_prob_event(:,1) > .33 & condition_prob_event(:,2) > .5 & condition_prob_event(:,3) > .68;
+
+figure;
+subplot(211)
+plot(condition_prob_event(responding_locs,:)')
+subplot(212)
+plot(condition_mean_time(responding_locs,:)')
+% subplot(313)
+% imagesc(condition_var_time)
+
+%%
+trace_array = {squeeze(condition_mean(~responding_locs,1,:)),...
+    squeeze(condition_mean(~responding_locs,2,:)),...
+    squeeze(condition_mean(~responding_locs,3,:))};
+figure
+plot_trace_stack_grid(trace_array,Inf,1,0)
 
 
 %% plot spiking locs
 
 offset = .00;
 
-spike_time_max = 140;
+spike_time_max = 200;
 
 views = [90 90; 90 -0];
 subplot_order = [1 2 3];
 colors = [.35 0 0; .68 0 0; 1 0 0];
-colors = [.2 .2 1; .2 .2 1; .2 .2 1]*.75;
+colors = [.2 .2 1; 1 .2 .2; .2 1 .2; .2 .2 .2]*.75;
 
-xlimits = [-40 40];
+xlimits = [-30 30];
 ylimits = [-30 30];
 zlimits = [-50 50];
 
+time_thresh = 100;
+
 figure
 n_choice = [2];
+count = 1;
 for jj = 1:length(n_choice)
     j = n_choice(jj);
 %     figure
     j
     unique_powers = unique(result_ground_truth_set(j).targ_power);%[15 35 55]; %
     unique_powers(unique_powers > 55) = [];
-    [unique_targs,~,unique_targs_trial_idx] = unique(result_ground_truth_set(j).c2_targ_pos,'rows');
-    prob_spike_c1 = zeros(length(unique_powers),size(unique_targs,1));
-    prob_spike_c2 = zeros(length(unique_powers),size(unique_targs,1));
-    for i = 1:length(unique_powers) 
+%     [unique_targs,~,unique_targs_trial_idx] = unique(result_ground_truth_set(j).c1_targ_pos,'rows');
+    
+%     prob_spike_c2 = zeros(length(unique_powers),size(unique_targs,1));
+    for i = length(unique_powers)
         i
+        for ii = 1:5
+            z_range = -50 + [(ii-1)*20 ii*20]
         for k = 1:size(views,1)
             k
-            subplot(2,3,i+3*(k-1))
-            disp(['subplot : ' num2str(i+3*(k-1))])
+            subplot(2,5,ii+5*(k-1))
+            disp(['subplot : ' num2str(ii+5*(k-1))])
             hold on
             if k == 1 && jj == 1
                 line(xlimits,[0 0],[0 0],'color','k','linewidth',0.5)
@@ -395,47 +459,70 @@ for jj = 1:length(n_choice)
             end
 %             subplot(3,6,count+6*(j-1))
 %             subplot(2,2,subplot_order(k))
-            these_trials = result_ground_truth_set(j).targ_power == unique_powers(i);
-            [unique_targs,~,unique_targs_trial_idx] = unique(result_ground_truth_set(j).c2_targ_pos(these_trials,:),'rows');
+%             these_trials = result_ground_truth_set(j).targ_power == unique_powers(i);
+%             these_trials = these_trials & result_ground_truth_set(j).c1_targ_pos(:,3)' >= z_range(1) & result_ground_truth_set(j).c1_targ_pos(:,3)' < z_range(2);
+%             [unique_targs,~,unique_targs_trial_idx] = unique(result_ground_truth_set(j).c1_targ_pos(these_trials,:),'rows');
             
 %             hold on
             
             
-            
+            num_cells = 0;
             
             if ch2_cell_type(j) == 1
                 
+                these_trials = result_ground_truth_set(j).targ_power == unique_powers(i);
+            these_trials = these_trials & result_ground_truth_set(j).c2_targ_pos(:,3)' >= z_range(1) & result_ground_truth_set(j).c2_targ_pos(:,3)' < z_range(2);
+            [unique_targs,~,unique_targs_trial_idx] = unique(result_ground_truth_set(j).c2_targ_pos(these_trials,:),'rows');
+%                 unique_targs = bsxfun(@plus,unique_targs,[-4 8 10]);
+                prob_spike_c2 = zeros(length(unique_powers),size(unique_targs,1));
 %                 scatter3(result_ground_truth_set(j).c2_pos(1),result_ground_truth_set(j).c2_pos(2),result_ground_truth_set(j).c2_pos(3),100,[0 0 1],'filled')
                 these_times = result_ground_truth_set(j).spike_times_c2(these_trials);
                 for this_loc_ind = 1:size(unique_targs,1)
                     loc_times = these_times(unique_targs_trial_idx == this_loc_ind);
-                    this_prob_spike = sum(~isnan(loc_times) & loc_times < spike_time_max)/length(loc_times);
-                    if this_prob_spike
+                    this_prob_spike = sum(~isnan(loc_times) & loc_times < time_thresh)/length(loc_times);
+                    if this_prob_spike > .5
+                        this_time_var = var(loc_times(~isnan(loc_times)));
+                    else
+                        this_time_var = NaN;
+                    end
+                    if this_prob_spike && ~isnan(this_time_var)
                         scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),-unique_targs(this_loc_ind,3),...
-                            40,colors(j,:),'filled','markerfacealpha',this_prob_spike^1.2)
+                            40,colors(count,:),'filled','markerfacealpha',this_prob_spike^1.2-.1)
                         hold on
                     else
                         scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),-unique_targs(this_loc_ind,3),...
-                            10,colors(j,:),'filled','MarkerFaceAlpha',.2)
+                            10,colors(count,:),'filled','MarkerFaceAlpha',.2)
+                        hold on
                     end
                     prob_spike_c2(i,this_loc_ind) = this_prob_spike;
                 end
+                num_cells = num_cells + 1;
             end
             
-%             if ch1_cell_type(j) == 1
-%                 scatter3(result_ground_truth_set(j).c1_pos(1),result_ground_truth_set(j).c1_pos(2),result_ground_truth_set(j).c1_pos(3),40,[1 0 0])
-%                 these_times = result_ground_truth_set(j).spike_times_c1(these_trials);
-%                 
-%                 for this_loc_ind = 1:size(unique_targs,1)
-%                     loc_times = these_times(unique_targs_trial_idx == this_loc_ind);
-%                     this_prob_spike = sum(~isnan(loc_times) & loc_times < 140)/length(loc_times);
-%                     if this_prob_spike
-%                         scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),unique_targs(this_loc_ind,3),30,[1 0 0],'filled','MarkerFaceAlpha',1)
-%                         hold on
-%                     end
-%                     prob_spike_c1(i,this_loc_ind) = this_prob_spike;
-%                 end
-%             end
+            if ch1_cell_type(j) == 1
+                these_trials = result_ground_truth_set(j).targ_power == unique_powers(i);
+            these_trials = these_trials & result_ground_truth_set(j).c1_targ_pos(:,3)' >= z_range(1) & result_ground_truth_set(j).c1_targ_pos(:,3)' < z_range(2);
+            [unique_targs,~,unique_targs_trial_idx] = unique(result_ground_truth_set(j).c1_targ_pos(these_trials,:),'rows');
+%             unique_targs = bsxfun(@minus,unique_targs,[-4 8 10]);
+            prob_spike_c1 = zeros(length(unique_powers),size(unique_targs,1));    
+%             scatter3(result_ground_truth_set(j).c1_pos(1),result_ground_truth_set(j).c1_pos(2),result_ground_truth_set(j).c1_pos(3),40,[1 0 0])
+                these_times = result_ground_truth_set(j).spike_times_c1(these_trials);
+                
+                for this_loc_ind = 1:size(unique_targs,1)
+                    loc_times = these_times(unique_targs_trial_idx == this_loc_ind);
+                    this_prob_spike = sum(~isnan(loc_times) & loc_times < time_thresh)/length(loc_times);
+                    if this_prob_spike
+                        scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),-unique_targs(this_loc_ind,3),40,colors(count+1,:),'filled','MarkerFaceAlpha',this_prob_spike^1.2-.1)
+                        hold on
+                    else
+                        scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),-unique_targs(this_loc_ind,3),...
+                            10,colors(count+1,:),'filled','MarkerFaceAlpha',.2)
+                        hold on
+                    end
+                    prob_spike_c1(i,this_loc_ind) = this_prob_spike;
+                end
+                num_cells = num_cells + 1;
+            end
 %             if i == length(unique_powers)
 %                 spiking_targs = unique_targs(prob_spike_c2(i,:) > 0,:);
 %             end
@@ -443,7 +530,7 @@ for jj = 1:length(n_choice)
                 if k == 1
                     title(['Power: ' num2str(unique_powers(i)) 'mW'])
                 end
-                if i == 1 && k == 1
+                if ii == 1 && k == 1
                     xlabel('vertical')
                     set(gca,'Yticklabel',[]) 
                 end
@@ -451,21 +538,21 @@ for jj = 1:length(n_choice)
                     ylabel('horizontal')
                 end
 
-                if i == 1 && k == 2
+                if ii == 1 && k == 2
                     zlabel('axial/horizontal')
                 end
-                if i == 2 && k == 1
+                if ii > 1 && ii < 5 && k == 1
                     set(gca,'Xticklabel',[]) 
                     set(gca,'Yticklabel',[]) 
                 end
-                if i == 2 && k == 2
+                if ii > 1 && ii < 5 && k == 2
                     set(gca,'Zticklabel',[]) 
                 end
-                if i == 3 && k == 1
+                if ii == 5 && k == 1
                     set(gca,'Yticklabel',[]) 
                     set(gca,'Xticklabel',[]) 
                 end
-                if i == 3 && k == 2
+                if ii == 5 && k == 2
                     set(gca,'Zticklabel',[]) 
                 end
 %                 title(sprintf('Pair %d, Power: %d',j,unique_powers(i)))
@@ -489,7 +576,8 @@ for jj = 1:length(n_choice)
 %             end
 %             axis image
               end
-            count = count - 1;
+                end
+%             count = count - 1;
         end
 %         subplot(3,length(unique_powers)+1,length(unique_powers)+1+(length(unique_powers)+1)*(k-1))
 %         scatter3(result_ground_truth_set(j).spike_targ_pos(:,1),result_ground_truth_set(j).spike_targ_pos(:,2),result_ground_truth_set(j).spike_targ_pos(:,3),'filled')
@@ -503,5 +591,6 @@ for jj = 1:length(n_choice)
 %         view(views(k,1),views(k,2))
         
     end
+    count = count + num_cells;
 end
 

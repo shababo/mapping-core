@@ -66,7 +66,7 @@ end
 
 % clear result_full_nrp
 
-for j = 5:size(filenames_nrp,1)
+for j = 1:size(filenames_nrp,1)
     
     j
     
@@ -125,12 +125,12 @@ end
 
 offset = .00;
 
-spike_time_max = 200;
+spike_time_max = 100;
 
 views = [0 90; 0 0; 90 0];
 colors = jet(total_cells);
 count = 1;
-for j = 2%1:size(filenames_nrp,1)
+for j = 1:size(filenames_nrp,1)
     
     figure
     unique_powers = unique(result_full_nrp(j).spike_targ_power);%[15 35 55]; %
@@ -354,16 +354,16 @@ views = [0 90; 0 0; 90 0];
 xy_bound = 8;
 clear max_dist
 clear max_dist_loc
-z_test_locs = cell(3,1);
-z_spike_locs = cell(3,1);
+z_test_locs = cell(5,1);
+z_spike_locs = cell(5,1);
 for k = 1:3
     
     unique_powers = unique(result_full_nrp(1).spike_targ_power);
     for i = 1:length(unique_powers)
         subplot(3,length(unique_powers),i + length(unique_powers)*(k-1))
-        for j = 5
+        for j = 1:4
         
-            
+            unique_powers = unique(result_full_nrp(j).spike_targ_power);
             
             
             these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
@@ -406,9 +406,9 @@ for k = 1:3
         end
         subplot(3,length(unique_powers),i + length(unique_powers)*(k-1))
         cell_count = 1
-        for j = 5% 1:length(result_full_nrp)  
+        for j = 1:4
 %             subplot(3,length(unique_powers),i + length(unique_powers)*(k-1))
-            
+            unique_powers = unique(result_full_nrp(j).spike_targ_power);
             these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
             if ~any(these_trials)
                 bad_pow(j,i) = 1;
@@ -422,16 +422,16 @@ for k = 1:3
 %                 z_aligned = these_locs_cell(:,1) > -xy_bound & these_locs_cell(:,1) < xy_bound & these_locs_cell(:,2) > -xy_bound & these_locs_cell(:,2) < xy_bound;
 %                 these_locs_cell = these_locs_cell(z_aligned,:);
                 these_locs_dist = sqrt(sum(these_locs_cell.^2,2));
-                if ~isempty(these_locs_dist)
-                    if k == 1
-                        [max_dist(i,cell_count),max_i] = max(these_locs_dist);
-                        max_dist_loc(i,cell_count,:) = these_locs_cell(max_i,:);
-                    end
-%                     scatter3(max_dist_loc(i,cell_count,1),max_dist_loc(i,cell_count,2),-max_dist_loc(i,cell_count,3),[],[0 0 1],'filled')
-                else
-                    max_dist(i,cell_count) = 0;
-                    max_dist_loc(i,cell_count,:) = NaN;
-                end
+%                 if ~isempty(these_locs_dist)
+%                     if k == 1
+%                         [max_dist(i,cell_count),max_i] = max(these_locs_dist);
+%                         max_dist_loc(i,cell_count,:) = these_locs_cell(max_i,:);
+%                     end
+% %                     scatter3(max_dist_loc(i,cell_count,1),max_dist_loc(i,cell_count,2),-max_dist_loc(i,cell_count,3),[],[0 0 1],'filled')
+%                 else
+%                     max_dist(i,cell_count) = 0;
+%                     max_dist_loc(i,cell_count,:) = NaN;
+%                 end
 %                 cell_count = cell_count + 1;
     %             c1_targs = bsxfun(@minus,result_full_nrp(j).spike_targ_pos,result_full_nrp(j).c1_pos);
     %             scatter3(c1_targs(:,1),c1_targs(:,2),c1_targs(:,3),5,'k','filled')
@@ -453,16 +453,16 @@ for k = 1:3
                 z_aligned = these_locs_cell(:,1) > -xy_bound & these_locs_cell(:,1) < xy_bound & these_locs_cell(:,2) > -xy_bound & these_locs_cell(:,2) < xy_bound;
                 these_locs_cell = these_locs_cell(z_aligned,:);
                 these_locs_dist = sqrt(sum(these_locs_cell.^2,2));
-                if ~isempty(these_locs_dist)
-                    if k == 1
-                        [max_dist(i,cell_count),max_i] = max(these_locs_dist);
-                        max_dist_loc(i,cell_count,:) = these_locs_cell(max_i,:);
-                    end
-%                     scatter3(max_dist_loc(i,cell_count,1),max_dist_loc(i,cell_count,2),-max_dist_loc(i,cell_count,3),[],[0 0 1],'filled','MarkerFaceAlpha',1./4.)
-                else
-                    max_dist(i,cell_count) = 0;
-                    max_dist_loc(i,cell_count,:) = NaN;
-                end
+%                 if ~isempty(these_locs_dist)
+%                     if k == 1
+%                         [max_dist(i,cell_count),max_i] = max(these_locs_dist);
+%                         max_dist_loc(i,cell_count,:) = these_locs_cell(max_i,:);
+%                     end
+% %                     scatter3(max_dist_loc(i,cell_count,1),max_dist_loc(i,cell_count,2),-max_dist_loc(i,cell_count,3),[],[0 0 1],'filled','MarkerFaceAlpha',1./4.)
+%                 else
+%                     max_dist(i,cell_count) = 0;
+%                     max_dist_loc(i,cell_count,:) = NaN;
+%                 end
                 cell_count = cell_count + 1;
                 z_spike_locs{i} = [z_spike_locs{i}; abs(these_locs_cell(:,3))];
                 scatter3(these_locs(:,1)-result_full_nrp(j).c2_pos(1),these_locs(:,2)-result_full_nrp(j).c2_pos(2),these_locs(:,3)-result_full_nrp(j).c2_pos(3),[],...
@@ -565,6 +565,7 @@ spike_time_min = 0;
 colors = jet(total_cells);
 
 views = [0 90; 0 0; 90 0];
+        for j = 1:size(filenames_nrp,1) 
 
     figure; 
 
@@ -575,7 +576,6 @@ for k = 1:3
     for i = 1:length(unique_powers)
 
         count = 1;
-        for j = 1:size(filenames_nrp,1) 
             subplot(3,length(unique_powers),i + length(unique_powers)*(k-1))
             
             if ch1_cell(j)
@@ -648,3 +648,184 @@ for k = 1:3
 %         view(views(k,1),views(k,2))
     end
 end
+
+%% z- sections
+
+
+offset = .00;
+
+spike_time_max = 140;
+
+views = [90 90; 90 -0];
+subplot_order = [1 2 3];
+colors = [.35 0 0; .68 0 0; 1 0 0];
+colors = [.2 .2 1; 1 .2 .2; .2 1 .2; .2 .2 .2]*.75;
+
+xlimits = [-30 30];
+ylimits = [-30 30];
+zlimits = [-50 50];
+
+time_thresh = 140;
+
+figure
+n_choice = [5];
+count = 1;
+for jj = 1:length(n_choice)
+    j = n_choice(jj);
+%     figure
+    j
+    unique_powers = unique(result_full_nrp(j).spike_targ_power);%[15 35 55]; %
+    unique_powers(unique_powers > 55) = [];
+%     [unique_targs,~,unique_targs_trial_idx] = unique(result_full_nrp(j).spike_targ_pos_c1,'rows');
+    
+%     prob_spike_c2 = zeros(length(unique_powers),size(unique_targs,1));
+    for i = length(unique_powers)
+        i
+        for ii = 1:5
+            z_range = -50 + [(ii-1)*20 ii*20]
+        for k = 1:size(views,1)
+            k
+            subplot(2,5,ii+5*(k-1))
+            disp(['subplot : ' num2str(ii+5*(k-1))])
+            hold on
+            if k == 1 && jj == 1
+                line(xlimits,[0 0],[0 0],'color','k','linewidth',0.5)
+                hold on
+                line([0 0],ylimits,[0 0],'color','k','linewidth',0.5)
+                hold on
+            elseif k == 2 && jj == 1
+                line([0 0],[0 0],zlimits,'color','k','linewidth',0.5)
+                hold on
+                line([0 0],ylimits,[0 0],'color','k','linewidth',0.5)
+                hold on
+            end
+%             subplot(3,6,count+6*(j-1))
+%             subplot(2,2,subplot_order(k))
+%             these_trials = result_full_nrp(j).targ_power == unique_powers(i);
+%             these_trials = these_trials & result_full_nrp(j).spike_targ_pos_c1(:,3)' >= z_range(1) & result_full_nrp(j).spike_targ_pos_c1(:,3)' < z_range(2);
+%             [unique_targs,~,unique_targs_trial_idx] = unique(result_full_nrp(j).spike_targ_pos_c1(these_trials,:),'rows');
+            
+%             hold on
+            
+            
+            num_cells = 0;
+            
+            if ch2_cell(j) == 1
+                
+                these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
+            these_trials = these_trials & result_full_nrp(j).spike_targ_pos_c2(:,3)' >= z_range(1) & result_full_nrp(j).spike_targ_pos_c2(:,3)' < z_range(2);
+            [unique_targs,~,unique_targs_trial_idx] = unique(result_full_nrp(j).spike_targ_pos_c2(these_trials,:),'rows');
+%                 prob_spike_c2 = zeros(length(unique_powers),size(unique_targs,1));
+%                 scatter3(result_full_nrp(j).c2_pos(1),result_full_nrp(j).c2_pos(2),result_full_nrp(j).c2_pos(3),100,[0 0 1],'filled')
+                these_times = result_full_nrp(j).spike_times_c2(these_trials);
+                for this_loc_ind = 1:size(unique_targs,1)
+                    loc_times = these_times(unique_targs_trial_idx == this_loc_ind);
+                    this_prob_spike = sum(~isnan(loc_times) & loc_times < time_thresh)/length(loc_times);
+                    if this_prob_spike
+                        scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),-unique_targs(this_loc_ind,3),...
+                            40,colors(count,:),'filled','markerfacealpha',this_prob_spike^1.2-.1)
+                        hold on
+                    else
+                        scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),-unique_targs(this_loc_ind,3),...
+                            10,colors(count,:),'filled','MarkerFaceAlpha',.2)
+                        hold on
+                    end
+%                     prob_spike_c2(i,this_loc_ind) = this_prob_spike;
+                end
+                num_cells = num_cells + 1;
+            end
+            
+            if ch1_cell(j) == 1
+                these_trials = result_full_nrp(j).spike_targ_power == unique_powers(i);
+            these_trials = these_trials & result_full_nrp(j).spike_targ_pos_c1(:,3)' >= z_range(1) & result_full_nrp(j).spike_targ_pos_c1(:,3)' < z_range(2);
+            [unique_targs,~,unique_targs_trial_idx] = unique(result_full_nrp(j).spike_targ_pos_c1(these_trials,:),'rows');
+%             prob_spike_c1 = zeros(1,size(unique_targs,1));    
+%             scatter3(result_full_nrp(j).c1_pos(1),result_full_nrp(j).c1_pos(2),result_full_nrp(j).c1_pos(3),40,[1 0 0])
+                these_times = result_full_nrp(j).spike_times_c1(these_trials);
+                
+                for this_loc_ind = 1:size(unique_targs,1)
+                    loc_times = these_times(unique_targs_trial_idx == this_loc_ind);
+                    this_prob_spike = sum(~isnan(loc_times) & loc_times < time_thresh)/length(loc_times);
+                    if this_prob_spike
+                        scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),-unique_targs(this_loc_ind,3),40,colors(count+1,:),'filled','MarkerFaceAlpha',this_prob_spike^1.2-.1)
+                        hold on
+                    else
+                        scatter3(unique_targs(this_loc_ind,1),unique_targs(this_loc_ind,2),-unique_targs(this_loc_ind,3),...
+                            10,colors(count+1,:),'filled','MarkerFaceAlpha',.2)
+                        hold on
+                    end
+%                     prob_spike_c1(i,this_loc_ind) = this_prob_spike;
+                end
+                num_cells = num_cells + 1;
+            end
+%             if i == length(unique_powers)
+%                 spiking_targs = unique_targs(prob_spike_c2(i,:) > 0,:);
+%             end
+              if jj == length(n_choice)
+                if k == 1
+                    title(['Power: ' num2str(unique_powers(i)) 'mW'])
+                end
+                if ii == 1 && k == 1
+                    xlabel('vertical')
+                    set(gca,'Yticklabel',[]) 
+                end
+                if k == 2
+                    ylabel('horizontal')
+                end
+
+                if ii == 1 && k == 2
+                    zlabel('axial/horizontal')
+                end
+                if ii > 1 && ii < 5 && k == 1
+                    set(gca,'Xticklabel',[]) 
+                    set(gca,'Yticklabel',[]) 
+                end
+                if ii > 1 && ii < 5 && k == 2
+                    set(gca,'Zticklabel',[]) 
+                end
+                if ii == 5 && k == 1
+                    set(gca,'Yticklabel',[]) 
+                    set(gca,'Xticklabel',[]) 
+                end
+                if ii == 5 && k == 2
+                    set(gca,'Zticklabel',[]) 
+                end
+%                 title(sprintf('Pair %d, Power: %d',j,unique_powers(i)))
+                view(views(k,1),views(k,2))
+                axis equal
+                xlim(xlimits)
+                ylim(ylimits)
+                zlim(zlimits)
+%                 lim = axis;
+                if k == 1
+                    axis_pos_radial = get(gca, 'Position')
+%                     lim_axial = axis;
+                elseif k == 2
+                    axis_pos_axial = get(gca, 'Position')   
+%                     lim_horiz = axis;
+                    set(gca, 'Position', [axis_pos_axial(1:3) diff(zlimits)/diff(xlimits)*axis_pos_radial(4)]) 
+%                 else
+%                     axis_pos3 = get(gca, 'Position') ;                    
+%                     set(gca, 'Position', [axis_pos3(1:2)  (lim(6)-lim(5))/(lim(2)-lim(1))*axis_pos2(3)]) 
+                end
+%             end
+%             axis image
+              end
+                end
+%             count = count - 1;
+        end
+%         subplot(3,length(unique_powers)+1,length(unique_powers)+1+(length(unique_powers)+1)*(k-1))
+%         scatter3(result_full_nrp(j).spike_targ_pos(:,1),result_full_nrp(j).spike_targ_pos(:,2),result_full_nrp(j).spike_targ_pos(:,3),'filled')
+%         xlim([min(result_full_nrp(j).spike_targ_pos(:,1)) max(result_full_nrp(j).spike_targ_pos(:,1))])
+%         ylim([min(result_full_nrp(j).spike_targ_pos(:,2)) max(result_full_nrp(j).spike_targ_pos(:,2))])
+%         zlim([min(result_full_nrp(j).spike_targ_pos(:,3)) max(result_full_nrp(j).spike_targ_pos(:,3))])
+%         xlabel('vertical')
+%         ylabel('horizontal')
+%         zlabel('axial/horizontal')
+%         title(sprintf('Pair %d, All Targets',j))
+%         view(views(k,1),views(k,2))
+        
+    end
+    count = count + num_cells;
+end
+
