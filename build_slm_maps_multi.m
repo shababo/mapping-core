@@ -93,6 +93,9 @@ for i = 1:num_cells
             j_stim
             k
             map_index(j_stim,:)
+            if isnan(map_index(j_stim,3))
+                map_index(j_stim,3) = 1;
+            end
             maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)} = ...
                 [maps{i}{map_index(j_stim,1,k),map_index(j_stim,2,k),map_index(j_stim,3,k)}; ...
                 these_traces(j,:)];
