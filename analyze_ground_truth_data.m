@@ -247,7 +247,10 @@ hold on
 
 subplot(122);
 histogram(result_ground_truth_set(2).event_times_c1(paired_trials)'...
+    - result_ground_truth_set(2).spike_times_c2(paired_trials),0:5:120)
+mode(result_ground_truth_set(2).event_times_c1(paired_trials)'...
     - result_ground_truth_set(2).spike_times_c2(paired_trials))
+
 %%
 
 figure;
