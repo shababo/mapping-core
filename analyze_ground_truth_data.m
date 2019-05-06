@@ -175,8 +175,8 @@ end
     
  %%   
     
-    
-load([thisdir filenames{1,2}])
+j = 2;
+load([thisdir filenames{j,2}])
 % load([thisdir filenames{9,2}])
 experiment_setup = exp_data.experiment_setup;
 
@@ -190,12 +190,51 @@ presyn_cell_pos = experiment_setup.presyn_cell_pos;
 %     postsyn_cell_pos = experiment_setup.patched_cell_loc_1;
 % end
 
-figure; scatter3(all_nucs(:,1), all_nucs(:,2), -all_nucs(:,3));
+figure; %scatter3(all_nucs(:,1), all_nucs(:,2), -all_nucs(:,3));
+% hold on
+subplot(1,4,1)
+good_cells = setdiff(1:17,[5 14 15 16]);
+scatter3(local_nucs(good_cells,1), local_nucs(good_cells,2), -local_nucs(good_cells,3),700,'r','.'); 
 hold on
-scatter3(local_nucs(:,1), local_nucs(:,2), -local_nucs(:,3)); 
-scatter3(presyn_cell_pos(:,1), presyn_cell_pos(:,2), -presyn_cell_pos(:,3)); axis image
+scatter3(local_nucs(8,1), local_nucs(8,2), -local_nucs(8,3),700,'b','.'); 
+hold on
+scatter3(result_ground_truth_set(2).targ_pos(:,1), result_ground_truth_set(2).targ_pos(:,2), -result_ground_truth_set(2).targ_pos(:,3),100,'.k'); axis image
+% set(gca,'Color','k')
+view(60,30)
+xlim([-30 60])
+ylim([-60 0])
+zlim([-150 -10])
 % scatter3(presyn_cell_pos(:,1), presyn_cell_pos(:,2), -presyn_cell_pos(:,3)); axis image
 
+unique_powers = unique(result_ground_truth_set(j).targ_power);
+[unique_targs,~,unique_targs_trial_idx] = unique(result_ground_truth_set(j).targ_pos,'rows');
+% figure;
+for i = 1:length(unique_powers)
+    subplot(1,4,i+1)
+    
+     %scatter3(all_nucs(:,1), all_nucs(:,2), -all_nucs(:,3));
+%     hold on
+    good_cells = setdiff(1:17,[5 14 15 16]);
+    scatter3(local_nucs(good_cells,1), local_nucs(good_cells,2), -local_nucs(good_cells,3),700,'r','.'); 
+    hold on
+    scatter3(local_nucs(8,1), local_nucs(8,2), -local_nucs(8,3),700,'b','.'); 
+    hold on
+    these_trials = result_ground_truth_set(j).targ_power == unique_powers(i);
+    for jj = 1:size(unique_targs,1)
+        loc_times = result_ground_truth_set(j).event_times_c1(these_trials' & unique_targs_trial_idx == jj);
+        good_times = ~isnan(loc_times) & loc_times > 70 & loc_times < 150;
+        this_prob_spike = sum(good_times)/length(good_times);
+        if this_prob_spike > .35
+            scatter3(unique_targs(jj,1), unique_targs(jj,2), -unique_targs(jj,3),100,'.k'); axis image
+            hold on
+        end
+    end
+%     set(gca,'Color','k')
+    view(60,30)
+    xlim([-30 60])
+ylim([-60 0])
+zlim([-150 -10])
+end
 %%
 
 % load(['~/projects/mapping/data/' filenames_nrp{9,2}])
@@ -232,7 +271,7 @@ plot(z_bounds(2:end),num_within_range_all)
 num_within_range25 = num_within_range_all;
 
 %%
-paired_trials = ~isnan(result_ground_truth_set_fix(2).spike_times_c2') & ~isnan(result_ground_truth_set_fix(2).event_times_c1) & result_ground_truth_set_fix(2).spike_times_c2' < 120 & result_ground_truth_set_fix(2).targ_power < 50 & result_ground_truth_set_fix(2).spike_times_c2' + 20 < result_ground_truth_set_fix(2).event_times_c1 & result_ground_truth_set_fix(2).spike_times_c2' + 80 > result_ground_truth_set_fix(2).event_times_c1 & result_ground_truth_set_fix(2).;
+paired_trials = ~isnan(result_ground_truth_set_fix(2).spike_times_c2') & ~isnan(result_ground_truth_set_fix(2).event_times_c1) & result_ground_truth_set_fix(2).spike_times_c2' < 120 & result_ground_truth_set_fix(2).targ_power < 50 & result_ground_truth_set_fix(2).spike_times_c2' + 20 < result_ground_truth_set_fix(2).event_times_c1 & result_ground_truth_set_fix(2).spike_times_c2' + 80 > result_ground_truth_set_fix(2).event_times_c1 & result_ground_truth_set_fix(2);
 
 
 figure;
