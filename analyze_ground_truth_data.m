@@ -14,16 +14,16 @@ thresh = [30 30 30;
 hpf = [0 0 0;
        0 0 1];
                
-map_trials = {3:5,1:6,2:5};
+map_trials = {3:5,[1],2:5};
 connection_check_trials = {1,1,1};
 post_aspiration_trials = {6,6,6};
 
 
 %%
 thisdir = '~/projects/mapping/data/';
-% thisdir = '/media/shababo/data/';
+thisdir = '/media/shababo/data/';
 %%
-
+clear result_ground_truth_set_fix
 for j = 2%1:size(filenames,1)
     
     j
@@ -271,13 +271,17 @@ plot(z_bounds(2:end),num_within_range_all)
 num_within_range25 = num_within_range_all;
 
 %%
-paired_trials = ~isnan(result_ground_truth_set_fix(2).spike_times_c2') & ~isnan(result_ground_truth_set_fix(2).event_times_c1) & result_ground_truth_set_fix(2).spike_times_c2' < 120 & result_ground_truth_set_fix(2).targ_power < 50 & result_ground_truth_set_fix(2).spike_times_c2' + 20 < result_ground_truth_set_fix(2).event_times_c1 & result_ground_truth_set_fix(2).spike_times_c2' + 80 > result_ground_truth_set_fix(2).event_times_c1 & result_ground_truth_set_fix(2);
 
+paired_trials = ~isnan(result_ground_truth_set_fix(2).spike_times_c2') & ~isnan(result_ground_truth_set_fix(2).event_times_c1) & result_ground_truth_set_fix(2).spike_times_c2' < 120 & result_ground_truth_set_fix(2).targ_power < 50 & result_ground_truth_set_fix(2).spike_times_c2' + 20 < result_ground_truth_set_fix(2).event_times_c1 & result_ground_truth_set_fix(2).spike_times_c2' + 80 > result_ground_truth_set_fix(2).event_times_c1 & result_ground_truth_set_fix(2);
+% paired_trials = ~isnan(result_ground_truth_set_fix(2).spike_times_c2') & ~isnan(result_ground_truth_set_fix(2).event_times_c1) & result_ground_truth_set_fix(2).spike_times_c2' < 120 & result_ground_truth_set_fix(2).targ_power < 100 & result_ground_truth_set_fix(2).spike_times_c2' + 20 < result_ground_truth_set_fix(2).event_times_c1 & result_ground_truth_set_fix(2).spike_times_c2' + 80 > result_ground_truth_set_fix(2).event_times_c1;
+
+
+paired_trials = ~isnan(result_ground_truth_set(2).spike_times_c2') & ~isnan(result_ground_truth_set(2).event_times_c1) & result_ground_truth_set(2).event_times_c1 > 70 & result_ground_truth_set(2).event_times_c1 < 140 & result_ground_truth_set(2).targ_power < 50;
 
 figure;
 subplot(121)
-scatter(result_ground_truth_set_fix(2).spike_times_c2(paired_trials),...
-    result_ground_truth_set_fix(2).event_times_c1(paired_trials));
+scatter(result_ground_truth_set(2).spike_times_c2(paired_trials),...
+    result_ground_truth_set(2).event_times_c1(paired_trials));
 xlabel('spike times')
 ylabel('event times')
 hold on
@@ -287,8 +291,24 @@ hold on
 % histogram(result_ground_truth_set_fix(1).spike_times_c2(paired_trials))
 
 subplot(122);
-histogram(result_ground_truth_set_fix(2).event_times_c1(paired_trials)'...
-    - result_ground_truth_set_fix(2).spike_times_c2(paired_trials))
+
+histogram(result_ground_truth_set(2).event_times_c1(paired_trials)'...
+    - result_ground_truth_set(2).spike_times_c2(paired_trials),30:5:80,'Normalization','pdf')
+hold on
+x_vec = 20:.1:80;
+
+final_posteriors = new_test_inf_result_test_newinit(exp_num).parameter_history(end,[7]);
+means_tmp = final_posteriors(1).delay_mu.mean;
+delay_mean = exp(means_tmp)./(1+exp(means_tmp))*...
+                        (parameter_path.delay_mu.bounds.up-parameter_path.delay_mu.bounds.low)+parameter_path.delay_mu.bounds.low;
+means_tmp = final_posteriors(1).delay_sigma.mean;
+delay_sigma = exp(means_tmp)./(1+exp(means_tmp))*...
+                        (parameter_path.delay_sigma.bounds.up-parameter_path.delay_sigma.bounds.low)+parameter_path.delay_sigma.bounds.low;
+
+plot(x_vec,normpdf(x_vec,delay_mean,delay_sigma))
+
+
+
 mean(result_ground_truth_set_fix(2).event_times_c1(paired_trials)'...
     - result_ground_truth_set_fix(2).spike_times_c2(paired_trials))
 std(result_ground_truth_set_fix(2).event_times_c1(paired_trials)'...
@@ -297,7 +317,7 @@ std(result_ground_truth_set_fix(2).event_times_c1(paired_trials)'...
 paired_trials_inds = find(paired_trials);
 [ordered_spike_times, ordering] = sort(result_ground_truth_set_fix(2).spike_times_c2(paired_trials_inds));
 figure
-plot_trace_stack(result_ground_truth_set_fix(2).traces_c1(paired_trials_inds(ordering),:),80,'-',result_ground_truth_set_fix(2).event_times_c1(paired_trials_inds(ordering)))
+plot_trace_stack(result_ground_truth_set_fix(2).traces_c1(paired_trials_inds(ordering),:),80,'-',[result_ground_truth_set_fix(2).spike_times_c2(paired_trials_inds(ordering)) result_ground_truth_set_fix(2).event_times_c1(paired_trials_inds(ordering))'])
 %%
 
 figure;
