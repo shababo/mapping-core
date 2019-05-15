@@ -229,9 +229,9 @@ count = 1;
 for i = 1:length(z_pos)
     
 
-    for j = 1:size(filenames,1)
+    for j = 1:length(result_shape)
         count
-        subplot(length(z_pos),size(filenames,1),count)
+        subplot(length(z_pos),length(result_shape),count)
 %         axes(ha(count))
         scatter3(result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,1), ...
                  result_shape(j).current_targ_pos(result_shape(j).current_targ_pos(:,3) == z_pos(i) & result_shape(j).max_curr < 2000,2), ...
