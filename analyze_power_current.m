@@ -465,9 +465,31 @@ end
 % legend({num2str(round(low_power)),num2str(round(medlow_power)),num2str(round(med_power)),num2str(round(high_power))})
 
 
+%%
+close all
+figure
+for j = 1:length(result_spikes)-1
+    
+    unique_pow = unique(result_spikes(j).power{1});
+    for pow_i = 1:length(unique_pow)
+        these_trials = find(result_spikes(j).power{1} == unique_pow(pow_i));
+        if isempty(these_trials)
+            disp('bad bad bad')
+        end
+        result_spikes(j).prob_spike140(pow_i) = sum(~isnan(result_spikes(j).spike_times{1}(these_trials)) & result_spikes(j).spike_times{1}(these_trials) < 140)/length(these_trials);
+    end
+    if length(result_current(j).peak_current_means) == length(result_spikes(j).prob_spike140)
+        plot(result_current(j).peak_current_means,result_spikes(j).prob_spike140,'--')
+    end
+    hold on
+    
+    optical_rheo(j) = unique_pow(find(result_spikes(j).prob_spike140 ~= 0,1,'first'));
+end
 
-
-
+figure
+cdfplot(optical_rheo)
+xlabel('power (mW)')
+ylabel('Fraction Cells Spike')
 
 
 

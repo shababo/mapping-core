@@ -1,4 +1,6 @@
-function detection_results = detect_peaks(traces,threshold,min_window,return_bit_vec,stop_ind,threshold_min,do_z,do_hp,first_only)
+function detection_results = detect_peaks(traces,threshold,...
+    min_window,return_bit_vec,stop_ind,threshold_min,do_z,do_hp,...
+    first_only)
 
 if return_bit_vec
     detection_results = zeros(size(traces));

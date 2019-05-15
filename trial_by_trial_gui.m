@@ -191,15 +191,15 @@ if get(handles.draw_thresh,'Value')
     plot(timebase,-1*thresh*ones(size(timebase)))
     hold on;
     if get(handles.ch1_on,'Value')
-        crossings1 = detect_peaks(-1*this_trace_ch1' + this_trace_ch1(1),thresh,30,0,Inf,-Inf,0,0,0);
+        crossings1 = detect_peaks(-1*this_trace_ch1' + median(this_trace_ch1),thresh,30,0,Inf,-Inf,0,0,0);
         crossings1 = crossings1{1};
-        scatter(timebase(crossings1),-1*thresh*ones(size(crossings1)))
+        scatter(timebase(crossings1),-1*thresh*ones(size(crossings1))+median(this_trace_ch1))
         hold on
     end
     if get(handles.ch2_on,'Value')
-        crossings2 = detect_peaks(flip*this_trace_ch2',thresh,5,0,length(this_trace_ch2),-Inf,0,0,0);
+        crossings2 = detect_peaks(-1*this_trace_ch2' + median(this_trace_ch2),thresh,30,0,Inf,-Inf,0,0,0);
         crossings2 = crossings2{1};
-        scatter(timebase(crossings2),flip*thresh*ones(size(crossings2)))
+        scatter(timebase(crossings2),-1*thresh*ones(size(crossings2))-100+median(this_trace_ch2))
         hold on
     end
 end
