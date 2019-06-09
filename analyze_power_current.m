@@ -491,6 +491,11 @@ cdfplot(optical_rheo)
 xlabel('power (mW)')
 ylabel('Fraction Cells Spike')
 
+figure
+histogram(optical_rheo)
+xlabel('min power for spike (mW)')
+ylabel('Num Cells')
+
 
 
 
